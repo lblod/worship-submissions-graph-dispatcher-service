@@ -51,6 +51,7 @@ async function processSubject(subject) {
     // Deduce type.
     // We can have multiple types .e.g LocalFileDataObject is also FileDataObject
     // hence we must check em all.
+    // TODO: really sure?
     const types = await getTypesForSubject(subject);
 
     for(const type of types) {

@@ -1,6 +1,6 @@
 import {  sparqlEscapeUri } from "mu";
 import { querySudo as query, updateSudo as update } from "@lblod/mu-auth-sudo";
-import exportConfig from "../exportConfig";
+import exportConfig from "../export-config";
 import { parseResult } from './utils';
 import { ORG_GRAPH_BASE, ORG_GRAPH_SUFFIX, DISPATCH_SOURCE_GRAPH } from '../config';
 
