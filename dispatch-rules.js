@@ -174,7 +174,7 @@ rule = {
         } UNION {
           VALUES ?bestuurseenheid {
             <http://data.lblod.info/id/bestuurseenheden/141d9d6b-54af-4d17-b313-8d1c30bc3f5b>
-            ${sparqlEscapeUri(sender)
+            ${sparqlEscapeUri(sender)}
           }
           ?bestuurseenheid mu:uuid ?uuid
         } UNION {
