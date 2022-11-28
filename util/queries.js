@@ -6,6 +6,21 @@ import { ORG_GRAPH_BASE, ORG_GRAPH_SUFFIX, DISPATCH_SOURCE_GRAPH } from '../conf
 
 const CREATOR = 'http://lblod.data.gift/services/worship-submissions-graph-dispatcher-service';
 
+export async function getRelatedSubjectsForSubmission(submission, subjectType, pathToSubmission) {
+  const queryStr = `
+    SELECT DISTINCT ?subject WHERE {
+      BIND(${sparqlEscapeUri(submission)} as ?submission)
+      GRAPH ?g {
+        ?subject a ${sparqlEscapeUri(subjectType)}.
+      }
+      ${pathToSubmission}
+    }
+  `;
+
+  const result = await query(queryStr);
+  return result.results.bindings.map(r => r.subject.value);
+}
+
 export async function getTypesForSubject(subject) {
   const configuredTypes = exportConfig.map(c => sparqlEscapeUri(c.type)).join('\n');
 
