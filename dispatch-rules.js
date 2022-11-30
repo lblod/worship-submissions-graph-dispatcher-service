@@ -101,7 +101,6 @@ rules.push(rule);
 
 
 // Excel: Rules number: 16, 18, 26, 28
-
 rule = {
   documentType: 'https://data.vlaanderen.be/id/concept/BesluitType/b25faa84-3ab5-47ae-98c0-1b389c77b827', // Schorsingsbesluit CB
   sendByType: 'https://data.vlaanderen.be/doc/concept/BestuurseenheidClassificatieCode/5ab0e9b8a3b2ca7c5e000001', // Gemeente
@@ -243,7 +242,7 @@ rules.push(rule);
 // Excel: Rules number: 77
 rule = {
   documentType: 'https://data.vlaanderen.be/id/concept/BesluitType/54b61cbd-349f-41c4-9c8a-7e8e67d08347', // Eindrekening (ER)
-  sendByType: 'http://data.vlaanderen.be/id/concept/BestuurseenheidClassificatieCode/66ec74fd-8cfc-4e16-99c6-350b35012e86',
+  sendByType: 'http://data.vlaanderen.be/id/concept/BestuurseenheidClassificatieCode/66ec74fd-8cfc-4e16-99c6-350b35012e86', // EB
   destinationInfoQuery: ( sender ) => {
     return `
       PREFIX mu: <http://mu.semte.ch/vocabularies/core/>
@@ -415,7 +414,7 @@ rules.push(rule);
 // Excel: Rules number: 100, 105, 106, 107, 108
 rule = {
   documentType: 'https://data.vlaanderen.be/id/concept/BesluitType/f56c645d-b8e1-4066-813d-e213f5bc529f', //Meerjarenplan(wijziging) - EB met CB
-  sendByType: 'http://data.vlaanderen.be/id/concept/BestuurseenheidClassificatieCode/66ec74fd-8cfc-4e16-99c6-350b35012e86',
+  sendByType: 'http://data.vlaanderen.be/id/concept/BestuurseenheidClassificatieCode/66ec74fd-8cfc-4e16-99c6-350b35012e86', //EB
   destinationInfoQuery: ( sender ) => {
     return `
       PREFIX mu: <http://mu.semte.ch/vocabularies/core/>
