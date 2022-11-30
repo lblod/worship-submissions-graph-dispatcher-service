@@ -8,9 +8,11 @@ import {
   getSubmissionForSubject,
   getSubmissionInfo,
   getDestinators,
-  copySubjectDataToDestinators
+  copySubjectDataToDestinators,
+  getRelatedSubjectsForSubmission
 } from "./util/queries";
 import dispatchRules from "./dispatch-rules";
+import exportConfig from "./export-config";
 
 const processSubjectsQueue = new ProcessingQueue('submissions-dispatch-queue');
 
@@ -58,7 +60,7 @@ async function processSubject(subject) {
       try {
         const submission = await getSubmissionForSubject(subject, type);
         if(submission) {
-          await dispatch(subject, submission);
+          await dispatch(submission);
         }
       }
       catch (e) {
@@ -76,16 +78,32 @@ async function processSubject(subject) {
   }
 }
 
-async function dispatch(subject, submission) {
+async function dispatch(submission) {
   const submissionInfo = await getSubmissionInfo(submission);
+
   if(submissionInfo) {
     const applicableRules = dispatchRules.filter(r =>
                                                    r.documentType == submissionInfo.submissionType
                                                    && r.sendByType == submissionInfo.creatorType
                                                 );
+
     for(const rule of applicableRules) {
       const destinators = await getDestinators(submissionInfo.creator, rule);
-      await copySubjectDataToDestinators(subject, destinators);
+      let relatedSubjects = [submissionInfo.submission]
+
+      for (const config of exportConfig) {
+        const subjects = await getRelatedSubjectsForSubmission(
+          submissionInfo.submission,
+          config.type,
+          config.pathToSubmission
+        );
+
+        relatedSubjects = [...relatedSubjects, ...subjects]
+      }
+
+      for(const subject of relatedSubjects) {
+        await copySubjectDataToDestinators(subject, destinators);
+      }
     }
   }
-}
+} 
