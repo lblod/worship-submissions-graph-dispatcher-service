@@ -366,6 +366,7 @@ rule = {
           }
           ?bestuurseenheid mu:uuid ?uuid
         }
+      }
     `;
   }
 };
@@ -389,6 +390,7 @@ rule = {
           }
           ?bestuurseenheid mu:uuid ?uuid
         }
+      }
     `;
   }
 };
@@ -485,6 +487,7 @@ rule = {
           }
           ?bestuurseenheid mu:uuid ?uuid
         }
+      }
     `;
   }
 };
