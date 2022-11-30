@@ -480,4 +480,29 @@ rule = {
 };
 rules.push(rule);
 
+
+// Excel: Rules number: 118
+rule = {
+  documentType: 'https://data.vlaanderen.be/id/concept/BesluitType/3fcf7dba-2e5b-4955-a489-6dd8285c013b', // Besluit Meerjarenplan(wijziging)
+  sendByType: 'https://data.vlaanderen.be/doc/concept/BestuurseenheidClassificatieCode/5ab0e9b8a3b2ca7c5e000001', // Gemeente
+  destinationInfoQuery: ( sender ) => {
+    return `
+      PREFIX mu: <http://mu.semte.ch/vocabularies/core/>
+      PREFIX org: <http://www.w3.org/ns/org#>
+
+      SELECT DISTINCT ?bestuurseenheid ?uuid WHERE {
+        BIND(${sparqlEscapeUri(sender)} as ?sender)
+        {
+          VALUES ?bestuurseenheid {
+            <http://data.lblod.info/id/bestuurseenheden/141d9d6b-54af-4d17-b313-8d1c30bc3f5b>
+            ${sparqlEscapeUri(sender)}
+          }
+          ?bestuurseenheid mu:uuid ?uuid
+        }
+      }
+    `;
+  }
+};
+rules.push(rule);
+
 export default rules;
