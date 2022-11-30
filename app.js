@@ -89,7 +89,7 @@ async function dispatch(submission) {
 
     for(const rule of applicableRules) {
       const destinators = await getDestinators(submissionInfo.creator, rule);
-      let relatedSubjects = [submissionInfo.submission]
+      let relatedSubjects = [ submissionInfo.submission ];
 
       for (const config of exportConfig) {
         const subjects = await getRelatedSubjectsForSubmission(
@@ -98,7 +98,7 @@ async function dispatch(submission) {
           config.pathToSubmission
         );
 
-        relatedSubjects = [...relatedSubjects, ...subjects]
+        relatedSubjects = [ ...relatedSubjects, ...subjects ];
       }
 
       for(const subject of relatedSubjects) {
@@ -106,4 +106,4 @@ async function dispatch(submission) {
       }
     }
   }
-} 
+}
