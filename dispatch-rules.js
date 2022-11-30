@@ -96,49 +96,9 @@ rule = {
 rules.push(rule);
 
 // Excel: Rules number: 9, 11, 13, 15, 17, 19, 21, 23, 25, 27
-// TODO linked centraal bestuur
-rule = {
-  documentType: 'https://data.vlaanderen.be/id/concept/BesluitType/b25faa84-3ab5-47ae-98c0-1b389c77b827', // Schorsingsbesluit EB
-  sendByType: 'https://data.vlaanderen.be/doc/concept/BestuurseenheidClassificatieCode/5ab0e9b8a3b2ca7c5e000000', // Provincie
-  destinationInfoQuery: ( sender ) => {
-    return `
-      PREFIX mu: <http://mu.semte.ch/vocabularies/core/>
-      PREFIX org: <http://www.w3.org/ns/org#>
+// TODO: we need an extension in loket to go 'down the tree', a PO can have multiple EB, CB.
+// This is for a next story
 
-      SELECT DISTINCT ?bestuurseenheid ?uuid WHERE {
-        BIND(${sparqlEscapeUri(sender)} as ?sender)
-        {
-          VALUES ?classificatie {
-            <http://data.vlaanderen.be/id/concept/BestuurseenheidClassificatieCode/5ab0e9b8a3b2ca7c5e000001>
-          }
-          ?betrokkenBestuur <http://www.w3.org/ns/org#organization> ?sender;
-            <http://data.lblod.info/vocabularies/erediensten/typebetrokkenheid> <http://lblod.data.gift/concepts/ac400cc9f135ac7873fb3e551ec738c1>;
-            a <http://data.lblod.info/vocabularies/erediensten/BetrokkenLokaleBesturen>.
-
-          ?bestuurseenheid <http://data.lblod.info/vocabularies/erediensten/betrokkenBestuur> ?betrokkenBestuur;
-            <http://data.vlaanderen.be/ns/besluit#classificatie> ?classificatie;
-            mu:uuid ?uuid.
-
-        } UNION {
-          ?bestuurseenheid org:hasSubOrganization ?sender ;
-             <http://data.vlaanderen.be/ns/besluit#classificatie> <http://data.vlaanderen.be/id/concept/BestuurseenheidClassificatieCode/f9cac08a-13c1-49da-9bcb-f650b0604054>;
-            mu:uuid ?uuid.
-        } UNION {
-          VALUES ?bestuurseenheid {
-            <http://data.lblod.info/id/bestuurseenheden/141d9d6b-54af-4d17-b313-8d1c30bc3f5b>
-            ${sparqlEscapeUri(sender)}
-          }
-          ?bestuurseenheid mu:uuid ?uuid
-        } UNION {
-          ?bestuurseenheid org:linkedTo ?sender ;
-            mu:uuid ?uuid ;
-            a <http://data.lblod.info/vocabularies/erediensten/RepresentatiefOrgaan>.
-        }
-      }
-    `;
-  }
-};
-rules.push(rule);
 
 // Excel: Rules number: 16, 18, 26, 28
 
