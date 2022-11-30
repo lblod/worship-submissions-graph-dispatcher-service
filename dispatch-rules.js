@@ -125,10 +125,37 @@ rule = {
 };
 rules.push(rule);
 
+// Excel: Rules number: 15, 17, 25, 27
+rule = {
+  documentType: 'https://data.vlaanderen.be/id/concept/BesluitType/b25faa84-3ab5-47ae-98c0-1b389c77b827', // Schorsingsbesluit CB
+  sendByType: 'https://data.vlaanderen.be/doc/concept/BestuurseenheidClassificatieCode/5ab0e9b8a3b2ca7c5e000000', // Provincie
+  destinationInfoQuery: ( sender ) => {
+    return `
+      PREFIX mu: <http://mu.semte.ch/vocabularies/core/>
+      PREFIX org: <http://www.w3.org/ns/org#>
+
+      SELECT DISTINCT ?bestuurseenheid ?uuid WHERE {
+        BIND(${sparqlEscapeUri(sender)} as ?sender)
+        {
+          VALUES ?bestuurseenheid {
+            <http://data.lblod.info/id/bestuurseenheden/141d9d6b-54af-4d17-b313-8d1c30bc3f5b>
+            ${sparqlEscapeUri(sender)}
+          }
+          ?bestuurseenheid mu:uuid ?uuid
+        }
+      }
+    `;
+  }
+};
+rules.push(rule);
+
+
+
+
 // Excel: Rules number: 63, 64, 65, 66
 rule = {
   documentType: 'https://data.vlaanderen.be/id/concept/BesluitType/e44c535d-4339-4d15-bdbf-d4be6046de2c', //Jaarrekening (JR) - EB met CB
-  sendByType: 'http://data.vlaanderen.be/id/concept/BestuurseenheidClassificatieCode/66ec74fd-8cfc-4e16-99c6-350b35012e86',
+  sendByType: 'http://data.vlaanderen.be/id/concept/BestuurseenheidClassificatieCode/66ec74fd-8cfc-4e16-99c6-350b35012e86', //EB
   destinationInfoQuery: ( sender ) => {
     return `
       PREFIX mu: <http://mu.semte.ch/vocabularies/core/>
