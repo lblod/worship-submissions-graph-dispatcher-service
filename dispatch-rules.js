@@ -58,7 +58,7 @@ rules.push(rule);
 // Excel: Rules number: 5, 6, 7, 8
 rule = {
   documentType: 'https://data.vlaanderen.be/id/concept/BesluitDocumentType/8e791b27-7600-4577-b24e-c7c29e0eb773', // Notulen CB
-  sendByType: 'https://data.vlaanderen.be/doc/concept/BestuurseenheidClassificatieCode/f9cac08a-13c1-49da-9bcb-f650b0604054', // Centraal bestuur van de eredienst
+  sendByType: 'http://data.vlaanderen.be/id/concept/BestuurseenheidClassificatieCode/f9cac08a-13c1-49da-9bcb-f650b0604054', // Centraal bestuur van de eredienst
   destinationInfoQuery: ( sender ) => {
     return `
       PREFIX mu: <http://mu.semte.ch/vocabularies/core/>
@@ -103,7 +103,7 @@ rules.push(rule);
 // Excel: Rules number: 16, 18, 26, 28
 rule = {
   documentType: 'https://data.vlaanderen.be/id/concept/BesluitType/b25faa84-3ab5-47ae-98c0-1b389c77b827', // Schorsingsbesluit CB
-  sendByType: 'https://data.vlaanderen.be/doc/concept/BestuurseenheidClassificatieCode/5ab0e9b8a3b2ca7c5e000001', // Gemeente
+  sendByType: 'http://data.vlaanderen.be/id/concept/BestuurseenheidClassificatieCode/5ab0e9b8a3b2ca7c5e000001', // Gemeente
   destinationInfoQuery: ( sender ) => {
     return `
       PREFIX mu: <http://mu.semte.ch/vocabularies/core/>
@@ -127,7 +127,7 @@ rules.push(rule);
 // Excel: Rules number: 15, 17, 25, 27
 rule = {
   documentType: 'https://data.vlaanderen.be/id/concept/BesluitType/b25faa84-3ab5-47ae-98c0-1b389c77b827', // Schorsingsbesluit CB
-  sendByType: 'https://data.vlaanderen.be/doc/concept/BestuurseenheidClassificatieCode/5ab0e9b8a3b2ca7c5e000000', // Provincie
+  sendByType: 'http://data.vlaanderen.be/id/concept/BestuurseenheidClassificatieCode/5ab0e9b8a3b2ca7c5e000000', // Provincie
   destinationInfoQuery: ( sender ) => {
     return `
       PREFIX mu: <http://mu.semte.ch/vocabularies/core/>
@@ -164,8 +164,8 @@ rule = {
         BIND(${sparqlEscapeUri(sender)} as ?sender)
         {
           VALUES ?classificatie {
-            <https://data.vlaanderen.be/doc/concept/BestuurseenheidClassificatieCode/5ab0e9b8a3b2ca7c5e000000>
-            <https://data.vlaanderen.be/doc/concept/BestuurseenheidClassificatieCode/5ab0e9b8a3b2ca7c5e000001>
+            <http://data.vlaanderen.be/id/concept/BestuurseenheidClassificatieCode/5ab0e9b8a3b2ca7c5e000000>
+            <http://data.vlaanderen.be/id/concept/BestuurseenheidClassificatieCode/5ab0e9b8a3b2ca7c5e000001>
           }
           ?betrokkenBestuur <http://www.w3.org/ns/org#organization> ?sender;
             <http://data.lblod.info/vocabularies/erediensten/typebetrokkenheid> <http://lblod.data.gift/concepts/ac400cc9f135ac7873fb3e551ec738c1>;
@@ -195,7 +195,7 @@ rules.push(rule);
 // Excel: Rules number: 67, 68, 69
 rule = {
   documentType: 'https://data.vlaanderen.be/id/concept/BesluitDocumentType/672bf096-dccd-40af-ab60-bd7de15cc461', // Jaarrekening (JR + Toelagenoverzicht)
-  sendByType: 'https://data.vlaanderen.be/doc/concept/BestuurseenheidClassificatieCode/f9cac08a-13c1-49da-9bcb-f650b0604054', // CB
+  sendByType: 'http://data.vlaanderen.be/id/concept/BestuurseenheidClassificatieCode/f9cac08a-13c1-49da-9bcb-f650b0604054', // CB
   destinationInfoQuery: ( sender ) => {
     return `
       PREFIX mu: <http://mu.semte.ch/vocabularies/core/>
@@ -205,8 +205,8 @@ rule = {
         BIND(${sparqlEscapeUri(sender)} as ?sender)
         {
           VALUES ?classificatie {
-            <https://data.vlaanderen.be/doc/concept/BestuurseenheidClassificatieCode/5ab0e9b8a3b2ca7c5e000000>
-            <https://data.vlaanderen.be/doc/concept/BestuurseenheidClassificatieCode/5ab0e9b8a3b2ca7c5e000001>
+            <http://data.vlaanderen.be/id/concept/BestuurseenheidClassificatieCode/5ab0e9b8a3b2ca7c5e000000>
+            <http://data.vlaanderen.be/id/concept/BestuurseenheidClassificatieCode/5ab0e9b8a3b2ca7c5e000001>
           }
           ?betrokkenBestuur <http://www.w3.org/ns/org#organization> ?sender;
             <http://data.lblod.info/vocabularies/erediensten/typebetrokkenheid> <http://lblod.data.gift/concepts/ac400cc9f135ac7873fb3e551ec738c1>;
@@ -231,7 +231,7 @@ rules.push(rule);
 // Excel: Rules number: 70
 rule = {
   documentType: 'https://data.vlaanderen.be/id/concept/BesluitType/79414af4-4f57-4ca3-aaa4-f8f1e015e71c', // Advies Jaarrekening
-  sendByType: 'https://data.vlaanderen.be/doc/concept/BestuurseenheidClassificatieCode/5ab0e9b8a3b2ca7c5e000000', // Provincie
+  sendByType: 'http://data.vlaanderen.be/id/concept/BestuurseenheidClassificatieCode/5ab0e9b8a3b2ca7c5e000000', // Provincie
   destinationInfoQuery: ( sender ) => {
     return `
       PREFIX mu: <http://mu.semte.ch/vocabularies/core/>
@@ -255,7 +255,7 @@ rules.push(rule);
 // Excel: Rules number: 71
 rule = {
   documentType: 'https://data.vlaanderen.be/id/concept/BesluitType/79414af4-4f57-4ca3-aaa4-f8f1e015e71c', // Advies Jaarrekening
-  sendByType: 'https://data.vlaanderen.be/doc/concept/BestuurseenheidClassificatieCode/5ab0e9b8a3b2ca7c5e000001', // Gemeente
+  sendByType: 'http://data.vlaanderen.be/id/concept/BestuurseenheidClassificatieCode/5ab0e9b8a3b2ca7c5e000001', // Gemeente
   destinationInfoQuery: ( sender ) => {
     return `
       PREFIX mu: <http://mu.semte.ch/vocabularies/core/>
@@ -303,7 +303,7 @@ rules.push(rule);
 // Excel: Rules number: 85, 88, 89
 rule = {
   documentType: 'https://data.vlaanderen.be/id/concept/BesluitDocumentType/18833df2-8c9e-4edd-87fd-b5c252337349', // Budget(wijziging) - CB namens EB's
-  sendByType: 'https://data.vlaanderen.be/doc/concept/BestuurseenheidClassificatieCode/f9cac08a-13c1-49da-9bcb-f650b0604054', // Centraal bestuur van de eredienst
+  sendByType: 'http://data.vlaanderen.be/id/concept/BestuurseenheidClassificatieCode/f9cac08a-13c1-49da-9bcb-f650b0604054', // Centraal bestuur van de eredienst
   destinationInfoQuery: ( sender ) => {
     return `
       PREFIX mu: <http://mu.semte.ch/vocabularies/core/>
@@ -313,8 +313,8 @@ rule = {
         BIND(${sparqlEscapeUri(sender)} as ?sender)
           {
             VALUES ?classificatie {
-              <https://data.vlaanderen.be/doc/concept/BestuurseenheidClassificatieCode/5ab0e9b8a3b2ca7c5e000000>
-              <https://data.vlaanderen.be/doc/concept/BestuurseenheidClassificatieCode/5ab0e9b8a3b2ca7c5e000001>
+              <http://data.vlaanderen.be/id/concept/BestuurseenheidClassificatieCode/5ab0e9b8a3b2ca7c5e000000>
+              <http://data.vlaanderen.be/id/concept/BestuurseenheidClassificatieCode/5ab0e9b8a3b2ca7c5e000001>
             }
             ?betrokkenBestuur <http://www.w3.org/ns/org#organization> ?sender;
               <http://data.lblod.info/vocabularies/erediensten/typebetrokkenheid> <http://lblod.data.gift/concepts/ac400cc9f135ac7873fb3e551ec738c1>;
@@ -353,8 +353,8 @@ rule = {
           BIND(${sparqlEscapeUri(sender)} as ?sender)
           {
             VALUES ?classificatie {
-              <https://data.vlaanderen.be/doc/concept/BestuurseenheidClassificatieCode/5ab0e9b8a3b2ca7c5e000000>
-              <https://data.vlaanderen.be/doc/concept/BestuurseenheidClassificatieCode/5ab0e9b8a3b2ca7c5e000001>
+              <http://data.vlaanderen.be/id/concept/BestuurseenheidClassificatieCode/5ab0e9b8a3b2ca7c5e000000>
+              <http://data.vlaanderen.be/id/concept/BestuurseenheidClassificatieCode/5ab0e9b8a3b2ca7c5e000001>
             }
             ?betrokkenBestuur <http://www.w3.org/ns/org#organization> ?sender;
               <http://data.lblod.info/vocabularies/erediensten/typebetrokkenheid> <http://lblod.data.gift/concepts/ac400cc9f135ac7873fb3e551ec738c1>;
@@ -386,7 +386,7 @@ rules.push(rule);
 // Excel: Rules number: 98
 rule = {
   documentType: 'https://data.vlaanderen.be/id/concept/BesluitType/df261490-cc74-4f80-b783-41c35e720b46', // Besluit Budget(wijziging)
-  sendByType: 'https://data.vlaanderen.be/doc/concept/BestuurseenheidClassificatieCode/5ab0e9b8a3b2ca7c5e000000', // Provincie
+  sendByType: 'http://data.vlaanderen.be/id/concept/BestuurseenheidClassificatieCode/5ab0e9b8a3b2ca7c5e000000', // Provincie
   destinationInfoQuery: ( sender ) => {
     return `
       PREFIX mu: <http://mu.semte.ch/vocabularies/core/>
@@ -410,7 +410,7 @@ rules.push(rule);
 // Excel: Rules number: 99
 rule = {
   documentType: 'https://data.vlaanderen.be/id/concept/BesluitType/df261490-cc74-4f80-b783-41c35e720b46', // Besluit Budget(wijziging)
-  sendByType: 'https://data.vlaanderen.be/doc/concept/BestuurseenheidClassificatieCode/5ab0e9b8a3b2ca7c5e000001', // Gemeente
+  sendByType: 'http://data.vlaanderen.be/id/concept/BestuurseenheidClassificatieCode/5ab0e9b8a3b2ca7c5e000001', // Gemeente
   destinationInfoQuery: ( sender ) => {
     return `
       PREFIX mu: <http://mu.semte.ch/vocabularies/core/>
@@ -434,7 +434,7 @@ rules.push(rule);
 // Excel: Rules number: 101, 102, 103, 104
 rule = {
   documentType: 'https://data.vlaanderen.be/id/concept/BesluitDocumentType/2c9ada23-1229-4c7e-a53e-acddc9014e4e', // Meerjarenplan(wijziging) - CB namens EB's
-  sendByType: 'https://data.vlaanderen.be/doc/concept/BestuurseenheidClassificatieCode/f9cac08a-13c1-49da-9bcb-f650b0604054', // Centraal bestuur van de eredienst
+  sendByType: 'http://data.vlaanderen.be/id/concept/BestuurseenheidClassificatieCode/f9cac08a-13c1-49da-9bcb-f650b0604054', // Centraal bestuur van de eredienst
   destinationInfoQuery: ( sender ) => {
     return `
       PREFIX mu: <http://mu.semte.ch/vocabularies/core/>
@@ -444,8 +444,8 @@ rule = {
         BIND(${sparqlEscapeUri(sender)} as ?sender)
         {
           VALUES ?classificatie {
-            <https://data.vlaanderen.be/doc/concept/BestuurseenheidClassificatieCode/5ab0e9b8a3b2ca7c5e000000>
-            <https://data.vlaanderen.be/doc/concept/BestuurseenheidClassificatieCode/5ab0e9b8a3b2ca7c5e000001>
+            <http://data.vlaanderen.be/id/concept/BestuurseenheidClassificatieCode/5ab0e9b8a3b2ca7c5e000000>
+            <http://data.vlaanderen.be/id/concept/BestuurseenheidClassificatieCode/5ab0e9b8a3b2ca7c5e000001>
           }
           ?betrokkenBestuur <http://www.w3.org/ns/org#organization> ?sender;
             <http://data.lblod.info/vocabularies/erediensten/typebetrokkenheid> <http://lblod.data.gift/concepts/ac400cc9f135ac7873fb3e551ec738c1>;
@@ -485,8 +485,8 @@ rule = {
         BIND(${sparqlEscapeUri(sender)} as ?sender)
         {
           VALUES ?classificatie {
-            <https://data.vlaanderen.be/doc/concept/BestuurseenheidClassificatieCode/5ab0e9b8a3b2ca7c5e000000>
-            <https://data.vlaanderen.be/doc/concept/BestuurseenheidClassificatieCode/5ab0e9b8a3b2ca7c5e000001>
+            <http://data.vlaanderen.be/id/concept/BestuurseenheidClassificatieCode/5ab0e9b8a3b2ca7c5e000000>
+            <http://data.vlaanderen.be/id/concept/BestuurseenheidClassificatieCode/5ab0e9b8a3b2ca7c5e000001>
           }
           ?betrokkenBestuur <http://www.w3.org/ns/org#organization> ?sender;
             <http://data.lblod.info/vocabularies/erediensten/typebetrokkenheid> <http://lblod.data.gift/concepts/ac400cc9f135ac7873fb3e551ec738c1>;
@@ -519,7 +519,7 @@ rules.push(rule);
 // Excel: Rules number: 117
 rule = {
   documentType: 'https://data.vlaanderen.be/id/concept/BesluitType/3fcf7dba-2e5b-4955-a489-6dd8285c013b', // Besluit Meerjarenplan(wijziging)
-  sendByType: 'https://data.vlaanderen.be/doc/concept/BestuurseenheidClassificatieCode/5ab0e9b8a3b2ca7c5e000000', // Prvincie
+  sendByType: 'http://data.vlaanderen.be/id/concept/BestuurseenheidClassificatieCode/5ab0e9b8a3b2ca7c5e000000', // Prvincie
   destinationInfoQuery: ( sender ) => {
     return `
       PREFIX mu: <http://mu.semte.ch/vocabularies/core/>
@@ -544,7 +544,7 @@ rules.push(rule);
 // Excel: Rules number: 118
 rule = {
   documentType: 'https://data.vlaanderen.be/id/concept/BesluitType/3fcf7dba-2e5b-4955-a489-6dd8285c013b', // Besluit Meerjarenplan(wijziging)
-  sendByType: 'https://data.vlaanderen.be/doc/concept/BestuurseenheidClassificatieCode/5ab0e9b8a3b2ca7c5e000001', // Gemeente
+  sendByType: 'http://data.vlaanderen.be/id/concept/BestuurseenheidClassificatieCode/5ab0e9b8a3b2ca7c5e000001', // Gemeente
   destinationInfoQuery: ( sender ) => {
     return `
       PREFIX mu: <http://mu.semte.ch/vocabularies/core/>
