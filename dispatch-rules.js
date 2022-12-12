@@ -39,10 +39,6 @@ let rule = {
             <http://data.vlaanderen.be/ns/besluit#classificatie> ?classificatie;
             mu:uuid ?uuid.
 
-          FILTER NOT EXISTS {
-            ?cb <http://www.w3.org/ns/org#hasSubOrganization> ?sender;
-              <http://data.vlaanderen.be/ns/besluit#classificatie> <http://data.vlaanderen.be/id/concept/BestuurseenheidClassificatieCode/f9cac08a-13c1-49da-9bcb-f650b0604054>
-          }
         } UNION {
           VALUES ?bestuurseenheid {
             <http://data.lblod.info/id/bestuurseenheden/141d9d6b-54af-4d17-b313-8d1c30bc3f5b>
@@ -84,10 +80,6 @@ rule = {
             <http://data.vlaanderen.be/ns/besluit#classificatie> ?classificatie;
             mu:uuid ?uuid.
 
-          FILTER NOT EXISTS {
-            ?cb <http://www.w3.org/ns/org#hasSubOrganization> ?sender;
-              <http://data.vlaanderen.be/ns/besluit#classificatie> <http://data.vlaanderen.be/id/concept/BestuurseenheidClassificatieCode/f9cac08a-13c1-49da-9bcb-f650b0604054>
-          }
         } UNION {
           VALUES ?bestuurseenheid {
             <http://data.lblod.info/id/bestuurseenheden/141d9d6b-54af-4d17-b313-8d1c30bc3f5b>
@@ -159,11 +151,37 @@ rule = {
 rules.push(rule);
 
 
-
-
-// Excel: Rules number: 63, 64, 65, 66
+// Excel: Rules number: 63
 rule = {
   documentType: 'https://data.vlaanderen.be/id/concept/BesluitType/e44c535d-4339-4d15-bdbf-d4be6046de2c', //Jaarrekening (JR) - EB met CB
+  sendByType: 'http://data.vlaanderen.be/id/concept/BestuurseenheidClassificatieCode/66ec74fd-8cfc-4e16-99c6-350b35012e86', //EB
+  destinationInfoQuery: ( sender ) => {
+    return `
+      PREFIX mu: <http://mu.semte.ch/vocabularies/core/>
+      PREFIX org: <http://www.w3.org/ns/org#>
+
+      SELECT DISTINCT ?bestuurseenheid ?uuid WHERE {
+        BIND(${sparqlEscapeUri(sender)} as ?sender)
+        {
+          ?bestuurseenheid org:hasSubOrganization ?sender;
+            <http://data.vlaanderen.be/ns/besluit#classificatie> <http://data.vlaanderen.be/id/concept/BestuurseenheidClassificatieCode/f9cac08a-13c1-49da-9bcb-f650b0604054>;
+            mu:uuid ?uuid.
+        } UNION {
+          VALUES ?bestuurseenheid {
+            ${sparqlEscapeUri(sender)}
+          }
+          ?bestuurseenheid mu:uuid ?uuid
+        }
+      }
+    `;
+  }
+};
+rules.push(rule);
+
+
+// Excel: Rules number: 64, 65, 66
+rule = {
+  documentType: 'https://data.vlaanderen.be/id/concept/BesluitType/e44c535d-4339-4d15-bdbf-d4be6046de2c', //Jaarrekening (JR) - EB zonder CB
   sendByType: 'http://data.vlaanderen.be/id/concept/BestuurseenheidClassificatieCode/66ec74fd-8cfc-4e16-99c6-350b35012e86', //EB
   destinationInfoQuery: ( sender ) => {
     return `
@@ -185,20 +203,25 @@ rule = {
             <http://data.vlaanderen.be/ns/besluit#classificatie> ?classificatie;
             mu:uuid ?uuid.
 
-          FILTER NOT EXISTS {
-            ?cb <http://www.w3.org/ns/org#hasSubOrganization> ?sender;
-              <http://data.vlaanderen.be/ns/besluit#classificatie> <http://data.vlaanderen.be/id/concept/BestuurseenheidClassificatieCode/f9cac08a-13c1-49da-9bcb-f650b0604054>
+            FILTER NOT EXISTS {
+              ?cb <http://www.w3.org/ns/org#hasSubOrganization> ?sender;
+                <http://data.vlaanderen.be/ns/besluit#classificatie> <http://data.vlaanderen.be/id/concept/BestuurseenheidClassificatieCode/f9cac08a-13c1-49da-9bcb-f650b0604054>
+            }
+          } UNION {
+            VALUES ?bestuurseenheid {
+              <http://data.lblod.info/id/bestuurseenheden/141d9d6b-54af-4d17-b313-8d1c30bc3f5b>
+            }
+            ?bestuurseenheid mu:uuid ?uuid
+
+            FILTER NOT EXISTS {
+              ?cb <http://www.w3.org/ns/org#hasSubOrganization> ?sender;
+                <http://data.vlaanderen.be/ns/besluit#classificatie> <http://data.vlaanderen.be/id/concept/BestuurseenheidClassificatieCode/f9cac08a-13c1-49da-9bcb-f650b0604054>
+          } UNION {
+            VALUES ?bestuurseenheid {
+              ${sparqlEscapeUri(sender)}
+            }
+            ?bestuurseenheid mu:uuid ?uuid
           }
-        } UNION {
-          ?bestuurseenheid org:hasSubOrganization ?sender;
-            <http://data.vlaanderen.be/ns/besluit#classificatie> <http://data.vlaanderen.be/id/concept/BestuurseenheidClassificatieCode/f9cac08a-13c1-49da-9bcb-f650b0604054>;
-            mu:uuid ?uuid.
-        } UNION {
-          VALUES ?bestuurseenheid {
-            <http://data.lblod.info/id/bestuurseenheden/141d9d6b-54af-4d17-b313-8d1c30bc3f5b>
-            ${sparqlEscapeUri(sender)}
-          }
-          ?bestuurseenheid mu:uuid ?uuid
         }
       }
     `;
@@ -231,10 +254,6 @@ rule = {
             <http://data.vlaanderen.be/ns/besluit#classificatie> ?classificatie;
             mu:uuid ?uuid.
 
-          FILTER NOT EXISTS {
-            ?cb <http://www.w3.org/ns/org#hasSubOrganization> ?sender;
-              <http://data.vlaanderen.be/ns/besluit#classificatie> <http://data.vlaanderen.be/id/concept/BestuurseenheidClassificatieCode/f9cac08a-13c1-49da-9bcb-f650b0604054>
-          }
         } UNION {
           VALUES ?bestuurseenheid {
             <http://data.lblod.info/id/bestuurseenheden/141d9d6b-54af-4d17-b313-8d1c30bc3f5b>
@@ -344,10 +363,6 @@ rule = {
               <http://data.vlaanderen.be/ns/besluit#classificatie> ?classificatie;
               mu:uuid ?uuid.
 
-            FILTER NOT EXISTS {
-              ?cb <http://www.w3.org/ns/org#hasSubOrganization> ?sender;
-                <http://data.vlaanderen.be/ns/besluit#classificatie> <http://data.vlaanderen.be/id/concept/BestuurseenheidClassificatieCode/f9cac08a-13c1-49da-9bcb-f650b0604054>
-            }
           } UNION {
             VALUES ?bestuurseenheid {
               ${sparqlEscapeUri(sender)}
@@ -364,8 +379,72 @@ rule = {
 };
 rules.push(rule);
 
+// Excel: Rules number: 83
+rule = {
+  documentType: 'https://data.vlaanderen.be/id/concept/BesluitType/40831a2c-771d-4b41-9720-0399998f1873', // Budget(wijziging)
+  sendByType: 'http://data.vlaanderen.be/id/concept/BestuurseenheidClassificatieCode/66ec74fd-8cfc-4e16-99c6-350b35012e86', //EB
+  destinationInfoQuery: ( sender ) => {
+    return `
+        PREFIX mu: <http://mu.semte.ch/vocabularies/core/>
+        PREFIX org: <http://www.w3.org/ns/org#>
 
-// Excel: Rules number: 83, 84, 90, 91
+        SELECT DISTINCT ?bestuurseenheid ?uuid WHERE {
+          BIND(${sparqlEscapeUri(sender)} as ?sender)
+          {
+            ?bestuurseenheid org:hasSubOrganization ?sender;
+            <http://data.vlaanderen.be/ns/besluit#classificatie> <http://data.vlaanderen.be/id/concept/BestuurseenheidClassificatieCode/f9cac08a-13c1-49da-9bcb-f650b0604054>;
+              mu:uuid ?uuid.
+
+            FILTER EXISTS {
+              ?cb <http://www.w3.org/ns/org#hasSubOrganization> ?sender;
+                <http://data.vlaanderen.be/ns/besluit#classificatie> <http://data.vlaanderen.be/id/concept/BestuurseenheidClassificatieCode/f9cac08a-13c1-49da-9bcb-f650b0604054>
+            }
+          } UNION {
+            VALUES ?bestuurseenheid {
+              ${sparqlEscapeUri(sender)}
+            }
+            ?bestuurseenheid mu:uuid ?uuid.
+          }
+        }
+    `;
+  }
+};
+rules.push(rule);
+
+// Excel: Rules number: 84
+rule = {
+  documentType: 'https://data.vlaanderen.be/id/concept/BesluitType/40831a2c-771d-4b41-9720-0399998f1873', // Budget(wijziging)
+  sendByType: 'http://data.vlaanderen.be/id/concept/BestuurseenheidClassificatieCode/66ec74fd-8cfc-4e16-99c6-350b35012e86', //EB
+  destinationInfoQuery: ( sender ) => {
+    return `
+        PREFIX mu: <http://mu.semte.ch/vocabularies/core/>
+        PREFIX org: <http://www.w3.org/ns/org#>
+
+        SELECT DISTINCT ?bestuurseenheid ?uuid WHERE {
+          BIND(${sparqlEscapeUri(sender)} as ?sender)
+          {
+            ?bestuurseenheid org:linkedTo ?sender ;
+              mu:uuid ?uuid ;
+              a <http://data.lblod.info/vocabularies/erediensten/RepresentatiefOrgaan>.
+
+            FILTER NOT EXISTS {
+              ?cb <http://www.w3.org/ns/org#hasSubOrganization> ?sender;
+                <http://data.vlaanderen.be/ns/besluit#classificatie> <http://data.vlaanderen.be/id/concept/BestuurseenheidClassificatieCode/f9cac08a-13c1-49da-9bcb-f650b0604054>
+            }
+          } UNION {
+            VALUES ?bestuurseenheid {
+              ${sparqlEscapeUri(sender)}
+            }
+            ?bestuurseenheid mu:uuid ?uuid.
+          }
+        }
+    `;
+  }
+};
+rules.push(rule);
+
+
+// Excel: Rules number: 90, 91
 rule = {
   documentType: 'https://data.vlaanderen.be/id/concept/BesluitType/40831a2c-771d-4b41-9720-0399998f1873', // Budget(wijziging)
   sendByType: 'http://data.vlaanderen.be/id/concept/BestuurseenheidClassificatieCode/66ec74fd-8cfc-4e16-99c6-350b35012e86', //EB
@@ -388,19 +467,11 @@ rule = {
             ?bestuurseenheid <http://data.lblod.info/vocabularies/erediensten/betrokkenBestuur> ?betrokkenBestuur;
               <http://data.vlaanderen.be/ns/besluit#classificatie> ?classificatie;
               mu:uuid ?uuid.
-              
+
             FILTER NOT EXISTS {
               ?cb <http://www.w3.org/ns/org#hasSubOrganization> ?sender;
                 <http://data.vlaanderen.be/ns/besluit#classificatie> <http://data.vlaanderen.be/id/concept/BestuurseenheidClassificatieCode/f9cac08a-13c1-49da-9bcb-f650b0604054>
             }
-          } UNION {
-            ?bestuurseenheid org:linkedTo ?sender ;
-              mu:uuid ?uuid ;
-              a <http://data.lblod.info/vocabularies/erediensten/RepresentatiefOrgaan>.
-          } UNION {
-            ?bestuurseenheid org:hasSubOrganization ?sender;
-              <http://data.vlaanderen.be/ns/besluit#classificatie> <http://data.vlaanderen.be/id/concept/BestuurseenheidClassificatieCode/f9cac08a-13c1-49da-9bcb-f650b0604054>;
-              mu:uuid ?uuid.
           } UNION {
             VALUES ?bestuurseenheid {
               ${sparqlEscapeUri(sender)}
@@ -484,11 +555,6 @@ rule = {
           ?bestuurseenheid <http://data.lblod.info/vocabularies/erediensten/betrokkenBestuur> ?betrokkenBestuur;
             <http://data.vlaanderen.be/ns/besluit#classificatie> ?classificatie;
             mu:uuid ?uuid.
-
-          FILTER NOT EXISTS {
-            ?cb <http://www.w3.org/ns/org#hasSubOrganization> ?sender;
-              <http://data.vlaanderen.be/ns/besluit#classificatie> <http://data.vlaanderen.be/id/concept/BestuurseenheidClassificatieCode/f9cac08a-13c1-49da-9bcb-f650b0604054>
-          }
         } UNION {
           ?bestuurseenheid org:linkedTo ?sender ;
               mu:uuid ?uuid ;
@@ -506,8 +572,35 @@ rule = {
 };
 rules.push(rule);
 
+// Excel: Rules number: 100
+rule = {
+  documentType: 'https://data.vlaanderen.be/id/concept/BesluitType/f56c645d-b8e1-4066-813d-e213f5bc529f', //Meerjarenplan(wijziging) - EB met CB
+  sendByType: 'http://data.vlaanderen.be/id/concept/BestuurseenheidClassificatieCode/66ec74fd-8cfc-4e16-99c6-350b35012e86', //EB
+  destinationInfoQuery: ( sender ) => {
+    return `
+      PREFIX mu: <http://mu.semte.ch/vocabularies/core/>
+      PREFIX org: <http://www.w3.org/ns/org#>
 
-// Excel: Rules number: 100, 105, 106, 107, 108
+      SELECT DISTINCT ?bestuurseenheid ?uuid WHERE {
+        BIND(${sparqlEscapeUri(sender)} as ?sender)
+        {
+          ?bestuurseenheid org:hasSubOrganization ?sender;
+            <http://data.vlaanderen.be/ns/besluit#classificatie> <http://data.vlaanderen.be/id/concept/BestuurseenheidClassificatieCode/f9cac08a-13c1-49da-9bcb-f650b0604054>;
+            mu:uuid ?uuid.
+        } UNION {
+          VALUES ?bestuurseenheid {
+            ${sparqlEscapeUri(sender)}
+          }
+          ?bestuurseenheid mu:uuid ?uuid
+        }
+      }
+    `;
+  }
+};
+rules.push(rule);
+
+
+// Excel: Rules number: 105, 106, 107, 108
 rule = {
   documentType: 'https://data.vlaanderen.be/id/concept/BesluitType/f56c645d-b8e1-4066-813d-e213f5bc529f', //Meerjarenplan(wijziging) - EB met CB
   sendByType: 'http://data.vlaanderen.be/id/concept/BestuurseenheidClassificatieCode/66ec74fd-8cfc-4e16-99c6-350b35012e86', //EB
@@ -538,9 +631,13 @@ rule = {
         } UNION {
           VALUES ?bestuurseenheid {
             <http://data.lblod.info/id/bestuurseenheden/141d9d6b-54af-4d17-b313-8d1c30bc3f5b>
-            ${sparqlEscapeUri(sender)}
           }
-          ?bestuurseenheid mu:uuid ?uuid
+          ?bestuurseenheid mu:uuid ?uuid.
+
+          FILTER NOT EXISTS {
+            ?cb <http://www.w3.org/ns/org#hasSubOrganization> ?sender;
+              <http://data.vlaanderen.be/ns/besluit#classificatie> <http://data.vlaanderen.be/id/concept/BestuurseenheidClassificatieCode/f9cac08a-13c1-49da-9bcb-f650b0604054>
+          }
         } UNION {
           ?bestuurseenheid org:hasSubOrganization ?sender;
             <http://data.vlaanderen.be/ns/besluit#classificatie> <http://data.vlaanderen.be/id/concept/BestuurseenheidClassificatieCode/f9cac08a-13c1-49da-9bcb-f650b0604054>;
@@ -549,6 +646,16 @@ rule = {
           ?bestuurseenheid org:linkedTo ?sender ;
             mu:uuid ?uuid ;
             a <http://data.lblod.info/vocabularies/erediensten/RepresentatiefOrgaan>.
+
+          FILTER NOT EXISTS {
+            ?cb <http://www.w3.org/ns/org#hasSubOrganization> ?sender;
+              <http://data.vlaanderen.be/ns/besluit#classificatie> <http://data.vlaanderen.be/id/concept/BestuurseenheidClassificatieCode/f9cac08a-13c1-49da-9bcb-f650b0604054>
+          }
+        } UNION {
+          VALUES ?bestuurseenheid {
+            ${sparqlEscapeUri(sender)}
+          }
+          ?bestuurseenheid mu:uuid ?uuid
         }
       }
     `;
@@ -559,7 +666,7 @@ rules.push(rule);
 // Excel: Rules number: 117
 rule = {
   documentType: 'https://data.vlaanderen.be/id/concept/BesluitType/3fcf7dba-2e5b-4955-a489-6dd8285c013b', // Besluit Meerjarenplan(wijziging)
-  sendByType: 'http://data.vlaanderen.be/id/concept/BestuurseenheidClassificatieCode/5ab0e9b8a3b2ca7c5e000000', // Prvincie
+  sendByType: 'http://data.vlaanderen.be/id/concept/BestuurseenheidClassificatieCode/5ab0e9b8a3b2ca7c5e000000', // Provincie
   destinationInfoQuery: ( sender ) => {
     return `
       PREFIX mu: <http://mu.semte.ch/vocabularies/core/>
