@@ -12,10 +12,14 @@ import { sparqlEscapeUri } from "mu";
 
 const rules = [];
 
-/*
- * Sender: EB
- */
-// Excel: Rules number: 1,2,3,4
+/* Excel: Rules number: 1,2,3,4
+* Testing:
+*--------------------------
+* -SENDER-: <http://data.lblod.info/id/besturenVanDeEredienst/d52de436e194111289248db2d06e99ac> Kerkfabriek O.-L.-Vrouw van Deinze
+* GEMEENTE: <http://data.lblod.info/id/bestuurseenheden/d93451bf-e89a-4528-80f3-f0a1c19361a8> Deinze
+* PG: <http://data.lblod.info/id/bestuurseenheden/141d9d6b-54af-4d17-b313-8d1c30bc3f5b> ABB
+* RO: <http://data.lblod.info/id/representatieveOrganen/2267e8e132b5556bd4d0b454c9383ca0> Bisdom Gent
+**/
 let rule = {
   documentType: 'https://data.vlaanderen.be/id/concept/BesluitDocumentType/8e791b27-7600-4577-b24e-c7c29e0eb773', // Notulen EB
   sendByType: 'http://data.vlaanderen.be/id/concept/BestuurseenheidClassificatieCode/66ec74fd-8cfc-4e16-99c6-350b35012e86', // Bestuur van de eredienst
@@ -56,7 +60,19 @@ let rule = {
 };
 rules.push(rule);
 
-// Excel: Rules number: 5, 6, 7, 8
+/* Excel: Rules number: 5, 6, 7, 8
+* Testing:
+*--------------------------
+* -SENDER-: <http://data.lblod.info/id/centraleBesturenVanDeEredienst/b0ffe0e981a7e887a0b949d7ff77096b> CKB Tongeren
+* GEMEENTE: <http://data.lblod.info/id/bestuurseenheden/104f32d7fb8d4b8b61b71717301656f136fe046eabaf126fb3325896b5c2d625> Tongeren
+* PG: <http://data.lblod.info/id/bestuurseenheden/141d9d6b-54af-4d17-b313-8d1c30bc3f5b> ABB
+* RO: <http://data.lblod.info/id/representatieveOrganen/c98e270d84a8455b2f4bf16b915aeff2> Bisdom Hasselt
+*--------------------------
+* -SENDER-: <http://data.lblod.info/id/centraleBesturenVanDeEredienst/d689e774de665f48e80db2262b1bbd7a> CB orthodoxe parochies West-Vlaanderen
+* PROVINCIE: <http://data.lblod.info/id/bestuurseenheden/8152e68420f560b8493d6c555a5bd4186903dc341028bb9855af6c44a9464fea> West-Vlaanderen
+* PG: <http://data.lblod.info/id/bestuurseenheden/141d9d6b-54af-4d17-b313-8d1c30bc3f5b> ABB
+* RO: <http://data.lblod.info/id/representatieveOrganen/0ebb44c2ef14d86978ea85e74d128ad1> Oecumenisch Patriarchaat van Konstantinopel
+**/
 rule = {
   documentType: 'https://data.vlaanderen.be/id/concept/BesluitDocumentType/8e791b27-7600-4577-b24e-c7c29e0eb773', // Notulen CB
   sendByType: 'http://data.vlaanderen.be/id/concept/BestuurseenheidClassificatieCode/f9cac08a-13c1-49da-9bcb-f650b0604054', // Centraal bestuur van de eredienst
@@ -102,7 +118,12 @@ rules.push(rule);
 // This is for a next story
 
 
-// Excel: Rules number: 16, 18, 26, 28
+/* Excel: Rules number: 16, 18, 26, 28
+* Testing:
+*--------------------------
+* -SENDER-: <http://data.lblod.info/id/bestuurseenheden/104f32d7fb8d4b8b61b71717301656f136fe046eabaf126fb3325896b5c2d625> Tongeren
+* PG: <http://data.lblod.info/id/bestuurseenheden/141d9d6b-54af-4d17-b313-8d1c30bc3f5b> ABB
+**/
 rule = {
   documentType: 'https://data.vlaanderen.be/id/concept/BesluitType/b25faa84-3ab5-47ae-98c0-1b389c77b827', // Schorsingsbesluit CB
   sendByType: 'http://data.vlaanderen.be/id/concept/BestuurseenheidClassificatieCode/5ab0e9b8a3b2ca7c5e000001', // Gemeente
@@ -126,9 +147,14 @@ rule = {
 };
 rules.push(rule);
 
-// Excel: Rules number: 15, 17, 25, 27
+/* Excel: Rules number: 15, 17, 25, 27
+* Testing:
+*--------------------------
+* -SENDER-: <http://data.lblod.info/id/bestuurseenheden/8152e68420f560b8493d6c555a5bd4186903dc341028bb9855af6c44a9464fea> West-Vlaanderen
+* PG: <http://data.lblod.info/id/bestuurseenheden/141d9d6b-54af-4d17-b313-8d1c30bc3f5b> ABB
+**/
 rule = {
-  documentType: 'https://data.vlaanderen.be/id/concept/BesluitType/b25faa84-3ab5-47ae-98c0-1b389c77b827', // Schorsingsbesluit CB
+  documentType: 'https://data.vlaanderen.be/id/concept/BesluitType/b25faa84-3ab5-47ae-98c0-1b389c77b827', // Schorsingsbesluit EB & CB
   sendByType: 'http://data.vlaanderen.be/id/concept/BestuurseenheidClassificatieCode/5ab0e9b8a3b2ca7c5e000000', // Provincie
   destinationInfoQuery: ( sender ) => {
     return `
@@ -151,7 +177,12 @@ rule = {
 rules.push(rule);
 
 
-// Excel: Rules number: 63
+/* Excel: Rules number: 63
+* Testing:
+*--------------------------
+* SENDER: <http://data.lblod.info/id/besturenVanDeEredienst/d52de436e194111289248db2d06e99ac> Kerkfabriek O.-L.-Vrouw van Deinze
+* CB: <http://data.lblod.info/id/centraleBesturenVanDeEredienst/7f5475cfb202d12f54779f046441c9e1> CKB Deinze
+**/
 rule = {
   documentType: 'https://data.vlaanderen.be/id/concept/BesluitType/e44c535d-4339-4d15-bdbf-d4be6046de2c', //Jaarrekening (JR) - EB met CB
   sendByType: 'http://data.vlaanderen.be/id/concept/BestuurseenheidClassificatieCode/66ec74fd-8cfc-4e16-99c6-350b35012e86', //EB
@@ -179,7 +210,13 @@ rule = {
 rules.push(rule);
 
 
-// Excel: Rules number: 64, 65, 66
+/* Excel: Rules number: 64, 65, 66
+* Testing:
+*--------------------------
+* -SENDER-: <http://data.lblod.info/id/besturenVanDeEredienst/44329be9ac7054b39adbc583b6203ba2> Protestantse Kerk Christengemeente Emmanuel van Haacht
+* GEMEENTE: <http://data.lblod.info/id/bestuurseenheden/2ad0d123f4a81787572342c394a1917b81752f42d802d1e013941f56b53bdd2a> Haacht
+* PG: <http://data.lblod.info/id/bestuurseenheden/141d9d6b-54af-4d17-b313-8d1c30bc3f5b> ABB
+**/
 rule = {
   documentType: 'https://data.vlaanderen.be/id/concept/BesluitType/e44c535d-4339-4d15-bdbf-d4be6046de2c', //Jaarrekening (JR) - EB zonder CB
   sendByType: 'http://data.vlaanderen.be/id/concept/BestuurseenheidClassificatieCode/66ec74fd-8cfc-4e16-99c6-350b35012e86', //EB
@@ -228,9 +265,14 @@ rule = {
   }
 };
 rules.push(rule);
-
-
-// Excel: Rules number: 67, 68, 69
+ 
+/* Excel: Rules number: 67, 68, 69
+* Testing:
+*--------------------------
+* -SENDER-: <http://data.lblod.info/id/centraleBesturenVanDeEredienst/b0ffe0e981a7e887a0b949d7ff77096b> CKB Tongeren
+* GEMEENTE: <http://data.lblod.info/id/bestuurseenheden/104f32d7fb8d4b8b61b71717301656f136fe046eabaf126fb3325896b5c2d625> Tongeren
+* PG: <http://data.lblod.info/id/bestuurseenheden/141d9d6b-54af-4d17-b313-8d1c30bc3f5b> ABB
+**/
 rule = {
   documentType: 'https://data.vlaanderen.be/id/concept/BesluitDocumentType/672bf096-dccd-40af-ab60-bd7de15cc461', // Jaarrekening (JR + Toelagenoverzicht)
   sendByType: 'http://data.vlaanderen.be/id/concept/BestuurseenheidClassificatieCode/f9cac08a-13c1-49da-9bcb-f650b0604054', // CB
@@ -315,7 +357,12 @@ rule = {
 };
 rules.push(rule);
 
-// Excel: Rules number: 77
+/* Excel: Rules number: 77
+* Testing:
+*--------------------------
+* -SENDER-: <http://data.lblod.info/id/besturenVanDeEredienst/d52de436e194111289248db2d06e99ac> Kerkfabriek O.-L.-Vrouw van Deinze
+* PG: <http://data.lblod.info/id/bestuurseenheden/141d9d6b-54af-4d17-b313-8d1c30bc3f5b> ABB
+**/
 rule = {
   documentType: 'https://data.vlaanderen.be/id/concept/BesluitType/54b61cbd-349f-41c4-9c8a-7e8e67d08347', // Eindrekening (ER)
   sendByType: 'http://data.vlaanderen.be/id/concept/BestuurseenheidClassificatieCode/66ec74fd-8cfc-4e16-99c6-350b35012e86', // EB
@@ -339,7 +386,13 @@ rule = {
 };
 rules.push(rule);
 
-// Excel: Rules number: 85, 88, 89
+/* Excel: Rules number: 85, 88, 89
+* Testing:
+*--------------------------
+* -SENDER-: <http://data.lblod.info/id/centraleBesturenVanDeEredienst/b0ffe0e981a7e887a0b949d7ff77096b> CKB Tongeren
+* GEMEENTE: <http://data.lblod.info/id/bestuurseenheden/104f32d7fb8d4b8b61b71717301656f136fe046eabaf126fb3325896b5c2d625> Tongeren
+* RO: <http://data.lblod.info/id/representatieveOrganen/c98e270d84a8455b2f4bf16b915aeff2> Bisdom Hasselt
+*/
 rule = {
   documentType: 'https://data.vlaanderen.be/id/concept/BesluitDocumentType/18833df2-8c9e-4edd-87fd-b5c252337349', // Budget(wijziging) - CB namens EB's
   sendByType: 'http://data.vlaanderen.be/id/concept/BestuurseenheidClassificatieCode/f9cac08a-13c1-49da-9bcb-f650b0604054', // Centraal bestuur van de eredienst
@@ -379,10 +432,15 @@ rule = {
 };
 rules.push(rule);
 
-// Excel: Rules number: 83
+/* Excel: Rules number: 83
+* Testing:
+*--------------------------
+* -SENDER-: <http://data.lblod.info/id/besturenVanDeEredienst/d52de436e194111289248db2d06e99ac> Kerkfabriek O.-L.-Vrouw van Deinze
+* CB: <http://data.lblod.info/id/centraleBesturenVanDeEredienst/7f5475cfb202d12f54779f046441c9e1> CKB Deinze
+**/
 rule = {
   documentType: 'https://data.vlaanderen.be/id/concept/BesluitType/40831a2c-771d-4b41-9720-0399998f1873', // Budget(wijziging)
-  sendByType: 'http://data.vlaanderen.be/id/concept/BestuurseenheidClassificatieCode/66ec74fd-8cfc-4e16-99c6-350b35012e86', //EB
+  sendByType: 'http://data.vlaanderen.be/id/concept/BestuurseenheidClassificatieCode/66ec74fd-8cfc-4e16-99c6-350b35012e86', //EB met CB
   destinationInfoQuery: ( sender ) => {
     return `
         PREFIX mu: <http://mu.semte.ch/vocabularies/core/>
@@ -411,10 +469,15 @@ rule = {
 };
 rules.push(rule);
 
-// Excel: Rules number: 84
+/* Excel: Rules number: 84
+* Testing:
+*--------------------------
+* -SENDER-: <http://data.lblod.info/id/besturenVanDeEredienst/44329be9ac7054b39adbc583b6203ba2> Protestantse Kerk Christengemeente Emmanuel van Haacht
+* RO: <http://data.lblod.info/id/representatieveOrganen/6f79a1b89678b85009484da7c4a104bc> Administratieve Raad van de Protestants-Evangelische Eredienst
+**/
 rule = {
   documentType: 'https://data.vlaanderen.be/id/concept/BesluitType/40831a2c-771d-4b41-9720-0399998f1873', // Budget(wijziging)
-  sendByType: 'http://data.vlaanderen.be/id/concept/BestuurseenheidClassificatieCode/66ec74fd-8cfc-4e16-99c6-350b35012e86', //EB
+  sendByType: 'http://data.vlaanderen.be/id/concept/BestuurseenheidClassificatieCode/66ec74fd-8cfc-4e16-99c6-350b35012e86', //EB zonder CB
   destinationInfoQuery: ( sender ) => {
     return `
         PREFIX mu: <http://mu.semte.ch/vocabularies/core/>
@@ -443,11 +506,15 @@ rule = {
 };
 rules.push(rule);
 
-
-// Excel: Rules number: 90, 91
+/* Excel: Rules number: 90, 91
+* Testing:
+*--------------------------
+* -SENDER-: <http://data.lblod.info/id/besturenVanDeEredienst/42adfc9a7b2cfa0e6ead719da03406b5> Anglicaanse Kerk Saint-George's van Ieper
+* GEMEENTE: <http://data.lblod.info/id/bestuurseenheden/3b6163727a5930106e631885999aa8e1dbd24eaf1931367b7f38123a89f14f10> Ieper
+**/
 rule = {
   documentType: 'https://data.vlaanderen.be/id/concept/BesluitType/40831a2c-771d-4b41-9720-0399998f1873', // Budget(wijziging)
-  sendByType: 'http://data.vlaanderen.be/id/concept/BestuurseenheidClassificatieCode/66ec74fd-8cfc-4e16-99c6-350b35012e86', //EB
+  sendByType: 'http://data.vlaanderen.be/id/concept/BestuurseenheidClassificatieCode/66ec74fd-8cfc-4e16-99c6-350b35012e86', //EB zonder CB
   destinationInfoQuery: ( sender ) => {
     return `
         PREFIX mu: <http://mu.semte.ch/vocabularies/core/>
@@ -532,7 +599,14 @@ rule = {
 };
 rules.push(rule);
 
-// Excel: Rules number: 101, 102, 103, 104
+/* Excel: Rules number: 101, 102, 103, 104
+* Testing:
+*--------------------------
+* -SENDER-: <http://data.lblod.info/id/centraleBesturenVanDeEredienst/b0ffe0e981a7e887a0b949d7ff77096b> CKB Tongeren
+* GEMEENTE: <http://data.lblod.info/id/bestuurseenheden/104f32d7fb8d4b8b61b71717301656f136fe046eabaf126fb3325896b5c2d625> Tongeren
+* RO: <http://data.lblod.info/id/representatieveOrganen/c98e270d84a8455b2f4bf16b915aeff2> Bisdom Hasselt
+* PG: <http://data.lblod.info/id/bestuurseenheden/141d9d6b-54af-4d17-b313-8d1c30bc3f5b> ABB
+*/
 rule = {
   documentType: 'https://data.vlaanderen.be/id/concept/BesluitDocumentType/2c9ada23-1229-4c7e-a53e-acddc9014e4e', // Meerjarenplan(wijziging) - CB namens EB's
   sendByType: 'http://data.vlaanderen.be/id/concept/BestuurseenheidClassificatieCode/f9cac08a-13c1-49da-9bcb-f650b0604054', // Centraal bestuur van de eredienst
@@ -572,7 +646,12 @@ rule = {
 };
 rules.push(rule);
 
-// Excel: Rules number: 100
+/* Excel: Rules number: 100
+* Testing:
+*--------------------------
+* -SENDER-: <http://data.lblod.info/id/besturenVanDeEredienst/d52de436e194111289248db2d06e99ac> Kerkfabriek O.-L.-Vrouw van Deinze
+* CB: <http://data.lblod.info/id/centraleBesturenVanDeEredienst/7f5475cfb202d12f54779f046441c9e1> CKB Deinze
+**/
 rule = {
   documentType: 'https://data.vlaanderen.be/id/concept/BesluitType/f56c645d-b8e1-4066-813d-e213f5bc529f', //Meerjarenplan(wijziging) - EB met CB
   sendByType: 'http://data.vlaanderen.be/id/concept/BestuurseenheidClassificatieCode/66ec74fd-8cfc-4e16-99c6-350b35012e86', //EB
@@ -600,7 +679,14 @@ rule = {
 rules.push(rule);
 
 
-// Excel: Rules number: 105, 106, 107, 108
+/* Excel: Rules number: 105, 106, 107, 108
+* Testing:
+*--------------------------
+* -SENDER-: <http://data.lblod.info/id/besturenVanDeEredienst/44329be9ac7054b39adbc583b6203ba2> Protestantse Kerk Christengemeente Emmanuel van Haacht
+* GEMEENTE: <http://data.lblod.info/id/bestuurseenheden/2ad0d123f4a81787572342c394a1917b81752f42d802d1e013941f56b53bdd2a> Haacht
+* PG: <http://data.lblod.info/id/bestuurseenheden/141d9d6b-54af-4d17-b313-8d1c30bc3f5b> ABB
+* RO: <http://data.lblod.info/id/representatieveOrganen/6f79a1b89678b85009484da7c4a104bc> Administratieve Raad van de Protestants-Evangelische Eredienst
+**/
 rule = {
   documentType: 'https://data.vlaanderen.be/id/concept/BesluitType/f56c645d-b8e1-4066-813d-e213f5bc529f', //Meerjarenplan(wijziging) - EB met CB
   sendByType: 'http://data.vlaanderen.be/id/concept/BestuurseenheidClassificatieCode/66ec74fd-8cfc-4e16-99c6-350b35012e86', //EB
@@ -638,10 +724,6 @@ rule = {
             ?cb <http://www.w3.org/ns/org#hasSubOrganization> ?sender;
               <http://data.vlaanderen.be/ns/besluit#classificatie> <http://data.vlaanderen.be/id/concept/BestuurseenheidClassificatieCode/f9cac08a-13c1-49da-9bcb-f650b0604054>
           }
-        } UNION {
-          ?bestuurseenheid org:hasSubOrganization ?sender;
-            <http://data.vlaanderen.be/ns/besluit#classificatie> <http://data.vlaanderen.be/id/concept/BestuurseenheidClassificatieCode/f9cac08a-13c1-49da-9bcb-f650b0604054>;
-            mu:uuid ?uuid.
         } UNION {
           ?bestuurseenheid org:linkedTo ?sender ;
             mu:uuid ?uuid ;
