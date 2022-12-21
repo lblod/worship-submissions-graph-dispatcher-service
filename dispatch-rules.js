@@ -118,65 +118,6 @@ rules.push(rule);
 // This is for a next story
 
 
-/* Excel: Rules number: 16, 18, 26, 28
-* Testing:
-*--------------------------
-* -SENDER-: <http://data.lblod.info/id/bestuurseenheden/104f32d7fb8d4b8b61b71717301656f136fe046eabaf126fb3325896b5c2d625> Tongeren
-* PG: <http://data.lblod.info/id/bestuurseenheden/141d9d6b-54af-4d17-b313-8d1c30bc3f5b> ABB
-**/
-rule = {
-  documentType: 'https://data.vlaanderen.be/id/concept/BesluitType/b25faa84-3ab5-47ae-98c0-1b389c77b827', // Schorsingsbesluit CB
-  sendByType: 'http://data.vlaanderen.be/id/concept/BestuurseenheidClassificatieCode/5ab0e9b8a3b2ca7c5e000001', // Gemeente
-  destinationInfoQuery: ( sender ) => {
-    return `
-      PREFIX mu: <http://mu.semte.ch/vocabularies/core/>
-      PREFIX org: <http://www.w3.org/ns/org#>
-
-      SELECT DISTINCT ?bestuurseenheid ?uuid WHERE {
-        BIND(${sparqlEscapeUri(sender)} as ?sender)
-        {
-          VALUES ?bestuurseenheid {
-            <http://data.lblod.info/id/bestuurseenheden/141d9d6b-54af-4d17-b313-8d1c30bc3f5b>
-            ${sparqlEscapeUri(sender)}
-          }
-          ?bestuurseenheid mu:uuid ?uuid
-        }
-      }
-    `;
-  }
-};
-rules.push(rule);
-
-/* Excel: Rules number: 15, 17, 25, 27
-* Testing:
-*--------------------------
-* -SENDER-: <http://data.lblod.info/id/bestuurseenheden/8152e68420f560b8493d6c555a5bd4186903dc341028bb9855af6c44a9464fea> West-Vlaanderen
-* PG: <http://data.lblod.info/id/bestuurseenheden/141d9d6b-54af-4d17-b313-8d1c30bc3f5b> ABB
-**/
-rule = {
-  documentType: 'https://data.vlaanderen.be/id/concept/BesluitType/b25faa84-3ab5-47ae-98c0-1b389c77b827', // Schorsingsbesluit EB & CB
-  sendByType: 'http://data.vlaanderen.be/id/concept/BestuurseenheidClassificatieCode/5ab0e9b8a3b2ca7c5e000000', // Provincie
-  destinationInfoQuery: ( sender ) => {
-    return `
-      PREFIX mu: <http://mu.semte.ch/vocabularies/core/>
-      PREFIX org: <http://www.w3.org/ns/org#>
-
-      SELECT DISTINCT ?bestuurseenheid ?uuid WHERE {
-        BIND(${sparqlEscapeUri(sender)} as ?sender)
-        {
-          VALUES ?bestuurseenheid {
-            <http://data.lblod.info/id/bestuurseenheden/141d9d6b-54af-4d17-b313-8d1c30bc3f5b>
-            ${sparqlEscapeUri(sender)}
-          }
-          ?bestuurseenheid mu:uuid ?uuid
-        }
-      }
-    `;
-  }
-};
-rules.push(rule);
-
-
 /* Excel: Rules number: 63
 * Testing:
 *--------------------------
@@ -309,53 +250,6 @@ rule = {
 };
 rules.push(rule);
 
-// Excel: Rules number: 70
-rule = {
-  documentType: 'https://data.vlaanderen.be/id/concept/BesluitType/79414af4-4f57-4ca3-aaa4-f8f1e015e71c', // Advies Jaarrekening
-  sendByType: 'http://data.vlaanderen.be/id/concept/BestuurseenheidClassificatieCode/5ab0e9b8a3b2ca7c5e000000', // Provincie
-  destinationInfoQuery: ( sender ) => {
-    return `
-      PREFIX mu: <http://mu.semte.ch/vocabularies/core/>
-      PREFIX org: <http://www.w3.org/ns/org#>
-
-      SELECT DISTINCT ?bestuurseenheid ?uuid WHERE {
-        BIND(${sparqlEscapeUri(sender)} as ?sender)
-        {
-          VALUES ?bestuurseenheid {
-            <http://data.lblod.info/id/bestuurseenheden/141d9d6b-54af-4d17-b313-8d1c30bc3f5b>
-            ${sparqlEscapeUri(sender)}
-          }
-          ?bestuurseenheid mu:uuid ?uuid.
-        }
-      }
-    `;
-  }
-};
-rules.push(rule);
-
-// Excel: Rules number: 71
-rule = {
-  documentType: 'https://data.vlaanderen.be/id/concept/BesluitType/79414af4-4f57-4ca3-aaa4-f8f1e015e71c', // Advies Jaarrekening
-  sendByType: 'http://data.vlaanderen.be/id/concept/BestuurseenheidClassificatieCode/5ab0e9b8a3b2ca7c5e000001', // Gemeente
-  destinationInfoQuery: ( sender ) => {
-    return `
-      PREFIX mu: <http://mu.semte.ch/vocabularies/core/>
-      PREFIX org: <http://www.w3.org/ns/org#>
-
-      SELECT DISTINCT ?bestuurseenheid ?uuid WHERE {
-        BIND(${sparqlEscapeUri(sender)} as ?sender)
-        {
-          VALUES ?bestuurseenheid {
-            <http://data.lblod.info/id/bestuurseenheden/141d9d6b-54af-4d17-b313-8d1c30bc3f5b>
-            ${sparqlEscapeUri(sender)}
-          }
-          ?bestuurseenheid mu:uuid ?uuid.
-        }
-      }
-    `;
-  }
-};
-rules.push(rule);
 
 /* Excel: Rules number: 77
 * Testing:
@@ -551,53 +445,6 @@ rule = {
 };
 rules.push(rule);
 
-// Excel: Rules number: 98
-rule = {
-  documentType: 'https://data.vlaanderen.be/id/concept/BesluitType/df261490-cc74-4f80-b783-41c35e720b46', // Besluit Budget(wijziging)
-  sendByType: 'http://data.vlaanderen.be/id/concept/BestuurseenheidClassificatieCode/5ab0e9b8a3b2ca7c5e000000', // Provincie
-  destinationInfoQuery: ( sender ) => {
-    return `
-      PREFIX mu: <http://mu.semte.ch/vocabularies/core/>
-      PREFIX org: <http://www.w3.org/ns/org#>
-
-      SELECT DISTINCT ?bestuurseenheid ?uuid WHERE {
-        BIND(${sparqlEscapeUri(sender)} as ?sender)
-        {
-          VALUES ?bestuurseenheid {
-            <http://data.lblod.info/id/bestuurseenheden/141d9d6b-54af-4d17-b313-8d1c30bc3f5b>
-            ${sparqlEscapeUri(sender)}
-          }
-          ?bestuurseenheid mu:uuid ?uuid
-        }
-      }
-    `;
-  }
-};
-rules.push(rule);
-
-// Excel: Rules number: 99
-rule = {
-  documentType: 'https://data.vlaanderen.be/id/concept/BesluitType/df261490-cc74-4f80-b783-41c35e720b46', // Besluit Budget(wijziging)
-  sendByType: 'http://data.vlaanderen.be/id/concept/BestuurseenheidClassificatieCode/5ab0e9b8a3b2ca7c5e000001', // Gemeente
-  destinationInfoQuery: ( sender ) => {
-    return `
-      PREFIX mu: <http://mu.semte.ch/vocabularies/core/>
-      PREFIX org: <http://www.w3.org/ns/org#>
-
-      SELECT DISTINCT ?bestuurseenheid ?uuid WHERE {
-        BIND(${sparqlEscapeUri(sender)} as ?sender)
-        {
-          VALUES ?bestuurseenheid {
-            <http://data.lblod.info/id/bestuurseenheden/141d9d6b-54af-4d17-b313-8d1c30bc3f5b>
-            ${sparqlEscapeUri(sender)}
-          }
-          ?bestuurseenheid mu:uuid ?uuid
-        }
-      }
-    `;
-  }
-};
-rules.push(rule);
 
 /* Excel: Rules number: 101, 102, 103, 104
 * Testing:
@@ -735,55 +582,6 @@ rule = {
           }
         } UNION {
           VALUES ?bestuurseenheid {
-            ${sparqlEscapeUri(sender)}
-          }
-          ?bestuurseenheid mu:uuid ?uuid
-        }
-      }
-    `;
-  }
-};
-rules.push(rule);
-
-// Excel: Rules number: 117
-rule = {
-  documentType: 'https://data.vlaanderen.be/id/concept/BesluitType/3fcf7dba-2e5b-4955-a489-6dd8285c013b', // Besluit Meerjarenplan(wijziging)
-  sendByType: 'http://data.vlaanderen.be/id/concept/BestuurseenheidClassificatieCode/5ab0e9b8a3b2ca7c5e000000', // Provincie
-  destinationInfoQuery: ( sender ) => {
-    return `
-      PREFIX mu: <http://mu.semte.ch/vocabularies/core/>
-      PREFIX org: <http://www.w3.org/ns/org#>
-
-      SELECT DISTINCT ?bestuurseenheid ?uuid WHERE {
-        BIND(${sparqlEscapeUri(sender)} as ?sender)
-        {
-          VALUES ?bestuurseenheid {
-            <http://data.lblod.info/id/bestuurseenheden/141d9d6b-54af-4d17-b313-8d1c30bc3f5b>
-            ${sparqlEscapeUri(sender)}
-          }
-          ?bestuurseenheid mu:uuid ?uuid
-        }
-      }
-    `;
-  }
-};
-rules.push(rule);
-
-
-// Excel: Rules number: 118
-rule = {
-  documentType: 'https://data.vlaanderen.be/id/concept/BesluitType/3fcf7dba-2e5b-4955-a489-6dd8285c013b', // Besluit Meerjarenplan(wijziging)
-  sendByType: 'http://data.vlaanderen.be/id/concept/BestuurseenheidClassificatieCode/5ab0e9b8a3b2ca7c5e000001', // Gemeente
-  destinationInfoQuery: ( sender ) => {
-    return `
-      PREFIX mu: <http://mu.semte.ch/vocabularies/core/>
-      PREFIX org: <http://www.w3.org/ns/org#>
-
-      SELECT DISTINCT ?bestuurseenheid ?uuid WHERE {
-        BIND(${sparqlEscapeUri(sender)} as ?sender)
-        {
-          VALUES ?bestuurseenheid {
-            <http://data.lblod.info/id/bestuurseenheden/141d9d6b-54af-4d17-b313-8d1c30bc3f5b>
             ${sparqlEscapeUri(sender)}
           }
           ?bestuurseenheid mu:uuid ?uuid
