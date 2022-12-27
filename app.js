@@ -11,7 +11,7 @@ import {
   copySubjectDataToDestinators,
   getRelatedSubjectsForSubmission
 } from "./util/queries";
-import dispatchRules from "./dispatch-rules";
+import dispatchRules from "./dispatch-rules/entrypoint";
 import exportConfig from "./export-config";
 
 const processSubjectsQueue = new ProcessingQueue('submissions-dispatch-queue');
