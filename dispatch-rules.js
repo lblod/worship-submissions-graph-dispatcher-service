@@ -1,4 +1,6 @@
 import { sparqlEscapeUri } from "mu";
+import { toezichthoudendeQuerySnippet, repOrgQuerySnippet } from './query-snippets';
+
 /*
  * This file exports a list of rule objects, which helps deduce who the targets are for a
  * a specific submission.
@@ -26,18 +28,7 @@ let rule = {
       SELECT DISTINCT ?bestuurseenheid ?uuid WHERE {
         BIND(${sparqlEscapeUri(sender)} as ?sender)
         {
-          VALUES ?classificatie {
-              <http://data.vlaanderen.be/id/concept/BestuurseenheidClassificatieCode/5ab0e9b8a3b2ca7c5e000000>
-              <http://data.vlaanderen.be/id/concept/BestuurseenheidClassificatieCode/5ab0e9b8a3b2ca7c5e000001>
-          }
-          ?betrokkenBestuur <http://www.w3.org/ns/org#organization> ?sender;
-            <http://data.lblod.info/vocabularies/erediensten/typebetrokkenheid> <http://lblod.data.gift/concepts/ac400cc9f135ac7873fb3e551ec738c1>;
-            a <http://data.lblod.info/vocabularies/erediensten/BetrokkenLokaleBesturen>.
-
-          ?bestuurseenheid <http://data.lblod.info/vocabularies/erediensten/betrokkenBestuur> ?betrokkenBestuur;
-            <http://data.vlaanderen.be/ns/besluit#classificatie> ?classificatie;
-            mu:uuid ?uuid.
-
+          ${toezichthoudendeQuerySnippet()}
         } UNION {
           VALUES ?bestuurseenheid {
             <http://data.lblod.info/id/bestuurseenheden/141d9d6b-54af-4d17-b313-8d1c30bc3f5b>
@@ -45,9 +36,7 @@ let rule = {
           }
           ?bestuurseenheid mu:uuid ?uuid
         } UNION {
-          ?bestuurseenheid org:linkedTo ?sender ;
-            mu:uuid ?uuid ;
-            a <http://data.lblod.info/vocabularies/erediensten/RepresentatiefOrgaan>.
+          ${repOrgQuerySnippet()}
         }
       }
     `;
@@ -79,18 +68,7 @@ rule = {
       SELECT DISTINCT ?bestuurseenheid ?uuid WHERE {
         BIND(${sparqlEscapeUri(sender)} as ?sender)
         {
-          VALUES ?classificatie {
-            <http://data.vlaanderen.be/id/concept/BestuurseenheidClassificatieCode/5ab0e9b8a3b2ca7c5e000000>
-            <http://data.vlaanderen.be/id/concept/BestuurseenheidClassificatieCode/5ab0e9b8a3b2ca7c5e000001>
-          }
-          ?betrokkenBestuur <http://www.w3.org/ns/org#organization> ?sender;
-            <http://data.lblod.info/vocabularies/erediensten/typebetrokkenheid> <http://lblod.data.gift/concepts/ac400cc9f135ac7873fb3e551ec738c1>;
-            a <http://data.lblod.info/vocabularies/erediensten/BetrokkenLokaleBesturen>.
-
-          ?bestuurseenheid <http://data.lblod.info/vocabularies/erediensten/betrokkenBestuur> ?betrokkenBestuur;
-            <http://data.vlaanderen.be/ns/besluit#classificatie> ?classificatie;
-            mu:uuid ?uuid.
-
+          ${toezichthoudendeQuerySnippet()}
         } UNION {
           VALUES ?bestuurseenheid {
             <http://data.lblod.info/id/bestuurseenheden/141d9d6b-54af-4d17-b313-8d1c30bc3f5b>
@@ -98,9 +76,7 @@ rule = {
           }
           ?bestuurseenheid mu:uuid ?uuid
         } UNION {
-          ?bestuurseenheid org:linkedTo ?sender ;
-            mu:uuid ?uuid ;
-            a <http://data.lblod.info/vocabularies/erediensten/RepresentatiefOrgaan>.
+${repOrgQuerySnippet()}
         }
       }
     `;
@@ -164,23 +140,13 @@ rule = {
       SELECT DISTINCT ?bestuurseenheid ?uuid WHERE {
         BIND(${sparqlEscapeUri(sender)} as ?sender)
         {
-          VALUES ?classificatie {
-            <http://data.vlaanderen.be/id/concept/BestuurseenheidClassificatieCode/5ab0e9b8a3b2ca7c5e000000>
-            <http://data.vlaanderen.be/id/concept/BestuurseenheidClassificatieCode/5ab0e9b8a3b2ca7c5e000001>
+          ${toezichthoudendeQuerySnippet()}
+          FILTER NOT EXISTS {
+            ?cb <http://www.w3.org/ns/org#hasSubOrganization> ?sender;
+              <http://data.vlaanderen.be/ns/besluit#classificatie>
+                <http://data.vlaanderen.be/id/concept/BestuurseenheidClassificatieCode/f9cac08a-13c1-49da-9bcb-f650b0604054>
           }
-          ?betrokkenBestuur <http://www.w3.org/ns/org#organization> ?sender;
-            <http://data.lblod.info/vocabularies/erediensten/typebetrokkenheid> <http://lblod.data.gift/concepts/ac400cc9f135ac7873fb3e551ec738c1>;
-            a <http://data.lblod.info/vocabularies/erediensten/BetrokkenLokaleBesturen>.
-
-          ?bestuurseenheid <http://data.lblod.info/vocabularies/erediensten/betrokkenBestuur> ?betrokkenBestuur;
-            <http://data.vlaanderen.be/ns/besluit#classificatie> ?classificatie;
-            mu:uuid ?uuid.
-
-            FILTER NOT EXISTS {
-              ?cb <http://www.w3.org/ns/org#hasSubOrganization> ?sender;
-                <http://data.vlaanderen.be/ns/besluit#classificatie> <http://data.vlaanderen.be/id/concept/BestuurseenheidClassificatieCode/f9cac08a-13c1-49da-9bcb-f650b0604054>
-            }
-          } UNION {
+        } UNION {
             VALUES ?bestuurseenheid {
               <http://data.lblod.info/id/bestuurseenheden/141d9d6b-54af-4d17-b313-8d1c30bc3f5b>
             }
@@ -201,7 +167,7 @@ rule = {
   }
 };
 rules.push(rule);
- 
+
 /* Excel: Rules number: 67, 68, 69
 * Testing:
 *--------------------------
@@ -220,18 +186,7 @@ rule = {
       SELECT DISTINCT ?bestuurseenheid ?uuid WHERE {
         BIND(${sparqlEscapeUri(sender)} as ?sender)
         {
-          VALUES ?classificatie {
-            <http://data.vlaanderen.be/id/concept/BestuurseenheidClassificatieCode/5ab0e9b8a3b2ca7c5e000000>
-            <http://data.vlaanderen.be/id/concept/BestuurseenheidClassificatieCode/5ab0e9b8a3b2ca7c5e000001>
-          }
-          ?betrokkenBestuur <http://www.w3.org/ns/org#organization> ?sender;
-            <http://data.lblod.info/vocabularies/erediensten/typebetrokkenheid> <http://lblod.data.gift/concepts/ac400cc9f135ac7873fb3e551ec738c1>;
-            a <http://data.lblod.info/vocabularies/erediensten/BetrokkenLokaleBesturen>.
-
-          ?bestuurseenheid <http://data.lblod.info/vocabularies/erediensten/betrokkenBestuur> ?betrokkenBestuur;
-            <http://data.vlaanderen.be/ns/besluit#classificatie> ?classificatie;
-            mu:uuid ?uuid.
-
+          ${toezichthoudendeQuerySnippet()}
         } UNION {
           VALUES ?bestuurseenheid {
             <http://data.lblod.info/id/bestuurseenheden/141d9d6b-54af-4d17-b313-8d1c30bc3f5b>
@@ -293,18 +248,7 @@ rule = {
       SELECT DISTINCT ?bestuurseenheid ?uuid WHERE {
         BIND(${sparqlEscapeUri(sender)} as ?sender)
           {
-            VALUES ?classificatie {
-              <http://data.vlaanderen.be/id/concept/BestuurseenheidClassificatieCode/5ab0e9b8a3b2ca7c5e000000>
-              <http://data.vlaanderen.be/id/concept/BestuurseenheidClassificatieCode/5ab0e9b8a3b2ca7c5e000001>
-            }
-            ?betrokkenBestuur <http://www.w3.org/ns/org#organization> ?sender;
-              <http://data.lblod.info/vocabularies/erediensten/typebetrokkenheid> <http://lblod.data.gift/concepts/ac400cc9f135ac7873fb3e551ec738c1>;
-              a <http://data.lblod.info/vocabularies/erediensten/BetrokkenLokaleBesturen>.
-
-            ?bestuurseenheid <http://data.lblod.info/vocabularies/erediensten/betrokkenBestuur> ?betrokkenBestuur;
-              <http://data.vlaanderen.be/ns/besluit#classificatie> ?classificatie;
-              mu:uuid ?uuid.
-
+            ${toezichthoudendeQuerySnippet()}
           } UNION {
             VALUES ?bestuurseenheid {
               ${sparqlEscapeUri(sender)}
@@ -412,18 +356,7 @@ rule = {
         SELECT DISTINCT ?bestuurseenheid ?uuid WHERE {
           BIND(${sparqlEscapeUri(sender)} as ?sender)
           {
-            VALUES ?classificatie {
-              <http://data.vlaanderen.be/id/concept/BestuurseenheidClassificatieCode/5ab0e9b8a3b2ca7c5e000000>
-              <http://data.vlaanderen.be/id/concept/BestuurseenheidClassificatieCode/5ab0e9b8a3b2ca7c5e000001>
-            }
-            ?betrokkenBestuur <http://www.w3.org/ns/org#organization> ?sender;
-              <http://data.lblod.info/vocabularies/erediensten/typebetrokkenheid> <http://lblod.data.gift/concepts/ac400cc9f135ac7873fb3e551ec738c1>;
-              a <http://data.lblod.info/vocabularies/erediensten/BetrokkenLokaleBesturen>.
-
-            ?bestuurseenheid <http://data.lblod.info/vocabularies/erediensten/betrokkenBestuur> ?betrokkenBestuur;
-              <http://data.vlaanderen.be/ns/besluit#classificatie> ?classificatie;
-              mu:uuid ?uuid.
-
+            ${toezichthoudendeQuerySnippet()}
             FILTER NOT EXISTS {
               ?cb <http://www.w3.org/ns/org#hasSubOrganization> ?sender;
                 <http://data.vlaanderen.be/ns/besluit#classificatie> <http://data.vlaanderen.be/id/concept/BestuurseenheidClassificatieCode/f9cac08a-13c1-49da-9bcb-f650b0604054>
@@ -460,17 +393,7 @@ rule = {
       SELECT DISTINCT ?bestuurseenheid ?uuid WHERE {
         BIND(${sparqlEscapeUri(sender)} as ?sender)
         {
-          VALUES ?classificatie {
-            <http://data.vlaanderen.be/id/concept/BestuurseenheidClassificatieCode/5ab0e9b8a3b2ca7c5e000000>
-            <http://data.vlaanderen.be/id/concept/BestuurseenheidClassificatieCode/5ab0e9b8a3b2ca7c5e000001>
-          }
-          ?betrokkenBestuur <http://www.w3.org/ns/org#organization> ?sender;
-            <http://data.lblod.info/vocabularies/erediensten/typebetrokkenheid> <http://lblod.data.gift/concepts/ac400cc9f135ac7873fb3e551ec738c1>;
-            a <http://data.lblod.info/vocabularies/erediensten/BetrokkenLokaleBesturen>.
-
-          ?bestuurseenheid <http://data.lblod.info/vocabularies/erediensten/betrokkenBestuur> ?betrokkenBestuur;
-            <http://data.vlaanderen.be/ns/besluit#classificatie> ?classificatie;
-            mu:uuid ?uuid.
+          ${toezichthoudendeQuerySnippet()}
         } UNION {
           ?bestuurseenheid org:linkedTo ?sender ;
               mu:uuid ?uuid ;
@@ -540,18 +463,7 @@ rule = {
       SELECT DISTINCT ?bestuurseenheid ?uuid WHERE {
         BIND(${sparqlEscapeUri(sender)} as ?sender)
         {
-          VALUES ?classificatie {
-            <http://data.vlaanderen.be/id/concept/BestuurseenheidClassificatieCode/5ab0e9b8a3b2ca7c5e000000>
-            <http://data.vlaanderen.be/id/concept/BestuurseenheidClassificatieCode/5ab0e9b8a3b2ca7c5e000001>
-          }
-          ?betrokkenBestuur <http://www.w3.org/ns/org#organization> ?sender;
-            <http://data.lblod.info/vocabularies/erediensten/typebetrokkenheid> <http://lblod.data.gift/concepts/ac400cc9f135ac7873fb3e551ec738c1>;
-            a <http://data.lblod.info/vocabularies/erediensten/BetrokkenLokaleBesturen>.
-
-          ?bestuurseenheid <http://data.lblod.info/vocabularies/erediensten/betrokkenBestuur> ?betrokkenBestuur;
-            <http://data.vlaanderen.be/ns/besluit#classificatie> ?classificatie;
-            mu:uuid ?uuid.
-
+          ${toezichthoudendeQuerySnippet()}
           FILTER NOT EXISTS {
             ?cb <http://www.w3.org/ns/org#hasSubOrganization> ?sender;
               <http://data.vlaanderen.be/ns/besluit#classificatie> <http://data.vlaanderen.be/id/concept/BestuurseenheidClassificatieCode/f9cac08a-13c1-49da-9bcb-f650b0604054>
@@ -567,9 +479,7 @@ rule = {
               <http://data.vlaanderen.be/ns/besluit#classificatie> <http://data.vlaanderen.be/id/concept/BestuurseenheidClassificatieCode/f9cac08a-13c1-49da-9bcb-f650b0604054>
           }
         } UNION {
-          ?bestuurseenheid org:linkedTo ?sender ;
-            mu:uuid ?uuid ;
-            a <http://data.lblod.info/vocabularies/erediensten/RepresentatiefOrgaan>.
+          ${repOrgQuerySnippet()}
 
           FILTER NOT EXISTS {
             ?cb <http://www.w3.org/ns/org#hasSubOrganization> ?sender;
