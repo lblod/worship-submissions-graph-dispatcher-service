@@ -3,11 +3,6 @@ import { sparqlEscapeUri } from "mu";
  * This file exports a list of rule objects, which helps deduce who the targets are for a
  * a specific submission.
  * It tries to translate this file: https://docs.google.com/spreadsheets/d/1NnZHqaFnNToE-aZMiyDI1QIPhHP5EG8i39KGFhTazlg/edit?usp=sharing
- * TODO's
- *  ABB needs UUID
- *  no centrale besturen van eredienst linked to eredienstbesturen
- *  addresses van alles
- *  more rules
  */
 
 const rules = [];
