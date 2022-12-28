@@ -2,6 +2,12 @@ import { sparqlEscapeUri } from "mu";
 
 const rules = [];
 
+/* Excel: Rules number: 70, 71
+ * Testing:
+ *--------------------------
+ * -SENDER-: <http://data.lblod.info/id/bestuurseenheden/14278813524c762255aeba149e7d7134ddecfbb43e7d56910731bd4e13e34f39> Prov. limburg
+ * PG: <http://data.lblod.info/id/bestuurseenheden/141d9d6b-54af-4d17-b313-8d1c30bc3f5b> ABB
+**/
 let rule = {
   documentType: 'https://data.vlaanderen.be/id/concept/BesluitType/79414af4-4f57-4ca3-aaa4-f8f1e015e71c', // Advies jaarrekening
   matchSentByEenheidClass: eenheidClass => {
