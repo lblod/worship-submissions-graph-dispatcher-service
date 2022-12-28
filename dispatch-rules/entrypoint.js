@@ -5,7 +5,8 @@ import jaarrekeningrules from './jaarrekening';
 import adviesJaarrekeningRules from './advies-jaarrekening';
 import eindRekeningRules from './eindrekening';
 import budgetwijziging from './budgetwijziging';
-import adviesBudgetwijzingRules from './advies-budgetwijziging';
+import adviesBudgetwijzigingRules from './advies-budgetwijziging';
+import besluitBudgetWijzigingRules from './besluit-budgetwijziging';
 
 import { sparqlEscapeUri } from "mu";
 import { toezichthoudendeQuerySnippet, repOrgQuerySnippet } from './query-snippets';
@@ -24,7 +25,8 @@ const rules = [
   ...adviesJaarrekeningRules,
   ...eindRekeningRules,
   ...budgetwijziging,
-  ...adviesBudgetwijzingRules
+  ...adviesBudgetwijzigingRules,
+  ...besluitBudgetWijzigingRules
 ];
 
 // Excel: Rules number: 9, 11, 13, 15, 17, 19, 21, 23, 25, 27
