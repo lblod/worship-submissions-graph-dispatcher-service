@@ -1,5 +1,4 @@
 import { sparqlEscapeUri } from "mu";
-import { toezichthoudendeQuerySnippet, repOrgQuerySnippet } from './query-snippets';
 
 const rules = [];
 
