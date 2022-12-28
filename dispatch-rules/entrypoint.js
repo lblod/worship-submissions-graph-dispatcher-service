@@ -2,6 +2,7 @@ import notulenRules from './notulen';
 import schorschingsbesluitRules from './schorsingsbesluit';
 import besluitHandhavenRules from './besluit-handhaven';
 import jaarrekeningrules from './jaarrekening';
+import adviesJaarrekeningRules from './advies-jaarrekening';
 
 import { sparqlEscapeUri } from "mu";
 import { toezichthoudendeQuerySnippet, repOrgQuerySnippet } from './query-snippets';
@@ -16,7 +17,8 @@ const rules = [
   ...notulenRules,
   ...schorschingsbesluitRules,
   ...besluitHandhavenRules,
-  ...jaarrekeningrules
+  ...jaarrekeningrules,
+  ...adviesJaarrekeningRules
 ];
 
 // Excel: Rules number: 9, 11, 13, 15, 17, 19, 21, 23, 25, 27
