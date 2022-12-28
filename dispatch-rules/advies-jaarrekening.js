@@ -1,4 +1,5 @@
 import { sparqlEscapeUri } from "mu";
+
 const rules = [];
 
 let rule = {
