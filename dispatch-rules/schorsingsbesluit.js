@@ -113,9 +113,18 @@ rule = {
         ?formData a <http://lblod.data.gift/vocabularies/automatische-melding/FormData>;
           <http://data.europa.eu/eli/ontology#is_about> ?aboutEenheid.
 
-        ?aboutEenheid a <http://data.lblod.info/vocabularies/erediensten/BestuurVanDeEredienst>;
-          <http://data.vlaanderen.be/ns/besluit#classificatie>
-            <http://data.vlaanderen.be/id/concept/BestuurseenheidClassificatieCode/66ec74fd-8cfc-4e16-99c6-350b35012e86>.
+        VALUES ?worshipType {
+          <http://data.lblod.info/vocabularies/erediensten/CentraalBestuurVanDeEredienst>
+          <http://data.lblod.info/vocabularies/erediensten/BestuurVanDeEredienst>
+        }
+
+        VALUES ?worshipClassifications {
+          <http://data.vlaanderen.be/id/concept/BestuurseenheidClassificatieCode/66ec74fd-8cfc-4e16-99c6-350b35012e86>
+          <http://data.vlaanderen.be/id/concept/BestuurseenheidClassificatieCode/f9cac08a-13c1-49da-9bcb-f650b0604054>
+        }
+
+        ?aboutEenheid a ?worshipType;
+          <http://data.vlaanderen.be/ns/besluit#classificatie> ?worshipClassifications.
 
        {
          ?aboutEenheid mu:uuid ?uuid;
@@ -129,6 +138,8 @@ rule = {
          ?bestuurseenheid mu:uuid ?uuid;
            skos:prefLabel ?label.
        } UNION {
+         ?aboutEenheid a <http://data.lblod.info/vocabularies/erediensten/BestuurVanDeEredienst>.
+
          ?bestuurseenheid a <http://data.lblod.info/vocabularies/erediensten/CentraalBestuurVanDeEredienst>;
             <http://www.w3.org/ns/org#hasSubOrganization> ?aboutEenheid;
             skos:prefLabel ?label;
@@ -138,6 +149,13 @@ rule = {
             mu:uuid ?uuid ;
             skos:prefLabel ?label;
             a <http://data.lblod.info/vocabularies/erediensten/RepresentatiefOrgaan>.
+       } UNION {
+         ?aboutEenheid a <http://data.lblod.info/vocabularies/erediensten/CentraalBestuurVanDeEredienst>;
+           <http://www.w3.org/ns/org#hasSubOrganization> ?bestuurseenheid.
+
+         ?bestuurseenheid a <http://data.lblod.info/vocabularies/erediensten/BestuurVanDeEredienst>;
+            skos:prefLabel ?label;
+            mu:uuid ?uuid.
        }
       }
     `;
