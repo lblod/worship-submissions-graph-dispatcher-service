@@ -3,6 +3,7 @@ import schorschingsbesluitRules from './schorsingsbesluit';
 import besluitHandhavenRules from './besluit-handhaven';
 import jaarrekeningrules from './jaarrekening';
 import adviesJaarrekeningRules from './advies-jaarrekening';
+import eindRekeningRules from './eindrekening';
 
 import { sparqlEscapeUri } from "mu";
 import { toezichthoudendeQuerySnippet, repOrgQuerySnippet } from './query-snippets';
@@ -18,42 +19,13 @@ const rules = [
   ...schorschingsbesluitRules,
   ...besluitHandhavenRules,
   ...jaarrekeningrules,
-  ...adviesJaarrekeningRules
+  ...adviesJaarrekeningRules,
+  ...eindRekeningRules
 ];
 
 // Excel: Rules number: 9, 11, 13, 15, 17, 19, 21, 23, 25, 27
 // TODO: we need an extension in loket to go 'down the tree', a PO can have multiple EB, CB.
 // This is for a next story
-
-
-/* Excel: Rules number: 77
-* Testing:
-*--------------------------
-* -SENDER-: <http://data.lblod.info/id/besturenVanDeEredienst/d52de436e194111289248db2d06e99ac> Kerkfabriek O.-L.-Vrouw van Deinze
-* PG: <http://data.lblod.info/id/bestuurseenheden/141d9d6b-54af-4d17-b313-8d1c30bc3f5b> ABB
-**/
-let rule = {
-  documentType: 'https://data.vlaanderen.be/id/concept/BesluitType/54b61cbd-349f-41c4-9c8a-7e8e67d08347', // Eindrekening (ER)
-  matchSentByEenheidClass: eenheidClass => eenheidClass == 'http://data.vlaanderen.be/id/concept/BestuurseenheidClassificatieCode/66ec74fd-8cfc-4e16-99c6-350b35012e86', // EB
-  destinationInfoQuery: ( sender ) => {
-    return `
-      PREFIX mu: <http://mu.semte.ch/vocabularies/core/>
-      PREFIX org: <http://www.w3.org/ns/org#>
-
-      SELECT DISTINCT ?bestuurseenheid ?uuid WHERE {
-        BIND(${sparqlEscapeUri(sender)} as ?sender)
-        {
-          VALUES ?bestuurseenheid {
-            <http://data.lblod.info/id/bestuurseenheden/141d9d6b-54af-4d17-b313-8d1c30bc3f5b>
-            ${sparqlEscapeUri(sender)}
-          }
-          ?bestuurseenheid mu:uuid ?uuid.
-        }
-      }
-    `;
-  }
-};
-rules.push(rule);
 
 /* Excel: Rules number: 85, 88, 89
 * Testing:
@@ -62,7 +34,7 @@ rules.push(rule);
 * GEMEENTE: <http://data.lblod.info/id/bestuurseenheden/104f32d7fb8d4b8b61b71717301656f136fe046eabaf126fb3325896b5c2d625> Tongeren
 * RO: <http://data.lblod.info/id/representatieveOrganen/c98e270d84a8455b2f4bf16b915aeff2> Bisdom Hasselt
 */
-rule = {
+let rule = {
   documentType: 'https://data.vlaanderen.be/id/concept/BesluitDocumentType/18833df2-8c9e-4edd-87fd-b5c252337349', // Budget(wijziging) - CB namens EB's
   matchSentByEenheidClass: eenheidClass => eenheidClass == 'http://data.vlaanderen.be/id/concept/BestuurseenheidClassificatieCode/f9cac08a-13c1-49da-9bcb-f650b0604054', // Centraal bestuur van de eredienst
   destinationInfoQuery: ( sender ) => {
