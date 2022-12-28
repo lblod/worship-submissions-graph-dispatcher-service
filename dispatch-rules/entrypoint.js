@@ -23,38 +23,6 @@ const rules = [
 // TODO: we need an extension in loket to go 'down the tree', a PO can have multiple EB, CB.
 // This is for a next story
 
-/* Excel: Rules number: 67, 68, 69
-* Testing:
-*--------------------------
-* -SENDER-: <http://data.lblod.info/id/centraleBesturenVanDeEredienst/b0ffe0e981a7e887a0b949d7ff77096b> CKB Tongeren
-* GEMEENTE: <http://data.lblod.info/id/bestuurseenheden/104f32d7fb8d4b8b61b71717301656f136fe046eabaf126fb3325896b5c2d625> Tongeren
-* PG: <http://data.lblod.info/id/bestuurseenheden/141d9d6b-54af-4d17-b313-8d1c30bc3f5b> ABB
-**/
-let rule = {
-  documentType: 'https://data.vlaanderen.be/id/concept/BesluitDocumentType/672bf096-dccd-40af-ab60-bd7de15cc461', // Jaarrekening (JR + Toelagenoverzicht)
-  matchSentByEenheidClass: eenheidClass => eenheidClass == 'http://data.vlaanderen.be/id/concept/BestuurseenheidClassificatieCode/f9cac08a-13c1-49da-9bcb-f650b0604054', // CB
-  destinationInfoQuery: ( sender ) => {
-    return `
-      PREFIX mu: <http://mu.semte.ch/vocabularies/core/>
-      PREFIX org: <http://www.w3.org/ns/org#>
-
-      SELECT DISTINCT ?bestuurseenheid ?uuid WHERE {
-        BIND(${sparqlEscapeUri(sender)} as ?sender)
-        {
-          ${toezichthoudendeQuerySnippet()}
-        } UNION {
-          VALUES ?bestuurseenheid {
-            <http://data.lblod.info/id/bestuurseenheden/141d9d6b-54af-4d17-b313-8d1c30bc3f5b>
-            ${sparqlEscapeUri(sender)}
-          }
-          ?bestuurseenheid mu:uuid ?uuid.
-        }
-      }
-    `;
-  }
-};
-rules.push(rule);
-
 
 /* Excel: Rules number: 77
 * Testing:
@@ -62,7 +30,7 @@ rules.push(rule);
 * -SENDER-: <http://data.lblod.info/id/besturenVanDeEredienst/d52de436e194111289248db2d06e99ac> Kerkfabriek O.-L.-Vrouw van Deinze
 * PG: <http://data.lblod.info/id/bestuurseenheden/141d9d6b-54af-4d17-b313-8d1c30bc3f5b> ABB
 **/
-rule = {
+let rule = {
   documentType: 'https://data.vlaanderen.be/id/concept/BesluitType/54b61cbd-349f-41c4-9c8a-7e8e67d08347', // Eindrekening (ER)
   matchSentByEenheidClass: eenheidClass => eenheidClass == 'http://data.vlaanderen.be/id/concept/BestuurseenheidClassificatieCode/66ec74fd-8cfc-4e16-99c6-350b35012e86', // EB
   destinationInfoQuery: ( sender ) => {
