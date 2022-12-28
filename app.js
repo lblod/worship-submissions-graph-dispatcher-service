@@ -11,7 +11,7 @@ import {
   copySubjectDataToDestinators,
   getRelatedSubjectsForSubmission
 } from "./util/queries";
-import dispatchRules from "./dispatch-rules";
+import dispatchRules from "./dispatch-rules/entrypoint";
 import exportConfig from "./export-config";
 
 const processSubjectsQueue = new ProcessingQueue('submissions-dispatch-queue');
@@ -83,12 +83,12 @@ async function dispatch(submission) {
 
   if(submissionInfo) {
     const applicableRules = dispatchRules.filter(r =>
-                                                   r.documentType == submissionInfo.submissionType
-                                                   && r.sendByType == submissionInfo.creatorType
+                                                 r.documentType == submissionInfo.submissionType
+                                                 && r.matchSentByEenheidClass(submissionInfo.creatorType)
                                                 );
 
     for(const rule of applicableRules) {
-      const destinators = await getDestinators(submissionInfo.creator, rule);
+      const destinators = await getDestinators(submissionInfo, rule);
       let relatedSubjects = [ submissionInfo.submission ];
 
       for (const config of exportConfig) {
