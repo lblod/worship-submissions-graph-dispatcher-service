@@ -76,8 +76,8 @@ export async function getSubmissionInfo(submission) {
   return parseResult(await query(queryStr))[0];
 }
 
-export async function getDestinators(sender, rule) {
-  const result = await query(rule.destinationInfoQuery(sender));
+export async function getDestinators(submissionInfo, rule) {
+  const result = await query(rule.destinationInfoQuery(submissionInfo.creator, submissionInfo.submission));
   return parseResult(result);
 }
 

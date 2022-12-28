@@ -88,7 +88,7 @@ async function dispatch(submission) {
                                                 );
 
     for(const rule of applicableRules) {
-      const destinators = await getDestinators(submissionInfo.creator, rule);
+      const destinators = await getDestinators(submissionInfo, rule);
       let relatedSubjects = [ submissionInfo.submission ];
 
       for (const config of exportConfig) {
