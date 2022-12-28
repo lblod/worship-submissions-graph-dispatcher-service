@@ -3,7 +3,7 @@ import { toezichthoudendeQuerySnippet, repOrgQuerySnippet } from './query-snippe
 
 const rules = [];
 
-/* Excel: Rules number: 9, 11, 13, 15, 17
+/* Excel: Rules number: 9, 11, 13, 15, 17, 20, 22, 24, 26, 28
  * Testing:
  *--------------------------
  * -SENDER-: <http://data.lblod.info/id/bestuurseenheden/14278813524c762255aeba149e7d7134ddecfbb43e7d56910731bd4e13e34f39> Prov. limburg
@@ -33,9 +33,18 @@ let rule = {
         ?formData a <http://lblod.data.gift/vocabularies/automatische-melding/FormData>;
           <http://data.europa.eu/eli/ontology#is_about> ?aboutEenheid.
 
-        ?aboutEenheid a <http://data.lblod.info/vocabularies/erediensten/BestuurVanDeEredienst>;
-          <http://data.vlaanderen.be/ns/besluit#classificatie>
-            <http://data.vlaanderen.be/id/concept/BestuurseenheidClassificatieCode/66ec74fd-8cfc-4e16-99c6-350b35012e86>.
+        VALUES ?worshipType {
+          <http://data.lblod.info/vocabularies/erediensten/CentraalBestuurVanDeEredienst>
+          <http://data.lblod.info/vocabularies/erediensten/BestuurVanDeEredienst>
+        }
+
+        VALUES ?worshipClassifications {
+          <http://data.vlaanderen.be/id/concept/BestuurseenheidClassificatieCode/66ec74fd-8cfc-4e16-99c6-350b35012e86>
+          <http://data.vlaanderen.be/id/concept/BestuurseenheidClassificatieCode/f9cac08a-13c1-49da-9bcb-f650b0604054>
+        }
+
+        ?aboutEenheid a ?worshipType;
+          <http://data.vlaanderen.be/ns/besluit#classificatie> ?worshipClassifications.
 
        {
          ?aboutEenheid mu:uuid ?uuid;
@@ -49,6 +58,8 @@ let rule = {
          ?bestuurseenheid mu:uuid ?uuid;
            skos:prefLabel ?label.
        } UNION {
+         ?aboutEenheid a <http://data.lblod.info/vocabularies/erediensten/BestuurVanDeEredienst>.
+
          ?bestuurseenheid a <http://data.lblod.info/vocabularies/erediensten/CentraalBestuurVanDeEredienst>;
             <http://www.w3.org/ns/org#hasSubOrganization> ?aboutEenheid;
             skos:prefLabel ?label;
@@ -58,6 +69,13 @@ let rule = {
             mu:uuid ?uuid ;
             skos:prefLabel ?label;
             a <http://data.lblod.info/vocabularies/erediensten/RepresentatiefOrgaan>.
+       } UNION {
+         ?aboutEenheid a <http://data.lblod.info/vocabularies/erediensten/CentraalBestuurVanDeEredienst>;
+           <http://www.w3.org/ns/org#hasSubOrganization> ?bestuurseenheid.
+
+         ?bestuurseenheid a <http://data.lblod.info/vocabularies/erediensten/BestuurVanDeEredienst>;
+            skos:prefLabel ?label;
+            mu:uuid ?uuid.
        }
       }
     `;
