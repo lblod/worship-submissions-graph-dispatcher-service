@@ -9,6 +9,7 @@ import adviesBudgetwijzigingRules from './advies-budgetwijziging';
 import besluitBudgetwijzigingRules from './besluit-budgetwijziging';
 import meerjarenplanwijzigingRules from './meerjarenplanwijziging';
 import adviesMeerjarenplanwijzigingRules from './advies-meerjarenplanwijziging';
+import besluitMeerjarenplanwijzigingRules from './besluit-meerjarenplanwijziging';
 
 /*
  * This file exports a list of rule objects, which helps deduce who the targets are for a
@@ -27,7 +28,8 @@ const rules = [
   ...adviesBudgetwijzigingRules,
   ...besluitBudgetwijzigingRules,
   ...meerjarenplanwijzigingRules,
-  ...adviesMeerjarenplanwijzigingRules
+  ...adviesMeerjarenplanwijzigingRules,
+  ...besluitMeerjarenplanwijzigingRules
 ];
 
 export default rules;
