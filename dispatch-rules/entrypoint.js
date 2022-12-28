@@ -29,41 +29,6 @@ const rules = [
 // TODO: we need an extension in loket to go 'down the tree', a PO can have multiple EB, CB.
 // This is for a next story
 
-/* Excel: Rules number: 85, 88, 89
-* Testing:
-*--------------------------
-* -SENDER-: <http://data.lblod.info/id/centraleBesturenVanDeEredienst/b0ffe0e981a7e887a0b949d7ff77096b> CKB Tongeren
-* GEMEENTE: <http://data.lblod.info/id/bestuurseenheden/104f32d7fb8d4b8b61b71717301656f136fe046eabaf126fb3325896b5c2d625> Tongeren
-* RO: <http://data.lblod.info/id/representatieveOrganen/c98e270d84a8455b2f4bf16b915aeff2> Bisdom Hasselt
-*/
-let rule = {
-  documentType: 'https://data.vlaanderen.be/id/concept/BesluitDocumentType/18833df2-8c9e-4edd-87fd-b5c252337349', // Budget(wijziging) - CB namens EB's
-  matchSentByEenheidClass: eenheidClass => eenheidClass == 'http://data.vlaanderen.be/id/concept/BestuurseenheidClassificatieCode/f9cac08a-13c1-49da-9bcb-f650b0604054', // Centraal bestuur van de eredienst
-  destinationInfoQuery: ( sender ) => {
-    return `
-      PREFIX mu: <http://mu.semte.ch/vocabularies/core/>
-      PREFIX org: <http://www.w3.org/ns/org#>
-
-      SELECT DISTINCT ?bestuurseenheid ?uuid WHERE {
-        BIND(${sparqlEscapeUri(sender)} as ?sender)
-          {
-            ${toezichthoudendeQuerySnippet()}
-          } UNION {
-            VALUES ?bestuurseenheid {
-              ${sparqlEscapeUri(sender)}
-            }
-            ?bestuurseenheid mu:uuid ?uuid
-          } UNION {
-            ?bestuurseenheid org:linkedTo ?sender ;
-              mu:uuid ?uuid ;
-              a <http://data.lblod.info/vocabularies/erediensten/RepresentatiefOrgaan>.
-          }
-        }
-    `;
-  }
-};
-rules.push(rule);
-
 /* Excel: Rules number: 101, 102, 103, 104
 * Testing:
 *--------------------------
@@ -72,7 +37,7 @@ rules.push(rule);
 * RO: <http://data.lblod.info/id/representatieveOrganen/c98e270d84a8455b2f4bf16b915aeff2> Bisdom Hasselt
 * PG: <http://data.lblod.info/id/bestuurseenheden/141d9d6b-54af-4d17-b313-8d1c30bc3f5b> ABB
 */
-rule = {
+let rule = {
   documentType: 'https://data.vlaanderen.be/id/concept/BesluitDocumentType/2c9ada23-1229-4c7e-a53e-acddc9014e4e', // Meerjarenplan(wijziging) - CB namens EB's
   matchSentByEenheidClass: eenheidClass => eenheidClass == 'http://data.vlaanderen.be/id/concept/BestuurseenheidClassificatieCode/f9cac08a-13c1-49da-9bcb-f650b0604054', // Centraal bestuur van de eredienst
   destinationInfoQuery: ( sender ) => {

@@ -107,4 +107,42 @@ rule = {
 };
 rules.push(rule);
 
+/* Excel: Rules number: 85, 88, 89
+* Testing:
+*--------------------------
+* -SENDER-: <http://data.lblod.info/id/centraleBesturenVanDeEredienst/b0ffe0e981a7e887a0b949d7ff77096b> CKB Tongeren
+* GEMEENTE: <http://data.lblod.info/id/bestuurseenheden/104f32d7fb8d4b8b61b71717301656f136fe046eabaf126fb3325896b5c2d625> Tongeren
+* RO: <http://data.lblod.info/id/representatieveOrganen/c98e270d84a8455b2f4bf16b915aeff2> Bisdom Hasselt
+*/
+rule = {
+  documentType: 'https://data.vlaanderen.be/id/concept/BesluitDocumentType/18833df2-8c9e-4edd-87fd-b5c252337349', // Budget(wijziging) - CB namens EB's
+  matchSentByEenheidClass: eenheidClass => eenheidClass == 'http://data.vlaanderen.be/id/concept/BestuurseenheidClassificatieCode/f9cac08a-13c1-49da-9bcb-f650b0604054', // Centraal bestuur van de eredienst
+  destinationInfoQuery: ( sender ) => {
+    return `
+      PREFIX mu: <http://mu.semte.ch/vocabularies/core/>
+      PREFIX org: <http://www.w3.org/ns/org#>
+      PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
+
+      SELECT DISTINCT ?bestuurseenheid ?uuid ?label WHERE {
+        BIND(${sparqlEscapeUri(sender)} as ?sender)
+          {
+            ${toezichthoudendeQuerySnippet()}
+          } UNION {
+            VALUES ?bestuurseenheid {
+              ${sparqlEscapeUri(sender)}
+            }
+            ?bestuurseenheid mu:uuid ?uuid;
+              skos:prefLabel ?label.
+          } UNION {
+            ?bestuurseenheid org:linkedTo ?sender ;
+              mu:uuid ?uuid ;
+              skos:prefLabel ?label;
+              a <http://data.lblod.info/vocabularies/erediensten/RepresentatiefOrgaan>.
+          }
+        }
+    `;
+  }
+};
+rules.push(rule);
+
 export default rules;
