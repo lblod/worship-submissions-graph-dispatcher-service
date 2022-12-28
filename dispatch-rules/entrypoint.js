@@ -1,4 +1,5 @@
 import notulenRules from './notulen';
+import schorschingsbesluitRules from './schorsingsbesluit';
 
 import { sparqlEscapeUri } from "mu";
 import { toezichthoudendeQuerySnippet, repOrgQuerySnippet } from './query-snippets';
@@ -9,7 +10,7 @@ import { toezichthoudendeQuerySnippet, repOrgQuerySnippet } from './query-snippe
  * It tries to translate this file: https://docs.google.com/spreadsheets/d/1NnZHqaFnNToE-aZMiyDI1QIPhHP5EG8i39KGFhTazlg/edit?usp=sharing
  */
 
-const rules = [ ...notulenRules ];
+const rules = [ ...notulenRules, ...schorschingsbesluitRules ];
 
 // Excel: Rules number: 9, 11, 13, 15, 17, 19, 21, 23, 25, 27
 // TODO: we need an extension in loket to go 'down the tree', a PO can have multiple EB, CB.
