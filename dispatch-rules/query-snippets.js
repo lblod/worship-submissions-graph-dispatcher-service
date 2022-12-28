@@ -9,11 +9,13 @@ export const toezichthoudendeQuerySnippet = () => `
 
           ?bestuurseenheid <http://data.lblod.info/vocabularies/erediensten/betrokkenBestuur> ?betrokkenBestuur;
             <http://data.vlaanderen.be/ns/besluit#classificatie> ?classificatie;
-            mu:uuid ?uuid.
+            mu:uuid ?uuid;
+            <http://www.w3.org/2004/02/skos/core#prefLabel> ?label.
 `;
 
 export const repOrgQuerySnippet = () => `
           ?bestuurseenheid org:linkedTo ?sender ;
             mu:uuid ?uuid ;
+            <http://www.w3.org/2004/02/skos/core#prefLabel> ?label;
             a <http://data.lblod.info/vocabularies/erediensten/RepresentatiefOrgaan>.
 `;
