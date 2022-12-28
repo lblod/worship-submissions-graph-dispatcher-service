@@ -83,8 +83,8 @@ async function dispatch(submission) {
 
   if(submissionInfo) {
     const applicableRules = dispatchRules.filter(r =>
-                                                   r.documentType == submissionInfo.submissionType
-                                                   && r.sendByType == submissionInfo.creatorType
+                                                 r.documentType == submissionInfo.submissionType
+                                                 && r.matchSentByEenheidClass(submissionInfo.creatorType)
                                                 );
 
     for(const rule of applicableRules) {
