@@ -3,7 +3,7 @@ import { toezichthoudendeQuerySnippet, repOrgQuerySnippet } from './query-snippe
 
 const rules = [];
 
-/* Excel: Rules number: 9, 11, 13, 15, 17, 20, 22, 24, 26, 28
+/* Excel: Rules number: 9, 11, 13, 15, 17, 21, 23, 25, 27
  * Testing:
  *--------------------------
  * -SENDER-: <http://data.lblod.info/id/bestuurseenheden/14278813524c762255aeba149e7d7134ddecfbb43e7d56910731bd4e13e34f39> Prov. limburg
@@ -83,7 +83,7 @@ let rule = {
 };
 rules.push(rule);
 
-/* Excel: Rules number: 10, 12, 14, 16, 18
+/* Excel: Rules number: 10, 12, 14, 16, 18, 20, 22, 24, 26, 28
  * Testing:
  *--------------------------
  * -SENDER-: <http://data.lblod.info/id/bestuurseenheden/f08dca136aca8cfd86913c6e452ca3b763d618b52aec02f8864443942c50277a> Gem. Roosdaal
