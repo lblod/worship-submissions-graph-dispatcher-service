@@ -8,9 +8,7 @@ import budgetwijziging from './budgetwijziging';
 import adviesBudgetwijzigingRules from './advies-budgetwijziging';
 import besluitBudgetwijzigingRules from './besluit-budgetwijziging';
 import meerjarenplanwijzigingRules from './meerjarenplanwijziging';
-
-import { sparqlEscapeUri } from "mu";
-import { toezichthoudendeQuerySnippet, repOrgQuerySnippet } from './query-snippets';
+import adviesMeerjarenplanwijzigingRules from './advies-meerjarenplanwijziging';
 
 /*
  * This file exports a list of rule objects, which helps deduce who the targets are for a
@@ -28,7 +26,8 @@ const rules = [
   ...budgetwijziging,
   ...adviesBudgetwijzigingRules,
   ...besluitBudgetwijzigingRules,
-  ...meerjarenplanwijzigingRules
+  ...meerjarenplanwijzigingRules,
+  ...adviesMeerjarenplanwijzigingRules
 ];
 
 export default rules;
