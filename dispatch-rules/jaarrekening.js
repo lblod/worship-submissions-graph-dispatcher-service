@@ -31,6 +31,10 @@ let rule = {
           }
           ?bestuurseenheid mu:uuid ?uuid;
             skos:prefLabel ?label.
+
+          ?centraalBestuur org:hasSubOrganization ?bestuurseenheid;
+            <http://data.vlaanderen.be/ns/besluit#classificatie>
+              <http://data.vlaanderen.be/id/concept/BestuurseenheidClassificatieCode/f9cac08a-13c1-49da-9bcb-f650b0604054>.
         }
       }
     `;
