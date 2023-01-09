@@ -52,7 +52,7 @@ rule = {
     return `
       PREFIX mu: <http://mu.semte.ch/vocabularies/core/>
       PREFIX org: <http://www.w3.org/ns/org#>
-      PREFIX skos: http://www.w3.org/2004/02/skos/core#>
+      PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
 
       SELECT DISTINCT ?bestuurseenheid ?uuid ?label WHERE {
         BIND(${sparqlEscapeUri(sender)} as ?sender)
