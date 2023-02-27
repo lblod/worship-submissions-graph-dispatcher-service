@@ -35,38 +35,6 @@ export default [
                        ?formData <http://lblod.data.gift/vocabularies/besluit/chartOfAccount> ?subject.`
   },
   {
-    type: `http://www.w3.org/2004/02/skos/core#Concept`,
-    pathToSubmission: `
-    VALUES ?conceptScheme {
-      <http://lblod.data.gift/concept-schemes/5cecec47-ba66-4d7a-ac9d-a1e7962ca4e2>
-      <http://lblod.data.gift/concept-schemes/ac9bc402-c8e6-41fd-ad57-fad15622e560>
-      <https://data.vlaanderen.be/id/conceptscheme/BesluitType>
-      <https://data.vlaanderen.be/id/conceptscheme/BesluitDocumentType>
-      <http://data.vlaanderen.be/id/conceptscheme/BestuurseenheidClassificatieCode>
-      <http://lblod.data.gift/concept-schemes/b65b15ba-6755-4cd2-bd07-2c2cf3c0e4d3>
-      <http://lblod.data.gift/concept-schemes/c93ccd41-aee7-488f-86d3-038de890d05a>
-      <http://lblod.data.gift/concept-schemes/71e6455e-1204-46a6-abf4-87319f58eaa5>
-    }
-    {
-      ?subject <http://www.w3.org/2004/02/skos/core#inScheme> ?conceptScheme.
-    }
-    UNION {
-      ?subject <http://www.w3.org/2004/02/skos/core#topConceptOf> ?conceptScheme.
-    }
-    ?submission <http://www.w3.org/ns/prov#generated> ?formData .
-    {
-      ?formData <http://lblod.data.gift/vocabularies/besluit/authenticityType> ?subject.
-    } UNION {
-      ?formData <http://mu.semte.ch/vocabularies/ext/regulationType> ?subject.
-    } UNION {
-      ?formData <http://mu.semte.ch/vocabularies/ext/decisionType> ?subject.
-    } UNION {
-      ?formData <http://mu.semte.ch/vocabularies/ext/taxType> ?subject.
-    } UNION {
-      ?formData <http://data.europa.eu/eli/ontology#passed_by> / <http://data.vlaanderen.be/ns/mandaat#isTijdspecialisatieVan> / <http://data.vlaanderen.be/ns/besluit#bestuurt> / <http://data.vlaanderen.be/ns/besluit#classificatie> ?subject.
-    }`
-  },
-  {
     type: `http://lblod.data.gift/vocabularies/automatische-melding/FormData`,
     pathToSubmission: `?submission <http://www.w3.org/ns/prov#generated> ?subject;
                        a <http://rdf.myexperiment.org/ontologies/base/Submission>.`
