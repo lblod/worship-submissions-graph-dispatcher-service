@@ -9,10 +9,12 @@ import {
   getSubmissionInfo,
   getDestinators,
   copySubjectDataToDestinators,
-  getRelatedSubjectsForSubmission
+  getRelatedSubjectsForSubmission,
+  getSubmissionsFromGraph
 } from "./util/queries";
 import dispatchRules from "./dispatch-rules/entrypoint";
 import exportConfig from "./export-config";
+import { DISPATCH_SOURCE_GRAPH } from './config';
 
 const processSubjectsQueue = new ProcessingQueue('submissions-dispatch-queue');
 
@@ -46,6 +48,29 @@ app.post("/delta", async function (req, res) {
     processSubjectsQueue.addJob(() => processSubject(subject));
   }
   return res.status(200).send();
+});
+
+/***********************************************
+ * DEBUG/INTERNAL only. Not meant to be exposed
+ * Yeah also get request with side effects!
+ * Easier to write the call
+ ***********************************************/
+app.get("/manual-dispatch", async function (req, res) {
+  if(req.query.submission) {
+    console.log(`Only one submission to (re-)dispatch: ${req.query.submission}`);
+    processSubjectsQueue.addJob(() => processSubject(req.query.submission));
+  }
+  else {
+    console.log(`Dispatching all submissions (again) in GRAPH ${DISPATCH_SOURCE_GRAPH}`);
+    const submissions = (await getSubmissionsFromGraph(DISPATCH_SOURCE_GRAPH)).map(s => s.submission);
+    console.log(`Found ${submissions.length} submissions to (re-)dispatch.`);
+    console.log(`This might take a while; big amount can take big time`);
+    for(const submission of submissions) {
+      processSubjectsQueue.addJob(() => processSubject(submission));
+    }
+  }
+  console.log(`Scheduling done`);
+  return res.status(201).send();
 });
 
 async function processSubject(subject) {

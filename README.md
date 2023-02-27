@@ -38,3 +38,7 @@ export default [
 
 ### POST /delta
 Triggers the preparation of a submission for the export when a resource is sent.
+### GET /manual-dispatch?submission=http://bar
+Triggers a manual dispatch.
+Meant for debugging only.
+If no parameters are provided, will dispatch all submissions in DISPATCH_SOURCE_GRAPH.
