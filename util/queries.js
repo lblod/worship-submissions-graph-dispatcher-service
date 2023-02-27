@@ -129,3 +129,16 @@ export async function sendErrorAlert({message, detail, reference}) {
     console.error(`[WARN] Something went wrong while trying to store an error.\nMessage: ${e}\nQuery: ${q}`);
   }
 }
+
+export async function getSubmissionsFromGraph( graph ) {
+  const queryStr = `
+    PREFIX meb: <http://rdf.myexperiment.org/ontologies/base/>
+    SELECT DISTINCT ?submission WHERE {
+       GRAPH ${sparqlEscapeUri(graph)} {
+         ?submission a meb:Submission.
+       }
+    }
+  `;
+  const result = await query(queryStr);
+  return parseResult(result);
+}
