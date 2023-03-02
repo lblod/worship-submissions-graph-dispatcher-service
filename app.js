@@ -62,7 +62,7 @@ app.post("/delta", async function (req, res) {
   const uniqueSubjects = [ ...new Set(subjects) ];
 
   for(const subject of uniqueSubjects) {
-    processSubjectsQueue.addJob(() => processSubject(subject));
+    processSubjectsQueue.addJob(async () => await processSubject(subject));
   }
   return res.status(200).send();
 });
@@ -91,7 +91,7 @@ app.get("/manual-dispatch", async function (req, res) {
     console.log(`Found ${submissions.length} submissions to (re-)dispatch.`);
     console.log(`This might take a while; big amount can take big time`);
     for(const submission of submissions) {
-      processSubjectsQueue.addJob(() => processSubject(submission));
+      processSubjectsQueue.addJob(async () => await processSubject(submission));
     }
   }
   console.log(`Scheduling done`);
@@ -121,9 +121,11 @@ app.get("/heal-submission", async function (req, res) {
     return res.status(201).send();
   }
 });
+
 /***********************************************
  * END DEBUG/RESCUE ENDPOINTS
  ***********************************************/
+
 async function processSubject(subject) {
   try {
     // Deduce type.
@@ -183,6 +185,7 @@ async function dispatch(submission) {
     }
   }
 }
+
 /*
  * Removes a submission from its target graphs.
  * Re-dispatch the submission again.
