@@ -144,3 +144,24 @@ export async function getSubmissions( inGraph = null ) {
   const result = await query(queryStr);
   return parseResult(result).map(s => s.submission);
 }
+
+export async function removeSubjects(subjects, notInGraph = null) {
+  const notInGraphStr = notInGraph ? `FILTER( ?graph NOT IN ( ${sparqlEscapeUri(notInGraph)} ) )` : '';
+  const queryStr = `
+    DELETE {
+      GRAPH ?graph {
+        ?s ?p ?o
+      }
+    }
+    WHERE {
+      VALUES ?s {
+        ${subjects.map(sparqlEscapeUri).join('\n')}
+      }
+      GRAPH ?graph {
+       ?s ?p ?o
+     }
+     ${notInGraphStr}
+    }
+  `;
+  await query(queryStr);
+}
