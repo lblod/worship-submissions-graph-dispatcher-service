@@ -10,7 +10,7 @@ import {
   getDestinators,
   copySubjectDataToDestinators,
   getRelatedSubjectsForSubmission,
-  getSubmissionsFromGraph
+  getSubmissions,
 } from "./util/queries";
 import dispatchRules from "./dispatch-rules/entrypoint";
 import exportConfig from "./export-config";
@@ -61,8 +61,8 @@ app.get("/manual-dispatch", async function (req, res) {
     processSubjectsQueue.addJob(() => processSubject(req.query.submission));
   }
   else {
-    console.log(`Dispatching all submissions (again) in GRAPH ${DISPATCH_SOURCE_GRAPH}`);
-    const submissions = (await getSubmissionsFromGraph(DISPATCH_SOURCE_GRAPH)).map(s => s.submission);
+    console.log(`Dispatching all submissions (again) from GRAPH ${DISPATCH_SOURCE_GRAPH}`);
+    const submissions = await getSubmissions(DISPATCH_SOURCE_GRAPH);
     console.log(`Found ${submissions.length} submissions to (re-)dispatch.`);
     console.log(`This might take a while; big amount can take big time`);
     for(const submission of submissions) {
