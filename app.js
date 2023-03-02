@@ -132,3 +132,28 @@ async function dispatch(submission) {
     }
   }
 }
+/*
+ * Removes a submission from its target graphs.
+ * Re-dispatch the submission again.
+ * Use-case: handle data updates (e.g. bestuurseenheid changes) which affect the dispatch-rules
+ */
+async function healSubmission( submission ) {
+  try {
+    let relatedSubjects = [];
+    for (const config of exportConfig) {
+      const subjects = await getRelatedSubjectsForSubmission(
+        submission,
+        config.type,
+        config.pathToSubmission
+      );
+      relatedSubjects = [ ...relatedSubjects, ...subjects ];
+    }
+    await removeSubjects([submission, ...relatedSubjects], DISPATCH_SOURCE_GRAPH);
+    await processSubject(submission);
+  } catch (e) {
+    console.error(`Error while processing a subject: ${e.message ? e.message : e}`);
+    await sendErrorAlert({
+      message: `Something unexpected went wrong while processing a subject ${submission}: ${e.message ? e.message : e}`
+    });
+  }
+}
