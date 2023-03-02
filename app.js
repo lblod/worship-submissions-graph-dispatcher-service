@@ -98,6 +98,29 @@ app.get("/manual-dispatch", async function (req, res) {
   return res.status(201).send();
 });
 
+/*
+ * Triggers the healing flow for a single submission.
+ * Clears the submission from all its target graphs, and starts the dispatching again
+ * Uses cases:
+ *  - debugging
+ *  - something went wrong during the dispatch of a single submission
+ */
+app.get("/heal-submission", async function (req, res) {
+  if(req.query.subject) {
+    console.log(`Only one submission to (re-)dispatch: ${req.query.subject}`);
+    processSubjectsQueue.addJob(async () => await healSubmission(req.query.subject));
+    console.log(`Scheduling done`);
+    return res.status(201).send();
+  }
+  else {
+    console.log(`No, query param found, going to heal all submissions`);
+    const submissions = await getSubmissions();
+    for(const submission of submissions) {
+      processSubjectsQueue.addJob(async () => await healSubmission(submission));
+    }
+    return res.status(201).send();
+  }
+});
 /***********************************************
  * END DEBUG/RESCUE ENDPOINTS
  ***********************************************/
