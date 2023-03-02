@@ -1,4 +1,5 @@
 import bodyParser from "body-parser";
+import { CronJob } from 'cron';
 import { app } from "mu";
 import { Delta } from "./lib/delta";
 import { ProcessingQueue } from './lib/processing-queue';
@@ -11,12 +12,28 @@ import {
   copySubjectDataToDestinators,
   getRelatedSubjectsForSubmission,
   getSubmissions,
+  removeSubjects
 } from "./util/queries";
 import dispatchRules from "./dispatch-rules/entrypoint";
 import exportConfig from "./export-config";
-import { DISPATCH_SOURCE_GRAPH } from './config';
+import { DISPATCH_SOURCE_GRAPH, ENABLE_HEALING, HEALING_CRON } from './config';
 
 const processSubjectsQueue = new ProcessingQueue('submissions-dispatch-queue');
+
+console.log(`ENABLE_HEALING is set to ${ENABLE_HEALING}`);
+if(ENABLE_HEALING) {
+  console.log(`HEALING_CRON is set to ${HEALING_CRON}`);
+  new CronJob(HEALING_CRON, async function() {
+    const now = new Date().toISOString();
+    console.info(`Healing sync triggered by cron job at ${now}`);
+
+    const submissions = await getSubmissions();
+    for(const submission of submissions) {
+      processSubjectsQueue
+        .addJob(async () => await healSubmission(submission));
+    }
+  }, null, true);
+}
 
 app.use(
   bodyParser.json({
