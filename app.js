@@ -81,9 +81,9 @@ app.post("/delta", async function (req, res) {
  *  - something went wrong during the dispatch of a single submission
  */
 app.get("/manual-dispatch", async function (req, res) {
-  if(req.query.submission) {
-    console.log(`Only one submission to (re-)dispatch: ${req.query.submission}`);
-    processSubjectsQueue.addJob(() => processSubject(req.query.submission));
+  if(req.query.subject) {
+    console.log(`Only one subject to (re-)dispatch: ${req.query.subject}`);
+    processSubjectsQueue.addJob(async () => await processSubject(req.query.subject));
   }
   else {
     console.log(`Dispatching all submissions (again) from GRAPH ${DISPATCH_SOURCE_GRAPH}`);
