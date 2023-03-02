@@ -68,10 +68,18 @@ app.post("/delta", async function (req, res) {
 });
 
 /***********************************************
- * DEBUG/INTERNAL only. Not meant to be exposed
- * Yeah also get request with side effects!
- * Easier to write the call
+ * DEBUG/RESCUE ENDPOINS
+ * Not meant to be exposed
+ * Note: GET calls with side effects (sorry)
  ***********************************************/
+/*
+ * Triggers the dispatch manually.
+ * Append only operation.
+ * Uses cases:
+ *  - debugging
+ *  - something went wrong during the initial sync and it needs to be restarted.
+ *  - something went wrong during the dispatch of a single submission
+ */
 app.get("/manual-dispatch", async function (req, res) {
   if(req.query.submission) {
     console.log(`Only one submission to (re-)dispatch: ${req.query.submission}`);
@@ -90,6 +98,9 @@ app.get("/manual-dispatch", async function (req, res) {
   return res.status(201).send();
 });
 
+/***********************************************
+ * END DEBUG/RESCUE ENDPOINTS
+ ***********************************************/
 async function processSubject(subject) {
   try {
     // Deduce type.
