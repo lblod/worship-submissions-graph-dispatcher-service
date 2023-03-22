@@ -40,7 +40,7 @@ let rule = {
          }
 
          ?aboutEenheid a ?worshipType;
-           <http://data.vlaanderen.be/ns/besluit#classificatie> ?worshipClassifications.
+           <http://www.w3.org/ns/org#classification> ?worshipClassifications.
 
           VALUES ?classificatie {
               <http://data.vlaanderen.be/id/concept/BestuurseenheidClassificatieCode/5ab0e9b8a3b2ca7c5e000000>
@@ -51,7 +51,7 @@ let rule = {
             a <http://data.lblod.info/vocabularies/erediensten/BetrokkenLokaleBesturen>.
 
           ?bestuurseenheid <http://data.lblod.info/vocabularies/erediensten/betrokkenBestuur> ?betrokkenBestuur;
-            <http://data.vlaanderen.be/ns/besluit#classificatie> ?classificatie;
+            <http://www.w3.org/ns/org#classification> ?classificatie;
             mu:uuid ?uuid;
             <http://www.w3.org/2004/02/skos/core#prefLabel> ?label.
 

@@ -22,14 +22,14 @@ let rule = {
           BIND(${sparqlEscapeUri(sender)} as ?sender)
           {
             ?bestuurseenheid org:hasSubOrganization ?sender;
-            <http://data.vlaanderen.be/ns/besluit#classificatie>
+            <http://www.w3.org/ns/org#classification>
               <http://data.vlaanderen.be/id/concept/BestuurseenheidClassificatieCode/f9cac08a-13c1-49da-9bcb-f650b0604054>;
               skos:prefLabel ?label;
               mu:uuid ?uuid.
 
             FILTER EXISTS {
               ?cb <http://www.w3.org/ns/org#hasSubOrganization> ?sender;
-                <http://data.vlaanderen.be/ns/besluit#classificatie>
+                <http://www.w3.org/ns/org#classification>
                   <http://data.vlaanderen.be/id/concept/BestuurseenheidClassificatieCode/f9cac08a-13c1-49da-9bcb-f650b0604054>
             }
           } UNION {
@@ -42,7 +42,7 @@ let rule = {
 
             FILTER EXISTS {
               ?cb <http://www.w3.org/ns/org#hasSubOrganization> ?sender;
-                <http://data.vlaanderen.be/ns/besluit#classificatie>
+                <http://www.w3.org/ns/org#classification>
                   <http://data.vlaanderen.be/id/concept/BestuurseenheidClassificatieCode/f9cac08a-13c1-49da-9bcb-f650b0604054>
             }
           }
@@ -73,7 +73,7 @@ rule = {
             ${toezichthoudendeQuerySnippet()}
             FILTER NOT EXISTS {
               ?cb <http://www.w3.org/ns/org#hasSubOrganization> ?sender;
-                <http://data.vlaanderen.be/ns/besluit#classificatie>
+                <http://www.w3.org/ns/org#classification>
                   <http://data.vlaanderen.be/id/concept/BestuurseenheidClassificatieCode/f9cac08a-13c1-49da-9bcb-f650b0604054>.
             }
           } UNION {
@@ -84,7 +84,7 @@ rule = {
 
             FILTER NOT EXISTS {
               ?cb <http://www.w3.org/ns/org#hasSubOrganization> ?sender;
-                <http://data.vlaanderen.be/ns/besluit#classificatie>
+                <http://www.w3.org/ns/org#classification>
                   <http://data.vlaanderen.be/id/concept/BestuurseenheidClassificatieCode/f9cac08a-13c1-49da-9bcb-f650b0604054>.
             }
           } UNION {
@@ -97,7 +97,7 @@ rule = {
 
             FILTER NOT EXISTS {
               ?cb <http://www.w3.org/ns/org#hasSubOrganization> ?sender;
-                <http://data.vlaanderen.be/ns/besluit#classificatie>
+                <http://www.w3.org/ns/org#classification>
                   <http://data.vlaanderen.be/id/concept/BestuurseenheidClassificatieCode/f9cac08a-13c1-49da-9bcb-f650b0604054>.
             }
           }

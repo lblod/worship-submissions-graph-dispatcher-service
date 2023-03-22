@@ -56,7 +56,7 @@ let rule = {
         }
 
         ?aboutEenheid a ?worshipType;
-          <http://data.vlaanderen.be/ns/besluit#classificatie> ?worshipClassifications.
+          <http://www.w3.org/ns/org#classification> ?worshipClassifications.
 
        {
          ?aboutEenheid mu:uuid ?uuid;

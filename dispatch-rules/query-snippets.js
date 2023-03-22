@@ -8,7 +8,7 @@ export const toezichthoudendeQuerySnippet = () => `
             a <http://data.lblod.info/vocabularies/erediensten/BetrokkenLokaleBesturen>.
 
           ?bestuurseenheid <http://data.lblod.info/vocabularies/erediensten/betrokkenBestuur> ?betrokkenBestuur;
-            <http://data.vlaanderen.be/ns/besluit#classificatie> ?classificatie;
+            <http://www.w3.org/ns/org#classification> ?classificatie;
             mu:uuid ?uuid;
             <http://www.w3.org/2004/02/skos/core#prefLabel> ?label.
 `;
