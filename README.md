@@ -44,7 +44,6 @@ export default [
 ORG_GRAPH_BASE : The base uri of the org graph; defaults to 'http://mu.semte.ch/graphs/organizations';
 ORG_GRAPH_SUFFIX : The postfix of the org-graph  defaults to 'ABB_databankErediensten_LB_CompEnts_gebruiker';
 DISPATCH_SOURCE_GRAPH : The source graph of the submissions defaults to 'http://mu.semte.ch/graphs/temp/for-dispatch';
-DISPATCH_SOURCE_GRAPH_FILES: The source graph of the files for the submissions defaults to 'http://mu.semte.ch/graphs/temp/original-physical-files-data';
 HEALING_CRON : cron pattern for healing defaults to '00 07 * * 06'; //Weekly on saturday
 ENABLE_HEALING : enables healing, defaults to false
 ```

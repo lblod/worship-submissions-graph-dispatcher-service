@@ -16,7 +16,7 @@ import {
 } from "./util/queries";
 import dispatchRules from "./dispatch-rules/entrypoint";
 import exportConfig from "./export-config";
-import { DISPATCH_SOURCE_GRAPH, ENABLE_HEALING, HEALING_CRON, DISPATCH_SOURCE_GRAPH_FILES } from './config';
+import { DISPATCH_SOURCE_GRAPH, ENABLE_HEALING, HEALING_CRON, ORG_GRAPH_BASE, ORG_GRAPH_SUFFIX } from './config';
 
 const processSubjectsQueue = new ProcessingQueue('submissions-dispatch-queue');
 
@@ -202,7 +202,8 @@ async function healSubmission( submission ) {
       );
       relatedSubjects = [ ...relatedSubjects, ...subjects ];
     }
-    await removeSubjects([submission, ...relatedSubjects], [ DISPATCH_SOURCE_GRAPH, DISPATCH_SOURCE_GRAPH_FILES ]);
+    await removeSubjects([submission, ...relatedSubjects],
+                         ORG_GRAPH_BASE + '/*/' + ORG_GRAPH_SUFFIX);
     await processSubject(submission);
   } catch (e) {
     console.error(`Error while processing a subject: ${e.message ? e.message : e}`);
