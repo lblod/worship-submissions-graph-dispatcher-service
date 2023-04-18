@@ -203,7 +203,7 @@ async function healSubmission( submission ) {
       relatedSubjects = [ ...relatedSubjects, ...subjects ];
     }
     await removeSubjects([submission, ...relatedSubjects],
-                         ORG_GRAPH_BASE + '/*/' + ORG_GRAPH_SUFFIX);
+                         ORG_GRAPH_BASE + '/.*/' + ORG_GRAPH_SUFFIX);
     await processSubject(submission);
   } catch (e) {
     console.error(`Error while processing a subject: ${e.message ? e.message : e}`);
