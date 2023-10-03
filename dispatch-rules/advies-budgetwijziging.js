@@ -43,18 +43,8 @@ let rule = {
           ?centraalBestuurVanDeEredienst org:hasSubOrganization ?aboutEenheid.
         }
 
-        VALUES ?worshipType {
-          ere:CentraalBestuurVanDeEredienst
-          ere:BestuurVanDeEredienst
-        }
-
-        VALUES ?worshipClassifications {
-          <http://data.vlaanderen.be/id/concept/BestuurseenheidClassificatieCode/66ec74fd-8cfc-4e16-99c6-350b35012e86>
-          <http://data.vlaanderen.be/id/concept/BestuurseenheidClassificatieCode/f9cac08a-13c1-49da-9bcb-f650b0604054>
-        }
-
-        ?aboutEenheid a ?worshipType;
-          besluit:classificatie ?worshipClassifications.
+        ?aboutEenheid a ere:BestuurVanDeEredienst;
+          besluit:classificatie <http://data.vlaanderen.be/id/concept/BestuurseenheidClassificatieCode/66ec74fd-8cfc-4e16-99c6-350b35012e86>.
 
         BIND (IF(BOUND(?centraalBestuurVanDeEredienst), ?centraalBestuurVanDeEredienst, ?aboutEenheid) AS ?receiver)
        {
