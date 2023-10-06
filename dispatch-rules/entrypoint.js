@@ -12,6 +12,13 @@ import adviesMeerjarenplanwijzigingRules from './advies-meerjarenplanwijziging';
 
 import besluitMeerjarenplanwijzigingRules from './besluit-meerjarenplanwijziging';
 
+import erekenningReguliereProcedure from './erekenning-reguliere-procedure';
+import naamswijziging from './naamswijziging';
+import opheffingVanAnnexeKerkenEnKapelanijen from './opheffing-van-annexe-kerken-en-kapelanijen';
+import wijzigingGebiedsomschrijving from './wijziging-gebiedsomschrijving';
+import samenvoeging from './samenvoeging';
+
+
 /*
  * This file exports a list of rule objects, which helps deduce who the targets are for a
  * a specific submission.
@@ -41,7 +48,12 @@ const rules = [
   ...besluitBudgetwijzigingRules,
   ...meerjarenplanwijzigingRules,
   ...adviesMeerjarenplanwijzigingRules,
-  ...besluitMeerjarenplanwijzigingRules
+  ...besluitMeerjarenplanwijzigingRules,
+  ...erekenningReguliereProcedure,
+  ...naamswijziging,
+  ...opheffingVanAnnexeKerkenEnKapelanijen,
+  ...samenvoeging,
+  ...wijzigingGebiedsomschrijving
 ];
 
 export default rules;
