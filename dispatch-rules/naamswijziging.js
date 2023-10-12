@@ -6,6 +6,7 @@ const rules = [];
  *--------------------------
  * -SENDER-: <http://data.lblod.info/id/representatieveOrganen/e224c637ba8bb0e5dfbb87da225b4652> Executief van de Moslims van België
  * RO: <http://data.lblod.info/id/representatieveOrganen/e224c637ba8bb0e5dfbb87da225b4652> Executief van de Moslims van België
+ * PG: <http://data.lblod.info/id/bestuurseenheden/141d9d6b-54af-4d17-b313-8d1c30bc3f5b> ABB
 **/
 let rule = {
   documentType: 'https://data.vlaanderen.be/id/concept/BesluitDocumentType/d611364b-007b-49a7-b2bf-b8f4e5568777', // Naamswijziging
@@ -32,7 +33,8 @@ let rule = {
         ?formData a <http://lblod.data.gift/vocabularies/automatische-melding/FormData>.
 
          VALUES ?bestuurseenheid {
-           ${sparqlEscapeUri(sender)}
+          <http://data.lblod.info/id/bestuurseenheden/141d9d6b-54af-4d17-b313-8d1c30bc3f5b>
+          ${sparqlEscapeUri(sender)}
          }
 
         BIND(<http://data.lblod.info/vocabularies/erediensten/RepresentatiefOrgaan> as ?worshipType)
