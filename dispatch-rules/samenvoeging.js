@@ -32,18 +32,21 @@ let rule = {
 
         ?formData a <http://lblod.data.gift/vocabularies/automatische-melding/FormData>.
 
-         VALUES ?bestuurseenheid {
+        VALUES ?bestuurseenheid {
           <http://data.lblod.info/id/bestuurseenheden/141d9d6b-54af-4d17-b313-8d1c30bc3f5b>
           ${sparqlEscapeUri(sender)}
-         }
-
-        BIND(<http://data.lblod.info/vocabularies/erediensten/RepresentatiefOrgaan> as ?worshipType)
-        BIND(<http://data.vlaanderen.be/id/concept/BestuurseenheidClassificatieCode/36372fad-0358-499c-a4e3-f412d2eae213> as ?worshipClassification)
-
-        ?bestuurseenheid a ?worshipType ;
-          mu:uuid ?uuid;
-          besluit:classificatie ?worshipClassification;
-          skos:prefLabel ?label.
+        }
+        {
+          ?bestuurseenheid mu:uuid ?uuid;
+            skos:prefLabel ?label.
+        } UNION {
+          BIND(<http://data.lblod.info/vocabularies/erediensten/RepresentatiefOrgaan> as ?worshipType)
+          BIND(<http://data.vlaanderen.be/id/concept/BestuurseenheidClassificatieCode/36372fad-0358-499c-a4e3-f412d2eae213> as ?worshipClassification)
+          ?bestuurseenheid a ?worshipType ;
+            mu:uuid ?uuid;
+            besluit:classificatie ?worshipClassification;
+            skos:prefLabel ?label.
+        }
       }
     `;
   }
