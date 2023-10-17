@@ -9,8 +9,15 @@ import adviesBudgetwijzigingRules from './advies-budgetwijziging';
 import besluitBudgetwijzigingRules from './besluit-budgetwijziging';
 import meerjarenplanwijzigingRules from './meerjarenplanwijziging';
 import adviesMeerjarenplanwijzigingRules from './advies-meerjarenplanwijziging';
-
 import besluitMeerjarenplanwijzigingRules from './besluit-meerjarenplanwijziging';
+import aanvraagDesaffectatiePresbyteriaKerken from './aanvraag-desaffectatie-presbyteria-kerken';
+import opvragenBijkomendeInlichtingenEredienstbesturen from './opvragen-bijkomende-inlichtingen-eredienstbesturen';
+import reactieOpOpvragenBijkomendeInlichtingenDoorDeToezichthouderAanEeEredienstbesturen from './reactie-op-opvragen-bijkomende-inlichtingen-door-de-toezichthouder-aan-de-eredienstbesturen';
+import erekenningReguliereProcedure from './erekenning-reguliere-procedure';
+import naamswijziging from './naamswijziging';
+import opheffingVanAnnexeKerkenEnKapelanijen from './opheffing-van-annexe-kerken-en-kapelanijen';
+import wijzigingGebiedsomschrijving from './wijziging-gebiedsomschrijving';
+import samenvoeging from './samenvoeging';
 
 /*
  * This file exports a list of rule objects, which helps deduce who the targets are for a
@@ -41,7 +48,15 @@ const rules = [
   ...besluitBudgetwijzigingRules,
   ...meerjarenplanwijzigingRules,
   ...adviesMeerjarenplanwijzigingRules,
-  ...besluitMeerjarenplanwijzigingRules
+  ...besluitMeerjarenplanwijzigingRules,
+  ...aanvraagDesaffectatiePresbyteriaKerken,
+  ...opvragenBijkomendeInlichtingenEredienstbesturen,
+  ...reactieOpOpvragenBijkomendeInlichtingenDoorDeToezichthouderAanEeEredienstbesturen,
+  ...erekenningReguliereProcedure,
+  ...naamswijziging,
+  ...opheffingVanAnnexeKerkenEnKapelanijen,
+  ...samenvoeging,
+  ...wijzigingGebiedsomschrijving
 ];
 
 export default rules;
