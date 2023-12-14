@@ -246,11 +246,6 @@ rule = {
       SELECT DISTINCT ?bestuurseenheid ?uuid ?label WHERE {
         BIND(${sparqlEscapeUri(sender)} as ?sender)
         {
-          FILTER NOT EXISTS {
-            ?centraalBestuur org:hasSubOrganization ?sender ;
-              besluit:classificatie <http://data.vlaanderen.be/id/concept/BestuurseenheidClassificatieCode/f9cac08a-13c1-49da-9bentraalBestuur-f650b0604054> .
-          }
-        } UNION {
           ?bestuurseenheid org:linkedTo ?sender ;
             mu:uuid ?uuid ;
             skos:prefLabel ?label ;
@@ -300,12 +295,8 @@ rule = {
       SELECT DISTINCT ?bestuurseenheid ?uuid ?label WHERE {
         BIND(${sparqlEscapeUri(sender)} as ?sender)
         {
-          FILTER EXISTS {
-            ?centraalBestuur org:hasSubOrganization ?sender ;
-              besluit:classificatie <http://data.vlaanderen.be/id/concept/BestuurseenheidClassificatieCode/f9cac08a-13c1-49da-9bcb-f650b0604054> .
-          }
-        } UNION {
           ?bestuurseenheid org:hasSubOrganization ?sender ;
+            besluit:classificatie <http://data.vlaanderen.be/id/concept/BestuurseenheidClassificatieCode/f9cac08a-13c1-49da-9bcb-f650b0604054>;
             mu:uuid ?uuid ;
             skos:prefLabel ?label ;
             a ere:CentraalBestuurVanDeEredienst  .
@@ -316,11 +307,6 @@ rule = {
 
           ?bestuurseenheid skos:prefLabel ?label ;
             mu:uuid ?uuid.
-
-          FILTER EXISTS {
-            ?centraalBestuur org:hasSubOrganization ?sender ;
-              besluit:classificatie <http://data.vlaanderen.be/id/concept/BestuurseenheidClassificatieCode/f9cac08a-13c1-49da-9bcb-f650b0604054> .
-          }
         }
       }
     `;
