@@ -1,5 +1,4 @@
 import { sparqlEscapeUri } from "mu";
-import { toezichthoudendeQuerySnippet } from "./query-snippets";
 
 const rules = [];
 
@@ -42,7 +41,7 @@ let rule = {
         ]
           .indexOf(eenheidClass) > -1 ; 
     },
-    destinationInfoQuery: (sender) => {
+    destinationInfoQuery: (sender, submission) => {
         return `
           PREFIX mu: <http://mu.semte.ch/vocabularies/core/>
           PREFIX org: <http://www.w3.org/ns/org#>
@@ -50,18 +49,42 @@ let rule = {
 
           SELECT DISTINCT ?bestuurseenheid ?uuid ?label WHERE {
             BIND(${sparqlEscapeUri(sender)} as ?sender)
+            BIND(${sparqlEscapeUri(submission)} as ?submission)
+
+            ?submission a <http://rdf.myexperiment.org/ontologies/base/Submission>;
+              <http://purl.org/pav/createdBy> ?sender;
+              <http://www.w3.org/ns/prov#generated> ?formData.
+
+            ?formData a <http://lblod.data.gift/vocabularies/automatische-melding/FormData>;
+              <http://data.europa.eu/eli/ontology#is_about> ?aboutEenheid.
+
+            VALUES ?worshipType {
+              <http://data.lblod.info/vocabularies/erediensten/CentraalBestuurVanDeEredienst>
+              <http://data.lblod.info/vocabularies/erediensten/BestuurVanDeEredienst>
+            }
+
+            VALUES ?worshipClassifications {
+              <http://data.vlaanderen.be/id/concept/BestuurseenheidClassificatieCode/66ec74fd-8cfc-4e16-99c6-350b35012e86>
+              <http://data.vlaanderen.be/id/concept/BestuurseenheidClassificatieCode/f9cac08a-13c1-49da-9bcb-f650b0604054>
+            }
+
+            ?aboutEenheid a ?worshipType;
+              <http://data.vlaanderen.be/ns/besluit#classificatie> ?worshipClassifications.
+
             {
-              ${toezichthoudendeQuerySnippet()}
+              ?aboutEenheid mu:uuid ?uuid;
+                skos:prefLabel ?label.
+              BIND(?aboutEenheid as ?bestuurseenheid)
             } UNION {
               VALUES ?bestuurseenheid {
                 <http://data.lblod.info/id/bestuurseenheden/141d9d6b-54af-4d17-b313-8d1c30bc3f5b>
                 ${sparqlEscapeUri(sender)}
               }
               ?bestuurseenheid mu:uuid ?uuid;
-                skos:prefLabel ?label.
+                  skos:prefLabel ?label.
             }
           }
-        `;
+    `;
     },
 };
 rules.push(rule);
