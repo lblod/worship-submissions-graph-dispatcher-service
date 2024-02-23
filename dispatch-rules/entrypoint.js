@@ -18,6 +18,8 @@ import naamswijziging from './naamswijziging';
 import opheffingVanAnnexeKerkenEnKapelanijen from './opheffing-van-annexe-kerken-en-kapelanijen';
 import wijzigingGebiedsomschrijving from './wijziging-gebiedsomschrijving';
 import samenvoeging from './samenvoeging';
+import meldingOnvolledigheidInzendingEredienstbestuur from './melding-onvolledigheid-inzending-eredienstbestuur';
+import opstartBeroepsprocedureNaarAanleidingVanEenBeslissing from './opstart-beroepsprocedure-naar-aanleiding-van-een-beslissing';
 
 /*
  * This file exports a list of rule objects, which helps deduce who the targets are for a
@@ -56,7 +58,9 @@ const rules = [
   ...naamswijziging,
   ...opheffingVanAnnexeKerkenEnKapelanijen,
   ...samenvoeging,
-  ...wijzigingGebiedsomschrijving
+  ...wijzigingGebiedsomschrijving,
+  ...meldingOnvolledigheidInzendingEredienstbestuur,
+  ...opstartBeroepsprocedureNaarAanleidingVanEenBeslissing
 ];
 
 export default rules;
