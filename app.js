@@ -25,6 +25,8 @@ import { DISPATCH_SOURCE_GRAPH,
        } from './config';
 
 const normalQueue = new ProcessingQueue('normal-operation-queue');
+
+console.log(`The healing pool will consist of ${NUMBER_OF_HEALING_QUEUES} queues`);
 const healingQueuePool = Array.from(
   { length: NUMBER_OF_HEALING_QUEUES },
   (_, index) => new ProcessingQueue(`healing-queue-${index}`)
