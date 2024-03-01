@@ -2,7 +2,7 @@ import bodyParser from "body-parser";
 import { CronJob } from 'cron';
 import { app } from "mu";
 import { Delta } from "./lib/delta";
-import { ProcessingQueue } from './lib/processing-queue';
+import { ProcessingQueue, distributeAndSchedule } from './lib/processing-queue';
 import {
   sendErrorAlert,
   getTypesForSubject,
@@ -16,9 +16,19 @@ import {
 } from "./util/queries";
 import dispatchRules from "./dispatch-rules/entrypoint";
 import exportConfig from "./export-config";
-import { DISPATCH_SOURCE_GRAPH, ENABLE_HEALING, HEALING_CRON, ORG_GRAPH_BASE, ORG_GRAPH_SUFFIX } from './config';
+import { DISPATCH_SOURCE_GRAPH,
+         ENABLE_HEALING,
+         HEALING_CRON,
+         ORG_GRAPH_BASE,
+         ORG_GRAPH_SUFFIX,
+         NUMBER_OF_HEALING_QUEUES
+       } from './config';
 
 const normalQueue = new ProcessingQueue('normal-operation-queue');
+const healingQueuePool = Array.from(
+  { length: NUMBER_OF_HEALING_QUEUES },
+  (_, index) => new ProcessingQueue(`healing-queue-${index}`)
+);
 
 console.log(`ENABLE_HEALING is set to ${ENABLE_HEALING}`);
 if(ENABLE_HEALING) {
@@ -29,8 +39,10 @@ if(ENABLE_HEALING) {
 
     const submissions = await getSubmissions();
     for(const submission of submissions) {
-      processSubjectsQueue
-        .addJob(async () => await healSubmission(submission));
+      distributeAndSchedule(
+        healingQueuePool,
+        async () => await healSubmission(submission)
+      );
     }
   }, null, true);
 }
@@ -98,7 +110,10 @@ app.post("/delta", async function (req, res) {
 app.get("/manual-dispatch", async function (req, res) {
   if(req.query.subject) {
     console.log(`Only one subject to (re-)dispatch: ${req.query.subject}`);
-    processSubjectsQueue.addJob(async () => await processSubject(req.query.subject));
+    distributeAndSchedule(
+      healingQueuePool,
+      async () => await processSubject(req.query.subject)
+    );
   }
   else {
     console.log(`Dispatching all submissions (again) from GRAPH ${DISPATCH_SOURCE_GRAPH}`);
@@ -106,7 +121,10 @@ app.get("/manual-dispatch", async function (req, res) {
     console.log(`Found ${submissions.length} submissions to (re-)dispatch.`);
     console.log(`This might take a while; big amount can take big time`);
     for(const submission of submissions) {
-      processSubjectsQueue.addJob(async () => await processSubject(submission));
+      distributeAndSchedule(
+        healingQueuePool,
+        async () => await processSubject(submission)
+      );
     }
   }
   console.log(`Scheduling done`);
@@ -142,7 +160,10 @@ app.get("/heal-submission", async function (req, res) {
 
   if(req.query.subject) {
     console.log(`Only one submission to (re-)dispatch: ${req.query.subject}`);
-    processSubjectsQueue.addJob(async () => await healSubmission(req.query.subject));
+    distributeAndSchedule(
+      healingQueuePool,
+      async () => await healSubmission(req.query.subject)
+    );
     console.log(`Scheduling done`);
     return res.status(201).send();
   }
@@ -162,7 +183,10 @@ app.get("/heal-submission", async function (req, res) {
   }
 
   for(const submission of submissions) {
-    processSubjectsQueue.addJob(async () => await healSubmission(submission));
+    distributeAndSchedule(
+      healingQueuePool,
+      async () => await healSubmission(submission)
+    );
   }
 
   return res.status(201).send();
