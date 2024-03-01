@@ -3,4 +3,4 @@ export const ORG_GRAPH_SUFFIX = process.env.ORG_GRAPH_SUFFIX || 'ABB_databankEre
 export const DISPATCH_SOURCE_GRAPH = process.env.DISPATCH_SOURCE_GRAPH || 'http://mu.semte.ch/graphs/temp/for-dispatch';
 export const HEALING_CRON = process.env.HEALING_CRON || '00 07 * * 06'; //Weekly on saturday
 export const ENABLE_HEALING = process.env.ENABLE_HEALING == "true";
-export const NUMBER_OF_HEALING_QUEUES = parseInt(process.env.NUMBER_OF_HEALING_QUEUES || 1 );
+export const NUMBER_OF_HEALING_QUEUES = parseInt(process.env.NUMBER_OF_HEALING_QUEUES || 1);
