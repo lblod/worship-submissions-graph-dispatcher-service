@@ -18,7 +18,7 @@ import dispatchRules from "./dispatch-rules/entrypoint";
 import exportConfig from "./export-config";
 import { DISPATCH_SOURCE_GRAPH, ENABLE_HEALING, HEALING_CRON, ORG_GRAPH_BASE, ORG_GRAPH_SUFFIX } from './config';
 
-const processSubjectsQueue = new ProcessingQueue('submissions-dispatch-queue');
+const normalQueue = new ProcessingQueue('normal-operation-queue');
 
 console.log(`ENABLE_HEALING is set to ${ENABLE_HEALING}`);
 if(ENABLE_HEALING) {
@@ -62,7 +62,7 @@ app.post("/delta", async function (req, res) {
   const uniqueSubjects = [ ...new Set(subjects) ];
 
   for(const subject of uniqueSubjects) {
-    processSubjectsQueue.addJob(async () => await processSubject(subject));
+    normalQueue.addJob(async () => await processSubject(subject));
   }
   return res.status(200).send();
 });
