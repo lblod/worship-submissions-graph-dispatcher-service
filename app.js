@@ -87,7 +87,7 @@ app.get("/manual-dispatch", async function (req, res) {
   }
   else {
     console.log(`Dispatching all submissions (again) from GRAPH ${DISPATCH_SOURCE_GRAPH}`);
-    const submissions = await getSubmissions(DISPATCH_SOURCE_GRAPH);
+    const submissions = await getSubmissions( { inGraph: DISPATCH_SOURCE_GRAPH });
     console.log(`Found ${submissions.length} submissions to (re-)dispatch.`);
     console.log(`This might take a while; big amount can take big time`);
     for(const submission of submissions) {
@@ -106,20 +106,42 @@ app.get("/manual-dispatch", async function (req, res) {
  *  - something went wrong during the dispatch of a single submission
  */
 app.get("/heal-submission", async function (req, res) {
+
+  if(Object.keys(req.query || {}).length > 1) {
+    return res.status(406)
+      .send(
+        {
+          message: `Multiple query parameters not supported yet.`
+        }
+      );
+  }
+
   if(req.query.subject) {
     console.log(`Only one submission to (re-)dispatch: ${req.query.subject}`);
     processSubjectsQueue.addJob(async () => await healSubmission(req.query.subject));
     console.log(`Scheduling done`);
     return res.status(201).send();
   }
+
+  let submissions;
+
+  if(req.query.sentDateSince) {
+    let sentDateSince = new Date(req.query.sentDateSince).toISOString().split('T')[0];
+    console.log(`Received "?sentDateSince" paramater: ${req.query.sentDateSince}`);
+    console.log(`Converted to short date: ${sentDateSince}`);
+    console.log(`Healing will be applied submissions with sent date >= ${sentDateSince}`);
+    submissions = await getSubmissions( { sentDateSince } );
+  }
   else {
     console.log(`No, query param found, going to heal all submissions`);
-    const submissions = await getSubmissions();
-    for(const submission of submissions) {
-      processSubjectsQueue.addJob(async () => await healSubmission(submission));
-    }
-    return res.status(201).send();
+    submissions = await getSubmissions();
   }
+
+  for(const submission of submissions) {
+    processSubjectsQueue.addJob(async () => await healSubmission(submission));
+  }
+
+  return res.status(201).send();
 });
 
 /***********************************************
