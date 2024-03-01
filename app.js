@@ -80,6 +80,21 @@ app.post("/delta", async function (req, res) {
  *  - something went wrong during the initial sync and it needs to be restarted.
  *  - something went wrong during the dispatch of a single submission
  */
+
+/**
+ * Triggers the dispatch process manually.
+ *  This is an operation is intended for scenarios such as debugging, restarting failed initial syncs,
+ *  or re-dispatching submissions that encountered issues during dispatching.
+ *
+ * @route GET /manual-dispatch
+ * @group Dispatch - Operations related to the manual dispatch of submissions
+ * @param {string} [subject] - The unique identifier of a specific submission to dispatch. If provided, only this submission will be re-dispatched.
+ * @returns {Object} 201 - An empty response indicating that the dispatch process has been initiated.
+ * @example request - Example of dispatching a specific submission
+ * GET /manual-dispatch?subject=sub123
+ * @example request - Example of dispatching all submissions
+ * GET /manual-dispatch
+ */
 app.get("/manual-dispatch", async function (req, res) {
   if(req.query.subject) {
     console.log(`Only one subject to (re-)dispatch: ${req.query.subject}`);
@@ -98,12 +113,21 @@ app.get("/manual-dispatch", async function (req, res) {
   return res.status(201).send();
 });
 
-/*
- * Triggers the healing flow for a single submission.
- * Clears the submission from all its target graphs, and starts the dispatching again
- * Uses cases:
- *  - debugging
- *  - something went wrong during the dispatch of a single submission
+/**
+ * Triggers the healing flow for submissions.
+ * This process clears the submission from all its target graphs and restarts the dispatching process.
+ * It's useful for debugging or when something goes wrong during the dispatch of a submission.
+ *
+ * @route GET /heal-submission
+ * @param {string} [subject] - The unique identifier of the submission to heal. If provided, only this submission will be healed.
+ * @param {string} [sentDateSince] - The start date from which submissions will be healed, in YYYY-MM-DD format.
+ *   If provided, all submissions sent on or after this date will be healed. If omitted, all submissions will be healed.
+ * @returns {Object} 201 - An empty response indicating that the healing process has been initiated.
+ * @returns {Error} 406 - An error response indicating that multiple query parameters are not supported.
+ * @example request - Example of healing a specific submission
+ * GET /heal-submission?subject=sub123
+ * @example request - Example of healing submissions from a specific date
+ * GET /heal-submission?sentDateSince=2023-01-01
  */
 app.get("/heal-submission", async function (req, res) {
 
