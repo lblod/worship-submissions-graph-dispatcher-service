@@ -1,4 +1,4 @@
-s# worship-submissions-graph-dispatcher-service
+# worship-submissions-graph-dispatcher-service
 
 Microservice that listens to the delta notifier and dispatches submissions (and related) to the correct organisation graphs.
 By correct: we mean as defined by business rules. See code for exact implementation.
