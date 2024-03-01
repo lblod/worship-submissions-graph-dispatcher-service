@@ -72,14 +72,6 @@ app.post("/delta", async function (req, res) {
  * Not meant to be exposed
  * Note: GET calls with side effects (sorry)
  ***********************************************/
-/*
- * Triggers the dispatch manually.
- * Append only operation.
- * Uses cases:
- *  - debugging
- *  - something went wrong during the initial sync and it needs to be restarted.
- *  - something went wrong during the dispatch of a single submission
- */
 
 /**
  * Triggers the dispatch process manually.
