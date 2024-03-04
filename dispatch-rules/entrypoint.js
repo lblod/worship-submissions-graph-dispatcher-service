@@ -20,6 +20,7 @@ import wijzigingGebiedsomschrijving from './wijziging-gebiedsomschrijving';
 import samenvoeging from './samenvoeging';
 import meldingOnvolledigheidInzendingEredienstbestuur from './melding-onvolledigheid-inzending-eredienstbestuur';
 import opstartBeroepsprocedureNaarAanleidingVanEenBeslissing from './opstart-beroepsprocedure-naar-aanleiding-van-een-beslissing';
+import afschriftErkenningszoekendeBesturen from './afschrift-erkenningszoekende-besturen';
 
 /*
  * This file exports a list of rule objects, which helps deduce who the targets are for a
@@ -60,7 +61,8 @@ const rules = [
   ...samenvoeging,
   ...wijzigingGebiedsomschrijving,
   ...meldingOnvolledigheidInzendingEredienstbestuur,
-  ...opstartBeroepsprocedureNaarAanleidingVanEenBeslissing
+  ...opstartBeroepsprocedureNaarAanleidingVanEenBeslissing,
+  ...afschriftErkenningszoekendeBesturen
 ];
 
 export default rules;
