@@ -145,7 +145,7 @@ app.get("/heal-submission", async function (req, res) {
     let sentDateSince = new Date(req.query.sentDateSince).toISOString().split('T')[0];
     console.log(`Received "?sentDateSince" paramater: ${req.query.sentDateSince}`);
     console.log(`Converted to short date: ${sentDateSince}`);
-    console.log(`Healing will be applied submissions with sent date >= ${sentDateSince}`);
+    console.log(`Healing will be applied to submissions with sent date >= ${sentDateSince}`);
     submissions = await getSubmissions( { sentDateSince } );
   }
   else {
