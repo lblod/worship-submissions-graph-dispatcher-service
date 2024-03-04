@@ -1,4 +1,4 @@
-import {  sparqlEscapeUri, sparqlEscapeString, sparqlEscapeDateTime, uuid } from "mu";
+import {  sparqlEscapeUri, sparqlEscapeString, sparqlEscapeDateTime, sparqlEscapeDate, uuid } from "mu";
 import { querySudo as query, updateSudo as update } from "@lblod/mu-auth-sudo";
 import exportConfig from "../export-config";
 import { parseResult } from './utils';
@@ -130,9 +130,9 @@ export async function sendErrorAlert({message, detail, reference}) {
   }
 }
 
-export async function getSubmissions( inGraph = null ) {
+export async function getSubmissions( { inGraph, sentDateSince } = {}) {
   const bindGraph = inGraph ? `BIND(${sparqlEscapeUri(inGraph)} as ?graph)` : '';
-  const queryStr = `
+  let queryStr = `
     PREFIX meb: <http://rdf.myexperiment.org/ontologies/base/>
     SELECT DISTINCT ?submission WHERE {
        ${bindGraph}
@@ -141,6 +141,19 @@ export async function getSubmissions( inGraph = null ) {
        }
     }
   `;
+  if(sentDateSince) {
+    queryStr = `
+      PREFIX meb: <http://rdf.myexperiment.org/ontologies/base/>
+       SELECT DISTINCT ?submission WHERE {
+         ${bindGraph}
+         GRAPH ?graph {
+           ?submission a meb:Submission;
+             <http://www.semanticdesktop.org/ontologies/2007/03/22/nmo#sentDate> ?sentDate.
+         }
+         FILTER(?sentDate >= ${sparqlEscapeDate(sentDateSince)})
+      }
+  `;
+  }
   const result = await query(queryStr);
   return parseResult(result).map(s => s.submission);
 }

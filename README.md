@@ -46,14 +46,26 @@ ORG_GRAPH_SUFFIX : The postfix of the org-graph  defaults to 'ABB_databankEredie
 DISPATCH_SOURCE_GRAPH : The source graph of the submissions defaults to 'http://mu.semte.ch/graphs/temp/for-dispatch';
 HEALING_CRON : cron pattern for healing defaults to '00 07 * * 06'; //Weekly on saturday
 ENABLE_HEALING : enables healing, defaults to false
+NUMBER_OF_HEALING_QUEUES: the number of healing queues availible, for parallel processing purposes. Defaults to '1'
 ```
 ## API
 ### POST /delta
 Triggers the preparation of a submission for the export when a resource is sent.
-### [DEBUG] GET /manual-dispatch?subject=http://bar
-Triggers a manual dispatch.
-Meant for debugging only.
-If no parameters are provided, will dispatch all submissions in DISPATCH_SOURCE_GRAPH.
-### [DEBUG] GET /heal-submission?subject=http://bar
-Triggers the healing of one submission, or all of them if no param is given
-Meant for debugging only.
+#### DEBUG API
+The debug API provides a set of endpoints designed to assist in troubleshooting and resolving issues related to the submission dispatch.
+Don't expose this API in production.
+##### GET `/heal-submission`
+This endpoint triggers the healing flow for submissions, clearing the submission from all its target graphs and restarting the dispatching process.
+
+**Usage:**
+- To heal a specific submission, provide `?subject=http://submissions/123`
+- To heal submissions sent from a specific sentDate, use `?sentDateSince` with the date in `YYYY-MM-DD` format.
+- If no query parameters are provided, the healing process will be applied to all submissions.
+
+#### GET `/manual-dispatch`
+
+This endpoint allows for the manual triggering of the dispatch process. It doesn't not clear data in the target graph. It does the dispatch process again.
+
+**Usage:**
+- To dispatch a specific submission, provide `?subject=http://submissions/123`
+- Without any query parameters, the endpoint will re-dispatch all submissions present in `DISPATCH_SOURCE_GRAPH`.
