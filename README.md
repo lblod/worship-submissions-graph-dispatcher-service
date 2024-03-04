@@ -46,6 +46,7 @@ ORG_GRAPH_SUFFIX : The postfix of the org-graph  defaults to 'ABB_databankEredie
 DISPATCH_SOURCE_GRAPH : The source graph of the submissions defaults to 'http://mu.semte.ch/graphs/temp/for-dispatch';
 HEALING_CRON : cron pattern for healing defaults to '00 07 * * 06'; //Weekly on saturday
 ENABLE_HEALING : enables healing, defaults to false
+NUMBER_OF_HEALING_QUEUES: the number of healing queues availible, for parallel processing purposes. Defaults to '1'
 ```
 ## API
 ### POST /delta
