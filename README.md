@@ -50,7 +50,7 @@ ENABLE_HEALING : enables healing, defaults to false
 ## API
 ### POST /delta
 Triggers the preparation of a submission for the export when a resource is sent.
-#### DEUBG API
+#### DEBUG API
 The debug API provides a set of endpoints designed to assist in troubleshooting and resolving issues related to the submission dispatch.
 Don't expose this API in production.
 ##### GET `/heal-submission`
