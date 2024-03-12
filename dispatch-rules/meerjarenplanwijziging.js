@@ -1,5 +1,5 @@
 import { sparqlEscapeUri } from "mu";
-import { toezichthoudendeQuerySnippet, repOrgQuerySnippet } from './query-snippets';
+import { toezichthoudendeQuerySnippet } from './query-snippets';
 
 const rules = [];
 
@@ -12,12 +12,13 @@ const rules = [];
 let rule = {
   documentType: 'https://data.vlaanderen.be/id/concept/BesluitType/f56c645d-b8e1-4066-813d-e213f5bc529f', // Meerjarenplan(wijziging)
   matchSentByEenheidClass: eenheidClass =>
-    eenheidClass == 'http://data.vlaanderen.be/id/concept/BestuurseenheidClassificatieCode/66ec74fd-8cfc-4e16-99c6-350b35012e86', //EB met CB
+    eenheidClass == 'http://data.vlaanderen.be/id/concept/BestuurseenheidClassificatieCode/66ec74fd-8cfc-4e16-99c6-350b35012e86', //EB met CB (Active)
   destinationInfoQuery: ( sender ) => {
     return `
         PREFIX mu: <http://mu.semte.ch/vocabularies/core/>
         PREFIX org: <http://www.w3.org/ns/org#>
         PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
+        PREFIX regorg: <http://www.w3.org/ns/regorg#>
 
         SELECT DISTINCT ?bestuurseenheid ?uuid ?label WHERE {
           BIND(${sparqlEscapeUri(sender)} as ?sender)
@@ -25,13 +26,15 @@ let rule = {
             ?bestuurseenheid org:hasSubOrganization ?sender;
             <http://data.vlaanderen.be/ns/besluit#classificatie>
               <http://data.vlaanderen.be/id/concept/BestuurseenheidClassificatieCode/f9cac08a-13c1-49da-9bcb-f650b0604054>;
+              regorg:orgStatus <http://lblod.data.gift/concepts/63cc561de9188d64ba5840a42ae8f0d6> ;
               skos:prefLabel ?label;
               mu:uuid ?uuid.
 
             FILTER EXISTS {
               ?cb <http://www.w3.org/ns/org#hasSubOrganization> ?sender;
                 <http://data.vlaanderen.be/ns/besluit#classificatie>
-                  <http://data.vlaanderen.be/id/concept/BestuurseenheidClassificatieCode/f9cac08a-13c1-49da-9bcb-f650b0604054>
+                  <http://data.vlaanderen.be/id/concept/BestuurseenheidClassificatieCode/f9cac08a-13c1-49da-9bcb-f650b0604054> ;
+                regorg:orgStatus <http://lblod.data.gift/concepts/63cc561de9188d64ba5840a42ae8f0d6> .
             }
           } UNION {
             VALUES ?bestuurseenheid {
@@ -44,7 +47,8 @@ let rule = {
             FILTER EXISTS {
               ?cb <http://www.w3.org/ns/org#hasSubOrganization> ?sender;
                 <http://data.vlaanderen.be/ns/besluit#classificatie>
-                  <http://data.vlaanderen.be/id/concept/BestuurseenheidClassificatieCode/f9cac08a-13c1-49da-9bcb-f650b0604054>
+                  <http://data.vlaanderen.be/id/concept/BestuurseenheidClassificatieCode/f9cac08a-13c1-49da-9bcb-f650b0604054> ;
+                  regorg:orgStatus <http://lblod.data.gift/concepts/63cc561de9188d64ba5840a42ae8f0d6> .
             }
           }
         }
@@ -69,6 +73,7 @@ rule = {
         PREFIX mu: <http://mu.semte.ch/vocabularies/core/>
         PREFIX org: <http://www.w3.org/ns/org#>
         PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
+        PREFIX regorg: <http://www.w3.org/ns/regorg#>
 
         SELECT DISTINCT ?bestuurseenheid ?uuid ?label WHERE {
           BIND(${sparqlEscapeUri(sender)} as ?sender)
@@ -77,7 +82,8 @@ rule = {
             FILTER NOT EXISTS {
               ?cb <http://www.w3.org/ns/org#hasSubOrganization> ?sender;
                 <http://data.vlaanderen.be/ns/besluit#classificatie>
-                  <http://data.vlaanderen.be/id/concept/BestuurseenheidClassificatieCode/f9cac08a-13c1-49da-9bcb-f650b0604054>.
+                  <http://data.vlaanderen.be/id/concept/BestuurseenheidClassificatieCode/f9cac08a-13c1-49da-9bcb-f650b0604054>;
+                regorg:orgStatus <http://lblod.data.gift/concepts/63cc561de9188d64ba5840a42ae8f0d6>.
             }
           } UNION {
             ?bestuurseenheid org:linkedTo ?sender ;
@@ -88,7 +94,8 @@ rule = {
             FILTER NOT EXISTS {
               ?cb <http://www.w3.org/ns/org#hasSubOrganization> ?sender;
                 <http://data.vlaanderen.be/ns/besluit#classificatie>
-                  <http://data.vlaanderen.be/id/concept/BestuurseenheidClassificatieCode/f9cac08a-13c1-49da-9bcb-f650b0604054>.
+                  <http://data.vlaanderen.be/id/concept/BestuurseenheidClassificatieCode/f9cac08a-13c1-49da-9bcb-f650b0604054>;
+                regorg:orgStatus <http://lblod.data.gift/concepts/63cc561de9188d64ba5840a42ae8f0d6>.
             }
           } UNION {
             VALUES ?bestuurseenheid {
@@ -102,7 +109,8 @@ rule = {
             FILTER NOT EXISTS {
               ?cb <http://www.w3.org/ns/org#hasSubOrganization> ?sender;
                 <http://data.vlaanderen.be/ns/besluit#classificatie>
-                  <http://data.vlaanderen.be/id/concept/BestuurseenheidClassificatieCode/f9cac08a-13c1-49da-9bcb-f650b0604054>.
+                  <http://data.vlaanderen.be/id/concept/BestuurseenheidClassificatieCode/f9cac08a-13c1-49da-9bcb-f650b0604054>;
+                regorg:orgStatus <http://lblod.data.gift/concepts/63cc561de9188d64ba5840a42ae8f0d6>.
             }
           }
         }
