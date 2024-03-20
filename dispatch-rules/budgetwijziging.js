@@ -11,25 +11,28 @@ const rules = [];
 **/
 let rule = {
   documentType: 'https://data.vlaanderen.be/id/concept/BesluitType/d463b6d1-c207-4c1a-8c08-f2c7dd1fa53b', // Budget(wijziging) - Indiening bij Centraal bestuur of Representatief orgaan - EB met CB 
-  matchSentByEenheidClass: eenheidClass => eenheidClass == 'http://data.vlaanderen.be/id/concept/BestuurseenheidClassificatieCode/66ec74fd-8cfc-4e16-99c6-350b35012e86', //EB met CB
+  matchSentByEenheidClass: eenheidClass => eenheidClass == 'http://data.vlaanderen.be/id/concept/BestuurseenheidClassificatieCode/66ec74fd-8cfc-4e16-99c6-350b35012e86', //EB met CB (Active)
   destinationInfoQuery: ( sender ) => {
     return `
         PREFIX mu: <http://mu.semte.ch/vocabularies/core/>
         PREFIX org: <http://www.w3.org/ns/org#>
         PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
         PREFIX besluit: <http://data.vlaanderen.be/ns/besluit#>
+        PREFIX regorg: <http://www.w3.org/ns/regorg#>
 
         SELECT DISTINCT ?bestuurseenheid ?uuid ?label WHERE {
           BIND(${sparqlEscapeUri(sender)} as ?sender)
           {
             ?bestuurseenheid org:hasSubOrganization ?sender;
               besluit:classificatie <http://data.vlaanderen.be/id/concept/BestuurseenheidClassificatieCode/f9cac08a-13c1-49da-9bcb-f650b0604054>;
+              regorg:orgStatus <http://lblod.data.gift/concepts/63cc561de9188d64ba5840a42ae8f0d6> ;
               skos:prefLabel ?label;
               mu:uuid ?uuid.
 
             FILTER EXISTS {
               ?cb org:hasSubOrganization ?sender;
-                besluit:classificatie <http://data.vlaanderen.be/id/concept/BestuurseenheidClassificatieCode/f9cac08a-13c1-49da-9bcb-f650b0604054>
+                regorg:orgStatus <http://lblod.data.gift/concepts/63cc561de9188d64ba5840a42ae8f0d6> ;
+                besluit:classificatie <http://data.vlaanderen.be/id/concept/BestuurseenheidClassificatieCode/f9cac08a-13c1-49da-9bcb-f650b0604054> .
             }
           } UNION {
             VALUES ?bestuurseenheid {
@@ -41,7 +44,8 @@ let rule = {
 
             FILTER EXISTS {
               ?cb org:hasSubOrganization ?sender;
-                besluit:classificatie <http://data.vlaanderen.be/id/concept/BestuurseenheidClassificatieCode/f9cac08a-13c1-49da-9bcb-f650b0604054>
+                regorg:orgStatus <http://lblod.data.gift/concepts/63cc561de9188d64ba5840a42ae8f0d6> ;
+                besluit:classificatie <http://data.vlaanderen.be/id/concept/BestuurseenheidClassificatieCode/f9cac08a-13c1-49da-9bcb-f650b0604054> .
             }
           }
         }
@@ -67,6 +71,7 @@ rule = {
         PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
         PREFIX besluit: <http://data.vlaanderen.be/ns/besluit#>
         PREFIX ere: <http://data.lblod.info/vocabularies/erediensten/>
+        PREFIX regorg: <http://www.w3.org/ns/regorg#>
 
         SELECT DISTINCT ?bestuurseenheid ?uuid ?label WHERE {
           BIND(${sparqlEscapeUri(sender)} as ?sender)
@@ -78,7 +83,8 @@ rule = {
 
             FILTER NOT EXISTS {
               ?cb org:hasSubOrganization ?sender;
-                besluit:classificatie <http://data.vlaanderen.be/id/concept/BestuurseenheidClassificatieCode/f9cac08a-13c1-49da-9bcb-f650b0604054>.
+                besluit:classificatie <http://data.vlaanderen.be/id/concept/BestuurseenheidClassificatieCode/f9cac08a-13c1-49da-9bcb-f650b0604054>;
+                regorg:orgStatus <http://lblod.data.gift/concepts/63cc561de9188d64ba5840a42ae8f0d6>.
             }
           } UNION {
             VALUES ?bestuurseenheid {
@@ -91,7 +97,8 @@ rule = {
 
             FILTER NOT EXISTS {
               ?cb org:hasSubOrganization ?sender;
-                besluit:classificatie <http://data.vlaanderen.be/id/concept/BestuurseenheidClassificatieCode/f9cac08a-13c1-49da-9bcb-f650b0604054>.
+                besluit:classificatie <http://data.vlaanderen.be/id/concept/BestuurseenheidClassificatieCode/f9cac08a-13c1-49da-9bcb-f650b0604054>;
+                regorg:orgStatus <http://lblod.data.gift/concepts/63cc561de9188d64ba5840a42ae8f0d6>.
             }
           }
         }
@@ -116,6 +123,7 @@ rule = {
         PREFIX org: <http://www.w3.org/ns/org#>
         PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
         PREFIX besluit: <http://data.vlaanderen.be/ns/besluit#>
+        PREFIX regorg: <http://www.w3.org/ns/regorg#>
 
         SELECT DISTINCT ?bestuurseenheid ?uuid ?label WHERE {
           BIND(${sparqlEscapeUri(sender)} as ?sender)
@@ -123,7 +131,8 @@ rule = {
             ${toezichthoudendeQuerySnippet()}
             FILTER NOT EXISTS {
               ?cb org:hasSubOrganization ?sender;
-                besluit:classificatie <http://data.vlaanderen.be/id/concept/BestuurseenheidClassificatieCode/f9cac08a-13c1-49da-9bcb-f650b0604054>.
+                besluit:classificatie <http://data.vlaanderen.be/id/concept/BestuurseenheidClassificatieCode/f9cac08a-13c1-49da-9bcb-f650b0604054>;
+                regorg:orgStatus <http://lblod.data.gift/concepts/63cc561de9188d64ba5840a42ae8f0d6>.
             }
           } UNION {
             VALUES ?bestuurseenheid {
@@ -136,7 +145,8 @@ rule = {
 
             FILTER NOT EXISTS {
               ?cb org:hasSubOrganization ?sender;
-                besluit:classificatie <http://data.vlaanderen.be/id/concept/BestuurseenheidClassificatieCode/f9cac08a-13c1-49da-9bcb-f650b0604054>.
+                besluit:classificatie <http://data.vlaanderen.be/id/concept/BestuurseenheidClassificatieCode/f9cac08a-13c1-49da-9bcb-f650b0604054>;
+                regorg:orgStatus <http://lblod.data.gift/concepts/63cc561de9188d64ba5840a42ae8f0d6>.
             }
           }
         }
@@ -242,6 +252,7 @@ rule = {
       PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
       PREFIX besluit: <http://data.vlaanderen.be/ns/besluit#>
       PREFIX ere: <http://data.lblod.info/vocabularies/erediensten/>
+      PREFIX regorg: <http://www.w3.org/ns/regorg#>
 
       SELECT DISTINCT ?bestuurseenheid ?uuid ?label WHERE {
         BIND(${sparqlEscapeUri(sender)} as ?sender)
@@ -253,7 +264,8 @@ rule = {
 
           FILTER NOT EXISTS {
             ?centraalBestuur org:hasSubOrganization ?sender ;
-              besluit:classificatie <http://data.vlaanderen.be/id/concept/BestuurseenheidClassificatieCode/f9cac08a-13c1-49da-9bcb-f650b0604054> .
+              besluit:classificatie <http://data.vlaanderen.be/id/concept/BestuurseenheidClassificatieCode/f9cac08a-13c1-49da-9bcb-f650b0604054> ;
+              regorg:orgStatus <http://lblod.data.gift/concepts/63cc561de9188d64ba5840a42ae8f0d6> .
           }
         } UNION {
           VALUES ?bestuurseenheid {
@@ -266,7 +278,8 @@ rule = {
 
           FILTER NOT EXISTS {
             ?centraalBestuur org:hasSubOrganization ?sender ;
-              besluit:classificatie <http://data.vlaanderen.be/id/concept/BestuurseenheidClassificatieCode/f9cac08a-13c1-49da-9bcb-f650b0604054> .
+              besluit:classificatie <http://data.vlaanderen.be/id/concept/BestuurseenheidClassificatieCode/f9cac08a-13c1-49da-9bcb-f650b0604054> ;
+              regorg:orgStatus <http://lblod.data.gift/concepts/63cc561de9188d64ba5840a42ae8f0d6> .
           }
         }
       }
@@ -282,7 +295,7 @@ rules.push(rule);
 * CB: <http://data.lblod.info/id/centraleBesturenVanDeEredienst/7f5475cfb202d12f54779f046441c9e1> CKB Deinze
 */
 rule = {
-  documentType: 'https://data.vlaanderen.be/id/concept/BesluitType/40831a2c-771d-4b41-9720-0399998f1873', // Budget EB with CB
+  documentType: 'https://data.vlaanderen.be/id/concept/BesluitType/40831a2c-771d-4b41-9720-0399998f1873', // Budget EB with CB (Active)
   matchSentByEenheidClass: eenheidClass => eenheidClass == 'http://data.vlaanderen.be/id/concept/BestuurseenheidClassificatieCode/66ec74fd-8cfc-4e16-99c6-350b35012e86', // Bestuur van de eredienst
   destinationInfoQuery: ( sender ) => {
     return `
@@ -291,6 +304,7 @@ rule = {
       PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
       PREFIX besluit: <http://data.vlaanderen.be/ns/besluit#>
       PREFIX ere: <http://data.lblod.info/vocabularies/erediensten/>
+      PREFIX regorg: <http://www.w3.org/ns/regorg#>
 
       SELECT DISTINCT ?bestuurseenheid ?uuid ?label WHERE {
         BIND(${sparqlEscapeUri(sender)} as ?sender)
@@ -299,6 +313,7 @@ rule = {
             besluit:classificatie <http://data.vlaanderen.be/id/concept/BestuurseenheidClassificatieCode/f9cac08a-13c1-49da-9bcb-f650b0604054>;
             mu:uuid ?uuid ;
             skos:prefLabel ?label ;
+            regorg:orgStatus <http://lblod.data.gift/concepts/63cc561de9188d64ba5840a42ae8f0d6> ;
             a ere:CentraalBestuurVanDeEredienst  .
         } UNION {
           VALUES ?bestuurseenheid {
