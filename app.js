@@ -9,14 +9,17 @@ import {
   getSubmissionForSubject,
   getSubmissionInfo,
   getDestinators,
-  copySubjectDataToDestinators,
+  //copySubjectDataToDestinators,
+  copySubjectDataToGraph,
   getRelatedSubjectsForSubmission,
   getSubmissions,
-  removeSubjects
+  getGraphsAndCountForSubjects,
+  //removeSubjects
 } from "./util/queries";
 import dispatchRules from "./dispatch-rules/entrypoint";
 import exportConfig from "./export-config";
 import { DISPATCH_SOURCE_GRAPH,
+         DISPATCH_FILES_GRAPH,
          ENABLE_HEALING,
          HEALING_CRON,
          ORG_GRAPH_BASE,
@@ -43,7 +46,8 @@ if(ENABLE_HEALING) {
     for(const submission of submissions) {
       distributeAndSchedule(
         healingQueuePool,
-        async () => await healSubmission(submission)
+        //async () => await healSubmission(submission)
+        async () => await processSubject(submission)
       );
     }
   }, null, true);
@@ -156,7 +160,8 @@ app.get("/heal-submission", async function (req, res) {
     console.log(`Only one submission to (re-)dispatch: ${req.query.subject}`);
     distributeAndSchedule(
       healingQueuePool,
-      async () => await healSubmission(req.query.subject)
+      //async () => await healSubmission(req.query.subject)
+      async () => await processSubject(req.query.subject)
     );
     console.log(`Scheduling done`);
     return res.status(201).send();
@@ -179,7 +184,8 @@ app.get("/heal-submission", async function (req, res) {
   for(const submission of submissions) {
     distributeAndSchedule(
       healingQueuePool,
-      async () => await healSubmission(submission)
+      //async () => await healSubmission(submission)
+      async () => await processSubject(submission)
     );
   }
 
@@ -242,10 +248,39 @@ async function dispatch(submission) {
 
         relatedSubjects = [ ...relatedSubjects, ...subjects ];
       }
+      relatedSubjects = [ ...(new Set(relatedSubjects)) ];
 
-      for(const subject of relatedSubjects) {
-        await copySubjectDataToDestinators(subject, destinators);
-      }
+      // Scalar product of related subjects and graphs they should be in
+      const allSubjectsAndGraphs = relatedSubjects.reduce((acc, curr) => {
+        destinators.forEach((d) => {
+          acc.push({
+            subject: curr,
+            graph: ORG_GRAPH_BASE + '/' + d.uuid + '/' + ORG_GRAPH_SUFFIX
+          });
+        });
+        return acc;
+      }, []);
+      //Count number of triples per subject
+      const counts = await getGraphsAndCountForSubjects(relatedSubjects, [DISPATCH_SOURCE_GRAPH, DISPATCH_FILES_GRAPH]);
+      allSubjectsAndGraphs.forEach((e) => {
+        e.count = counts.find((f) => f.subject === e. subject)?.count;
+      });
+
+      // List of subjects and the graph they are in
+      const subjectsAndGraphs = await getGraphsAndCountForSubjects(relatedSubjects);
+
+      // Difference between the two lists, only ones remaining are the 'missing' ones
+      const missingSubjectsPerGraph = allSubjectsAndGraphs.filter((curr) => {
+        const hasFound = subjectsAndGraphs.find((e) => 
+          e.subject === curr.subject &&
+          e.graph === curr.graph &&
+          e.count === curr.count
+        );
+        return !hasFound;
+      });
+
+      for (const { subject, graph } of missingSubjectsPerGraph)
+        await copySubjectDataToGraph(subject, graph);
     }
   }
 }
@@ -255,24 +290,24 @@ async function dispatch(submission) {
  * Re-dispatch the submission again.
  * Use-case: handle data updates (e.g. bestuurseenheid changes) which affect the dispatch-rules
  */
-async function healSubmission( submission ) {
-  try {
-    let relatedSubjects = [];
-    for (const config of exportConfig) {
-      const subjects = await getRelatedSubjectsForSubmission(
-        submission,
-        config.type,
-        config.pathToSubmission
-      );
-      relatedSubjects = [ ...relatedSubjects, ...subjects ];
-    }
-    await removeSubjects([submission, ...relatedSubjects],
-                         ORG_GRAPH_BASE + '/.*/' + ORG_GRAPH_SUFFIX);
-    await processSubject(submission);
-  } catch (e) {
-    console.error(`Error while processing a subject: ${e.message ? e.message : e}`);
-    await sendErrorAlert({
-      message: `Something unexpected went wrong while processing a subject ${submission}: ${e.message ? e.message : e}`
-    });
-  }
-}
+//async function healSubmission( submission ) {
+//  try {
+//    let relatedSubjects = [];
+//    for (const config of exportConfig) {
+//      const subjects = await getRelatedSubjectsForSubmission(
+//        submission,
+//        config.type,
+//        config.pathToSubmission
+//      );
+//      relatedSubjects = [ ...relatedSubjects, ...subjects ];
+//    }
+//    await removeSubjects([submission, ...relatedSubjects],
+//                         ORG_GRAPH_BASE + '/.*/' + ORG_GRAPH_SUFFIX);
+//    await processSubject(submission);
+//  } catch (e) {
+//    console.error(`Error while processing a subject: ${e.message ? e.message : e}`);
+//    await sendErrorAlert({
+//      message: `Something unexpected went wrong while processing a subject ${submission}: ${e.message ? e.message : e}`
+//    });
+//  }
+//}
