@@ -260,6 +260,7 @@ async function dispatch(submission) {
         });
         return acc;
       }, []);
+
       //Count number of triples per subject
       const counts = await getGraphsAndCountForSubjects(relatedSubjects, [DISPATCH_SOURCE_GRAPH, DISPATCH_FILES_GRAPH]);
       allSubjectsAndGraphs.forEach((e) => {
