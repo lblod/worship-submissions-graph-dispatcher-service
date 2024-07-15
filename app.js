@@ -9,12 +9,10 @@ import {
   getSubmissionForSubject,
   getSubmissionInfo,
   getDestinators,
-  //copySubjectDataToDestinators,
   copySubjectDataToGraph,
   getRelatedSubjectsForSubmission,
   getSubmissions,
   getGraphsAndCountForSubjects,
-  //removeSubjects
 } from "./util/queries";
 import dispatchRules from "./dispatch-rules/entrypoint";
 import exportConfig from "./export-config";
@@ -46,7 +44,6 @@ if(ENABLE_HEALING) {
     for(const submission of submissions) {
       distributeAndSchedule(
         healingQueuePool,
-        //async () => await healSubmission(submission)
         async () => await processSubject(submission)
       );
     }
@@ -285,30 +282,3 @@ async function dispatch(submission) {
     }
   }
 }
-
-/*
- * Removes a submission from its target graphs.
- * Re-dispatch the submission again.
- * Use-case: handle data updates (e.g. bestuurseenheid changes) which affect the dispatch-rules
- */
-//async function healSubmission( submission ) {
-//  try {
-//    let relatedSubjects = [];
-//    for (const config of exportConfig) {
-//      const subjects = await getRelatedSubjectsForSubmission(
-//        submission,
-//        config.type,
-//        config.pathToSubmission
-//      );
-//      relatedSubjects = [ ...relatedSubjects, ...subjects ];
-//    }
-//    await removeSubjects([submission, ...relatedSubjects],
-//                         ORG_GRAPH_BASE + '/.*/' + ORG_GRAPH_SUFFIX);
-//    await processSubject(submission);
-//  } catch (e) {
-//    console.error(`Error while processing a subject: ${e.message ? e.message : e}`);
-//    await sendErrorAlert({
-//      message: `Something unexpected went wrong while processing a subject ${submission}: ${e.message ? e.message : e}`
-//    });
-//  }
-//}

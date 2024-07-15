@@ -103,26 +103,6 @@ export async function getGraphsAndCountForSubjects(subjects, graphs) {
   return parseResult(await query(q));
 }
 
-//export async function copySubjectDataToDestinators(subject, destinators) {
-//  for(const destinator of destinators) {
-//    const targetGraph = ORG_GRAPH_BASE + '/' + destinator.uuid + '/' + ORG_GRAPH_SUFFIX;
-//    const queryStr = `
-//       INSERT {
-//          GRAPH ${sparqlEscapeUri(targetGraph)} {
-//            ?s ?p ?o.
-//          }
-//       }
-//       WHERE {
-//          BIND(${sparqlEscapeUri(subject)} as ?s)
-//          GRAPH ${sparqlEscapeUri(DISPATCH_SOURCE_GRAPH)} {
-//            ?s ?p ?o.
-//          }
-//       }
-//    `;
-//    await update(queryStr);
-//  }
-//}
-
 export async function copySubjectDataToGraph(subject, graph) {
   const queryStr = `
      INSERT {
@@ -200,27 +180,3 @@ export async function getSubmissions( { inGraph, sentDateSince } = {}) {
   const result = await query(queryStr);
   return parseResult(result).map(s => s.submission);
 }
-
-//export async function removeSubjects(subjects, graphFilterRegex = '') {
-//  const filter = graphFilterRegex ?
-//        `FILTER( regex(str(?graph), ${sparqlEscapeString(graphFilterRegex)} ) )`
-//        : '';
-//
-//  const queryStr = `
-//    DELETE {
-//      GRAPH ?graph {
-//        ?s ?p ?o
-//      }
-//    }
-//    WHERE {
-//      VALUES ?s {
-//        ${subjects.map(sparqlEscapeUri).join('\n')}
-//      }
-//      GRAPH ?graph {
-//       ?s ?p ?o
-//     }
-//     ${filter}
-//    }
-//  `;
-//  await query(queryStr);
-//}
