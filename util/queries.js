@@ -2,7 +2,7 @@ import {  sparqlEscapeUri, sparqlEscapeString, sparqlEscapeDateTime, sparqlEscap
 import { querySudo as query, updateSudo as update } from "@lblod/mu-auth-sudo";
 import exportConfig from "../export-config";
 import { parseResult } from './utils';
-import { ORG_GRAPH_BASE, ORG_GRAPH_SUFFIX, DISPATCH_SOURCE_GRAPH } from '../config';
+import { ORG_GRAPH_BASE, ORG_GRAPH_SUFFIX, DISPATCH_SOURCE_GRAPH, DISPATCH_FILES_GRAPH } from '../config';
 
 const CREATOR = 'http://lblod.data.gift/services/worship-submissions-graph-dispatcher-service';
 
@@ -131,8 +131,12 @@ export async function copySubjectDataToGraph(subject, graph) {
         }
      }
      WHERE {
+        VALUES ?g {
+          ${sparqlEscapeUri(DISPATCH_SOURCE_GRAPH)}
+          ${sparqlEscapeUri(DISPATCH_FILES_GRAPH)}
+        }
         BIND(${sparqlEscapeUri(subject)} as ?s)
-        GRAPH ${sparqlEscapeUri(DISPATCH_SOURCE_GRAPH)} {
+        GRAPH ?g {
           ?s ?p ?o.
         }
      }
