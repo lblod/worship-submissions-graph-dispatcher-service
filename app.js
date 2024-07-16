@@ -267,18 +267,27 @@ async function dispatch(submission) {
       // List of subjects and the graph they are in
       const subjectsAndGraphs = await getGraphsAndCountForSubjects(relatedSubjects);
 
-      // Difference between the two lists, only ones remaining are the 'missing' ones
-      const missingSubjectsPerGraph = allSubjectsAndGraphs.filter((curr) => {
-        const hasFound = subjectsAndGraphs.find((e) => 
-          e.subject === curr.subject &&
-          e.graph === curr.graph &&
-          e.count === curr.count
-        );
-        return !hasFound;
-      });
+      // Difference between the two lists, only ones remaining are the missing or incorrect ones
+      const missingSubjectsPerGraph = [];
+      for (const allSub of allSubjectsAndGraphs) {
+        const found = subjectsAndGraphs.find((e) => 
+          e.subject === allSub.subject &&
+          e.graph === allSub.graph);
+        if (found) {
+          if (found.count > allSub.count) {
+            allSub.toRemoveFirst = true;
+            missingSubjectsPerGraph.push(allSub);
+          } else if (found.count < allSub.count) {
+            missingSubjectsPerGraph.push(allSub);
+            // No else. If counts are equal, nothing needs to be done.
+          }
+        } else {
+          missingSubjectsPerGraph.push(allSub);
+        }
+      }
 
-      for (const { subject, graph } of missingSubjectsPerGraph)
-        await copySubjectDataToGraph(subject, graph);
+      for (const { subject, graph, toRemoveFirst } of missingSubjectsPerGraph)
+        await copySubjectDataToGraph(subject, graph, toRemoveFirst);
     }
   }
 }
