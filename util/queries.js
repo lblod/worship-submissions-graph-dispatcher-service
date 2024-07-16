@@ -99,6 +99,23 @@ export async function getGraphsAndCountForSubjects(subjects, graphs) {
   return parseResult(await query(q));
 }
 
+export async function removeSubjectFromGraph(subject, graph) {
+  const removeQueryStr = `
+    DELETE {
+      GRAPH ${sparqlEscapeUri(graph)} {
+        ?subject ?p ?o .
+      }
+    }
+    WHERE {
+      BIND (${sparqlEscapeUri(subject)} as ?subject)
+      GRAPH ${sparqlEscapeUri(graph)} {
+        ?subject ?p ?o .
+      }
+    }
+  `;
+  await update(removeQueryStr);
+}
+
 export async function copySubjectDataToGraph(subject, graph, toRemoveFirst = false) {
   const removeQueryStr = toRemoveFirst ? `
     DELETE {

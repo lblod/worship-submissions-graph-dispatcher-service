@@ -9,6 +9,7 @@ import {
   getSubmissionForSubject,
   getSubmissionInfo,
   getDestinators,
+  removeSubjectFromGraph,
   copySubjectDataToGraph,
   getRelatedSubjectsForSubmission,
   getSubmissions,
@@ -266,6 +267,20 @@ async function dispatch(submission) {
 
       // List of subjects and the graph they are in
       const subjectsAndGraphs = await getGraphsAndCountForSubjects(relatedSubjects);
+
+      // Find subjects that no longer have a correct destinator by calculating a difference
+      const removeSubjectsPerGraph = [];
+      for (const currSub of subjectsAndGraphs) {
+        const found = allSubjectsAndGraphs.find((e) =>
+          e.subject === currSub.subject &&
+          e.graph === currSub.graph);
+        if (!found)
+          removeSubjectsPerGraph.push(currSub);
+      }
+
+      for (const { subject, graph } of removeSubjectsPerGraph) {
+        await removeSubjectFromGraph(subject, graph);
+      }
 
       // Difference between the two lists, only ones remaining are the missing or incorrect ones
       const missingSubjectsPerGraph = [];
