@@ -77,42 +77,33 @@ export default [
     type: `http://www.semanticdesktop.org/ontologies/2007/03/22/nfo#FileDataObject`,
     pathToSubmission: `?subject <http://purl.org/dc/terms/type> <http://data.lblod.gift/concepts/form-file-type>.
                        ?s <http://purl.org/dc/terms/source> ?subject.
-                       ?s a <http://mu.semte.ch/vocabularies/ext/SubmissionDocument>.
-                       ?submission <http://purl.org/dc/terms/subject> ?s.
-                       ?submission a <http://rdf.myexperiment.org/ontologies/base/Submission>.`
+                       ?submission <http://purl.org/dc/terms/subject> ?s.`
   },
   {
     type: `http://www.semanticdesktop.org/ontologies/2007/03/22/nfo#FileDataObject`,
     pathToSubmission: `?formData <http://purl.org/dc/terms/hasPart> ?subject.
-                       ?formData a <http://lblod.data.gift/vocabularies/automatische-melding/FormData>.
-                       ?submission <http://www.w3.org/ns/prov#generated> ?formData.
-                       ?submission a <http://rdf.myexperiment.org/ontologies/base/Submission>.`
+                       ?submission <http://www.w3.org/ns/prov#generated> ?formData.`
   },
   {
     type: `http://www.semanticdesktop.org/ontologies/2007/03/22/nfo#FileDataObject`,
     pathToSubmission: `?subject <http://www.semanticdesktop.org/ontologies/2007/01/19/nie#dataSource> ?virtualFile .
                        ?formData <http://purl.org/dc/terms/hasPart> ?virtualFile.
-                       ?formData a <http://lblod.data.gift/vocabularies/automatische-melding/FormData>.
-                       ?submission <http://www.w3.org/ns/prov#generated> ?formData.
-                       ?submission a <http://rdf.myexperiment.org/ontologies/base/Submission>.`
+                       ?submission <http://www.w3.org/ns/prov#generated> ?formData.`
   },
   {
     type: `http://www.semanticdesktop.org/ontologies/2007/03/22/nfo#RemoteDataObject`,
     pathToSubmission: `?formData <http://purl.org/dc/terms/hasPart> ?subject.
-                       ?formData a <http://lblod.data.gift/vocabularies/automatische-melding/FormData>.
-                       ?submission <http://www.w3.org/ns/prov#generated> ?formData.
-                       ?submission a <http://rdf.myexperiment.org/ontologies/base/Submission>.`
+                       ?submission <http://www.w3.org/ns/prov#generated> ?formData.`
   },
   {
     type: `http://www.semanticdesktop.org/ontologies/2007/03/22/nfo#LocalFileDataObject`,
     pathToSubmission: `?subject <http://www.semanticdesktop.org/ontologies/2007/01/19/nie#dataSource> ?vfile.
                        ?formData <http://purl.org/dc/terms/hasPart> ?vfile.
-                       ?formData a <http://lblod.data.gift/vocabularies/automatische-melding/FormData>.
-                       ?submission <http://www.w3.org/ns/prov#generated> ?formData.
-                       ?submission a <http://rdf.myexperiment.org/ontologies/base/Submission>.`
+                       ?submission <http://www.w3.org/ns/prov#generated> ?formData.`
   },
   {
-   type: `http://rdf.myexperiment.org/ontologies/base/Submission`,
-   pathToSubmission: `?submission a <http://rdf.myexperiment.org/ontologies/base/Submission> .\n FILTER(?submission = ?subject)`
+    type: `http://rdf.myexperiment.org/ontologies/base/Submission`,
+    pathToSubmission: `?submission a <http://rdf.myexperiment.org/ontologies/base/Submission> .
+                       FILTER(?submission = ?subject)`
   },
 ];

@@ -10,12 +10,8 @@ export async function getRelatedSubjectsForSubmission(submission, subjectType, p
   const queryStr = `
     SELECT DISTINCT ?subject WHERE {
       BIND(${sparqlEscapeUri(submission)} as ?submission)
-      GRAPH ?g {
-        ?subject a ${sparqlEscapeUri(subjectType)}.
-      }
       ${pathToSubmission}
-    }
-  `;
+    }`;
 
   const result = await query(queryStr);
   return result.results.bindings.map(r => r.subject.value);
