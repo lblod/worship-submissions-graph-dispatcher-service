@@ -158,7 +158,6 @@ app.get("/heal-submission", async function (req, res) {
     console.log(`Only one submission to (re-)dispatch: ${req.query.subject}`);
     distributeAndSchedule(
       healingQueuePool,
-      //async () => await healSubmission(req.query.subject)
       async () => await processSubject(req.query.subject)
     );
     console.log(`Scheduling done`);
@@ -182,7 +181,6 @@ app.get("/heal-submission", async function (req, res) {
   for(const submission of submissions) {
     distributeAndSchedule(
       healingQueuePool,
-      //async () => await healSubmission(submission)
       async () => await processSubject(submission)
     );
   }
