@@ -51,11 +51,11 @@ let rule = {
             BIND(${sparqlEscapeUri(sender)} as ?sender)
             BIND(${sparqlEscapeUri(submission)} as ?submission)
 
-            ?submission a <http://rdf.myexperiment.org/ontologies/base/Submission>;
+            ?submission
               <http://purl.org/pav/createdBy> ?sender;
               <http://www.w3.org/ns/prov#generated> ?formData.
 
-            ?formData a <http://lblod.data.gift/vocabularies/automatische-melding/FormData>;
+            ?formData
               <http://data.europa.eu/eli/ontology#is_about> ?aboutEenheid.
 
             VALUES ?worshipType {

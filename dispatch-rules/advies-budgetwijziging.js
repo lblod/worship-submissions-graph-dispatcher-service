@@ -32,11 +32,11 @@ let rule = {
         BIND(${sparqlEscapeUri(sender)} as ?sender)
         BIND(${sparqlEscapeUri(submission)} as ?submission)
 
-        ?submission a meb:Submission;
+        ?submission
           pav:createdBy ?sender;
           prov:generated ?formData.
 
-        ?formData a <http://lblod.data.gift/vocabularies/automatische-melding/FormData>;
+        ?formData
           eli:is_about ?aboutEenheid.      
 
         OPTIONAL {
