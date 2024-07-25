@@ -258,7 +258,21 @@ async function dispatch(submission) {
       }, []);
 
       //Count number of triples per subject
-      const counts = await getGraphsAndCountForSubjects(relatedSubjects, [DISPATCH_SOURCE_GRAPH, DISPATCH_FILES_GRAPH]);
+      let counts = await getGraphsAndCountForSubjects(relatedSubjects, [DISPATCH_SOURCE_GRAPH, DISPATCH_FILES_GRAPH]);
+      // Deduplicate the counts
+      // In certain scenario's, the physical file triples are not completely
+      // dispatched correctly between the temp/for-dispatch and the
+      // temp/original-physical-files-data graphs. Take the max number of
+      // triples that can be found in order to become consistent.
+      counts = counts.reduce((acc, curr) => {
+        const alreadySeen = acc.find((e) => e.subject === curr.subject);
+        if (alreadySeen) {
+          alreadySeen.count = Math.max(alreadySeen.count, curr.count);
+        } else {
+          acc.push(curr);
+        }
+        return acc;
+      }, []);
       allSubjectsAndGraphs.forEach((e) => {
         e.count = counts.find((f) => f.subject === e. subject)?.count;
       });

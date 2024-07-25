@@ -82,8 +82,8 @@ export async function getGraphsAndCountForSubjects(subjects, graphs) {
   const graphFilter = graphs?.length ? '' : `FILTER (REGEX(STR(?graph), "${ORG_GRAPH_BASE}"))`;
   const q = `
     SELECT DISTINCT
+        ?graph
         ?subject
-        ${graphs?.length ? '' : '?graph'}
         (COUNT(?p) as ?count) {
       VALUES ?subject {
         ${subjects.map(sparqlEscapeUri).join('\n')}
