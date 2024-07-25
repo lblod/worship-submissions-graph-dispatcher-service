@@ -78,7 +78,7 @@ export async function getDestinators(submissionInfo, rule) {
 }
 
 export async function getGraphsAndCountForSubjects(subjects, graphs) {
-  const bindGraph = graphs?.length ? `VALUES ?graph { ${graphs.map(sparqlEscapeUri).join('\n')} }` : '';
+  const bindGraph = graphs?.length ? `VALUES ?graph {\n${graphs.map(sparqlEscapeUri).join('\n')}\n}` : '';
   const graphFilter = graphs?.length ? '' : `FILTER (REGEX(STR(?graph), "${ORG_GRAPH_BASE}"))`;
   const q = `
     SELECT DISTINCT
