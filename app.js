@@ -257,7 +257,7 @@ async function dispatch(submission) {
         return acc;
       }, []);
 
-      //Count number of triples per subject
+      // Count number of triples per subject
       let counts = await getGraphsAndCountForSubjects(relatedSubjects, [DISPATCH_SOURCE_GRAPH, DISPATCH_FILES_GRAPH]);
       // Deduplicate the counts
       // In certain scenario's, the physical file triples are not completely
