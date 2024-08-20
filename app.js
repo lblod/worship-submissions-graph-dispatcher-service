@@ -231,8 +231,14 @@ async function dispatch(submission) {
                                                  && r.matchSentByEenheidClass(submissionInfo.creatorType)
                                                 );
 
-    for(const rule of applicableRules) {
-      const destinators = await getDestinators(submissionInfo, rule);
+    let destinators;
+    for (const rule of applicableRules) {
+      const currDestinators = await getDestinators(submissionInfo, rule);
+      destinators = destinators.concat(currDestinators);
+    }
+
+    //for(const rule of applicableRules) {
+      //const destinators = await getDestinators(submissionInfo, rule);
       let relatedSubjects = [ submissionInfo.submission ];
 
       for (const config of exportConfig) {
@@ -315,6 +321,6 @@ async function dispatch(submission) {
 
       for (const { subject, graph, toRemoveFirst } of missingSubjectsPerGraph)
         await copySubjectDataToGraph(subject, graph, toRemoveFirst);
-    }
+    //}
   }
 }
