@@ -231,7 +231,7 @@ async function dispatch(submission) {
                                                  && r.matchSentByEenheidClass(submissionInfo.creatorType)
                                                 );
 
-    let destinators;
+    let destinators = [];
     for (const rule of applicableRules) {
       const currDestinators = await getDestinators(submissionInfo, rule);
       destinators = destinators.concat(currDestinators);
