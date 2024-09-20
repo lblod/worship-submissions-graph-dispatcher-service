@@ -226,10 +226,17 @@ async function dispatch(submission) {
   const submissionInfo = await getSubmissionInfo(submission);
 
   if(submissionInfo) {
-    const applicableRules = dispatchRules.filter(r =>
-                                                 r.documentType == submissionInfo.submissionType
-                                                 && r.matchSentByEenheidClass(submissionInfo.creatorType)
-                                                );
+    const applicableRules = dispatchRules.filter(r => {
+      const isOneSubmissionTypeIncluded = submissionInfo.submissionTypes.includes(r.documentType);
+      let isOneCreatorTypeIncluded = false;
+      for (const creatorType of submissionInfo.creatorTypes) {
+        if (r.matchSentByEenheidClass(creatorType)) {
+          isOneCreatorTypeIncluded = true;
+        }
+      }
+
+      return isOneSubmissionTypeIncluded && isOneCreatorTypeIncluded;
+    });
 
     let destinators = [];
     for (const rule of applicableRules) {
