@@ -68,8 +68,17 @@ export async function getSubmissionInfo(submission) {
             <http://mu.semte.ch/vocabularies/ext/decisionType> ?submissionType.
     }
   `;
-  //TODO it is assumed to return MAX 1 result
-  return parseResult(await query(queryStr))[0];
+
+  const parsedResult = parseResult(await query(queryStr));
+
+  // We can receive a submission with multiple decision types and creator types that all need to be evaluated
+  return {
+    submission: parsedResult[0].submission,
+    creator: parsedResult[0].creator,
+    creatorUuid: parsedResult[0].creatorUuid,
+    submissionTypes: parsedResult.map(res => res.submissionType),
+    creatorTypes: parsedResult.map(res => res.creatorType)
+  };
 }
 
 export async function getDestinators(submissionInfo, rule) {
