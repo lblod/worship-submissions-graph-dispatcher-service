@@ -106,4 +106,11 @@ export default [
     pathToSubmission: `?submission a <http://rdf.myexperiment.org/ontologies/base/Submission> .
                        FILTER(?submission = ?subject)`
   },
+  {
+   type: `http://data.vlaanderen.be/ns/besluit#Artikel`,
+   pathToSubmission: `?subject a <http://data.vlaanderen.be/ns/besluit#Artikel>.
+                      ?submissionDocument <http://data.europa.eu/eli/ontology#has_part> ?subject.
+                      ?submission a <http://rdf.myexperiment.org/ontologies/base/Submission>;
+                         <http://purl.org/dc/terms/subject> ?submissionDocument.`
+  },
 ];
