@@ -6,10 +6,12 @@ const rules = [];
  *--------------------------
  * -SENDER-: <http://data.lblod.info/id/representatieveOrganen/e224c637ba8bb0e5dfbb87da225b4652> Executief van de Moslims van België
  * RO: <http://data.lblod.info/id/representatieveOrganen/e224c637ba8bb0e5dfbb87da225b4652> Executief van de Moslims van België
+ * PG: <http://data.lblod.info/id/bestuurseenheden/141d9d6b-54af-4d17-b313-8d1c30bc3f5b> ABB
  * CB: <http://data.lblod.info/id/centraleBesturenVanDeEredienst/e17dabfaf8f562ad181f422006c42e97> CB van de Islamitische gemeenschappen in Limburg
  * OR
  * -SENDER-: <http://data.lblod.info/id/representatieveOrganen/e224c637ba8bb0e5dfbb87da225b4652> Executief van de Moslims van België
  * RO: <http://data.lblod.info/id/representatieveOrganen/e224c637ba8bb0e5dfbb87da225b4652> Executief van de Moslims van België
+ * PG: <http://data.lblod.info/id/bestuurseenheden/141d9d6b-54af-4d17-b313-8d1c30bc3f5b> ABB
  * EB: <http://data.lblod.info/id/besturenVanDeEredienst/6375F8724B5FEAF28DEDE821> Attaqwa
 **/
 let rule = {
@@ -54,6 +56,7 @@ let rule = {
           BIND (?receiver AS ?bestuurseenheid)
         } UNION {
           VALUES ?bestuurseenheid {
+            <http://data.lblod.info/id/bestuurseenheden/141d9d6b-54af-4d17-b313-8d1c30bc3f5b>
             ${sparqlEscapeUri(sender)}
           }
           ?bestuurseenheid
