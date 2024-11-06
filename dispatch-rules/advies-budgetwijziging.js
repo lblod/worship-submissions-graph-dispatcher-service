@@ -15,7 +15,7 @@ const rules = [];
  * EB: <http://data.lblod.info/id/besturenVanDeEredienst/6375F8724B5FEAF28DEDE821> Attaqwa
 **/
 let rule = {
-  documentType: 'https://data.vlaanderen.be/id/concept/BesluitType/2b12630f-8c4e-40a4-8a61-a0c45621a1e6', // Avies budgetwijziging - EB if EB without CB or CB if EB has CB
+  documentType: 'https://data.vlaanderen.be/id/concept/BesluitType/2b12630f-8c4e-40a4-8a61-a0c45621a1e6', // Advies budgetwijziging - EB if EB without CB or CB if EB has CB
   matchSentByEenheidClass: eenheidClass =>
     eenheidClass == 'http://data.vlaanderen.be/id/concept/BestuurseenheidClassificatieCode/36372fad-0358-499c-a4e3-f412d2eae213', // RO
   destinationInfoQuery: ( sender, submission ) => {
