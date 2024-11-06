@@ -47,17 +47,19 @@ let rule = {
           besluit:classificatie <http://data.vlaanderen.be/id/concept/BestuurseenheidClassificatieCode/66ec74fd-8cfc-4e16-99c6-350b35012e86>.
 
         BIND (IF(BOUND(?centraalBestuurVanDeEredienst), ?centraalBestuurVanDeEredienst, ?aboutEenheid) AS ?receiver)
-       {
-        ?receiver mu:uuid ?uuid;
-          skos:prefLabel ?label.
-        BIND(?receiver AS ?bestuurseenheid)
-       } UNION {
-         VALUES ?bestuurseenheid {
-           ${sparqlEscapeUri(sender)}
-         }
-         ?bestuurseenheid mu:uuid ?uuid;
-           skos:prefLabel ?label.
-       }
+        {
+          ?receiver
+            mu:uuid ?uuid ;
+            skos:prefLabel ?label .
+          BIND (?receiver AS ?bestuurseenheid)
+        } UNION {
+          VALUES ?bestuurseenheid {
+            ${sparqlEscapeUri(sender)}
+          }
+          ?bestuurseenheid
+            mu:uuid ?uuid ;
+            skos:prefLabel ?label .
+        }
       }
     `;
   }
