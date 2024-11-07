@@ -2,7 +2,7 @@ import {  sparqlEscapeUri, sparqlEscapeString, sparqlEscapeDateTime, sparqlEscap
 import { querySudo as query, updateSudo as update } from "@lblod/mu-auth-sudo";
 import exportConfig from "../export-config";
 import { parseResult } from './utils';
-import { ORG_GRAPH_BASE, ORG_GRAPH_SUFFIX, DISPATCH_SOURCE_GRAPH } from '../config';
+import { ORG_GRAPH_BASE, ORG_GRAPH_SUFFIX, DISPATCH_SOURCE_GRAPH, DISPATCH_FILES_GRAPH } from '../config';
 
 const CREATOR = 'http://lblod.data.gift/services/worship-submissions-graph-dispatcher-service';
 
@@ -10,12 +10,8 @@ export async function getRelatedSubjectsForSubmission(submission, subjectType, p
   const queryStr = `
     SELECT DISTINCT ?subject WHERE {
       BIND(${sparqlEscapeUri(submission)} as ?submission)
-      GRAPH ?g {
-        ?subject a ${sparqlEscapeUri(subjectType)}.
-      }
       ${pathToSubmission}
-    }
-  `;
+    }`;
 
   const result = await query(queryStr);
   return result.results.bindings.map(r => r.subject.value);
@@ -72,8 +68,17 @@ export async function getSubmissionInfo(submission) {
             <http://mu.semte.ch/vocabularies/ext/decisionType> ?submissionType.
     }
   `;
-  //TODO it is assumed to return MAX 1 result
-  return parseResult(await query(queryStr))[0];
+
+  const parsedResult = parseResult(await query(queryStr));
+
+  // We can receive a submission with multiple decision types and creator types that all need to be evaluated
+  return {
+    submission: parsedResult[0].submission,
+    creator: parsedResult[0].creator,
+    creatorUuid: parsedResult[0].creatorUuid,
+    submissionTypes: parsedResult.map(res => res.submissionType),
+    creatorTypes: parsedResult.map(res => res.creatorType)
+  };
 }
 
 export async function getDestinators(submissionInfo, rule) {
@@ -81,24 +86,78 @@ export async function getDestinators(submissionInfo, rule) {
   return parseResult(result);
 }
 
-export async function copySubjectDataToDestinators(subject, destinators) {
-  for(const destinator of destinators) {
-    const targetGraph = ORG_GRAPH_BASE + '/' + destinator.uuid + '/' + ORG_GRAPH_SUFFIX;
-    const queryStr = `
-       INSERT {
-          GRAPH ${sparqlEscapeUri(targetGraph)} {
-            ?s ?p ?o.
-          }
-       }
-       WHERE {
-          BIND(${sparqlEscapeUri(subject)} as ?s)
-          GRAPH ${sparqlEscapeUri(DISPATCH_SOURCE_GRAPH)} {
-            ?s ?p ?o.
-          }
-       }
-    `;
-    await update(queryStr);
-  }
+export async function getGraphsAndCountForSubjects(subjects, graphs) {
+  const bindGraph = graphs?.length ? `VALUES ?graph {\n${graphs.map(sparqlEscapeUri).join('\n')}\n}` : '';
+  const graphFilter = graphs?.length ? '' : `FILTER (REGEX(STR(?graph), "${ORG_GRAPH_BASE}"))`;
+  const q = `
+    SELECT DISTINCT
+        ?graph
+        ?subject
+        (COUNT(?p) as ?count) {
+      VALUES ?subject {
+        ${subjects.map(sparqlEscapeUri).join('\n')}
+      }
+      ${bindGraph}
+      GRAPH ?graph {
+        ?subject ?p ?o .
+      }
+      ${graphFilter}
+    }
+    GROUP BY ?graph ?subject
+  `;
+  return parseResult(await query(q));
+}
+
+export async function removeSubjectFromGraph(subject, graph) {
+  const removeQueryStr = `
+    DELETE {
+      GRAPH ${sparqlEscapeUri(graph)} {
+        ?subject ?p ?o .
+      }
+    }
+    WHERE {
+      BIND (${sparqlEscapeUri(subject)} as ?subject)
+      GRAPH ${sparqlEscapeUri(graph)} {
+        ?subject ?p ?o .
+      }
+    }
+  `;
+  await update(removeQueryStr);
+}
+
+export async function copySubjectDataToGraph(subject, graph, toRemoveFirst = false) {
+  const removeQueryStr = toRemoveFirst ? `
+    DELETE {
+      GRAPH ${sparqlEscapeUri(graph)} {
+        ?subject ?p ?o .
+      }
+    }
+    WHERE {
+      BIND (${sparqlEscapeUri(subject)} as ?subject)
+      GRAPH ${sparqlEscapeUri(graph)} {
+        ?subject ?p ?o .
+      }
+    }
+  ` : '';
+  const queryStr = `
+     ${toRemoveFirst ? removeQueryStr + '\n;\n' : ''}
+     INSERT {
+        GRAPH ${sparqlEscapeUri(graph)} {
+          ?s ?p ?o.
+        }
+     }
+     WHERE {
+        VALUES ?g {
+          ${sparqlEscapeUri(DISPATCH_SOURCE_GRAPH)}
+          ${sparqlEscapeUri(DISPATCH_FILES_GRAPH)}
+        }
+        BIND(${sparqlEscapeUri(subject)} as ?s)
+        GRAPH ?g {
+          ?s ?p ?o.
+        }
+     }
+  `;
+  await update(queryStr);
 }
 
 export async function sendErrorAlert({message, detail, reference}) {
@@ -156,28 +215,4 @@ export async function getSubmissions( { inGraph, sentDateSince } = {}) {
   }
   const result = await query(queryStr);
   return parseResult(result).map(s => s.submission);
-}
-
-export async function removeSubjects(subjects, graphFilterRegex = '') {
-  const filter = graphFilterRegex ?
-        `FILTER( regex(str(?graph), ${sparqlEscapeString(graphFilterRegex)} ) )`
-        : '';
-
-  const queryStr = `
-    DELETE {
-      GRAPH ?graph {
-        ?s ?p ?o
-      }
-    }
-    WHERE {
-      VALUES ?s {
-        ${subjects.map(sparqlEscapeUri).join('\n')}
-      }
-      GRAPH ?graph {
-       ?s ?p ?o
-     }
-     ${filter}
-    }
-  `;
-  await query(queryStr);
 }

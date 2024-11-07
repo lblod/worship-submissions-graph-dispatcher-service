@@ -9,14 +9,16 @@ import {
   getSubmissionForSubject,
   getSubmissionInfo,
   getDestinators,
-  copySubjectDataToDestinators,
+  removeSubjectFromGraph,
+  copySubjectDataToGraph,
   getRelatedSubjectsForSubmission,
   getSubmissions,
-  removeSubjects
+  getGraphsAndCountForSubjects,
 } from "./util/queries";
 import dispatchRules from "./dispatch-rules/entrypoint";
 import exportConfig from "./export-config";
 import { DISPATCH_SOURCE_GRAPH,
+         DISPATCH_FILES_GRAPH,
          ENABLE_HEALING,
          HEALING_CRON,
          ORG_GRAPH_BASE,
@@ -43,7 +45,7 @@ if(ENABLE_HEALING) {
     for(const submission of submissions) {
       distributeAndSchedule(
         healingQueuePool,
-        async () => await healSubmission(submission)
+        async () => await processSubject(submission)
       );
     }
   }, null, true);
@@ -156,7 +158,7 @@ app.get("/heal-submission", async function (req, res) {
     console.log(`Only one submission to (re-)dispatch: ${req.query.subject}`);
     distributeAndSchedule(
       healingQueuePool,
-      async () => await healSubmission(req.query.subject)
+      async () => await processSubject(req.query.subject)
     );
     console.log(`Scheduling done`);
     return res.status(201).send();
@@ -179,7 +181,7 @@ app.get("/heal-submission", async function (req, res) {
   for(const submission of submissions) {
     distributeAndSchedule(
       healingQueuePool,
-      async () => await healSubmission(submission)
+      async () => await processSubject(submission)
     );
   }
 
@@ -224,55 +226,105 @@ async function dispatch(submission) {
   const submissionInfo = await getSubmissionInfo(submission);
 
   if(submissionInfo) {
-    const applicableRules = dispatchRules.filter(r =>
-                                                 r.documentType == submissionInfo.submissionType
-                                                 && r.matchSentByEenheidClass(submissionInfo.creatorType)
-                                                );
-
-    for(const rule of applicableRules) {
-      const destinators = await getDestinators(submissionInfo, rule);
-      let relatedSubjects = [ submissionInfo.submission ];
-
-      for (const config of exportConfig) {
-        const subjects = await getRelatedSubjectsForSubmission(
-          submissionInfo.submission,
-          config.type,
-          config.pathToSubmission
-        );
-
-        relatedSubjects = [ ...relatedSubjects, ...subjects ];
+    const applicableRules = dispatchRules.filter(r => {
+      const isOneSubmissionTypeIncluded = submissionInfo.submissionTypes.includes(r.documentType);
+      let isOneCreatorTypeIncluded = false;
+      for (const creatorType of submissionInfo.creatorTypes) {
+        if (r.matchSentByEenheidClass(creatorType)) {
+          isOneCreatorTypeIncluded = true;
+        }
       }
 
-      for(const subject of relatedSubjects) {
-        await copySubjectDataToDestinators(subject, destinators);
-      }
+      return isOneSubmissionTypeIncluded && isOneCreatorTypeIncluded;
+    });
+
+    let destinators = [];
+    for (const rule of applicableRules) {
+      const currDestinators = await getDestinators(submissionInfo, rule);
+      destinators = destinators.concat(currDestinators);
     }
-  }
-}
 
-/*
- * Removes a submission from its target graphs.
- * Re-dispatch the submission again.
- * Use-case: handle data updates (e.g. bestuurseenheid changes) which affect the dispatch-rules
- */
-async function healSubmission( submission ) {
-  try {
-    let relatedSubjects = [];
+    let relatedSubjects = [ submissionInfo.submission ];
+
     for (const config of exportConfig) {
       const subjects = await getRelatedSubjectsForSubmission(
-        submission,
+        submissionInfo.submission,
         config.type,
         config.pathToSubmission
       );
+
       relatedSubjects = [ ...relatedSubjects, ...subjects ];
     }
-    await removeSubjects([submission, ...relatedSubjects],
-                         ORG_GRAPH_BASE + '/.*/' + ORG_GRAPH_SUFFIX);
-    await processSubject(submission);
-  } catch (e) {
-    console.error(`Error while processing a subject: ${e.message ? e.message : e}`);
-    await sendErrorAlert({
-      message: `Something unexpected went wrong while processing a subject ${submission}: ${e.message ? e.message : e}`
+    relatedSubjects = [ ...(new Set(relatedSubjects)) ];
+
+    // Scalar product of related subjects and graphs they should be in
+    const allSubjectsAndGraphs = relatedSubjects.reduce((acc, curr) => {
+      destinators.forEach((d) => {
+        acc.push({
+          subject: curr,
+          graph: ORG_GRAPH_BASE + '/' + d.uuid + '/' + ORG_GRAPH_SUFFIX
+        });
+      });
+      return acc;
+    }, []);
+
+    // Count number of triples per subject
+    let counts = await getGraphsAndCountForSubjects(relatedSubjects, [DISPATCH_SOURCE_GRAPH, DISPATCH_FILES_GRAPH]);
+    // Deduplicate the counts
+    // In certain scenario's, the physical file triples are not completely
+    // dispatched correctly between the temp/for-dispatch and the
+    // temp/original-physical-files-data graphs. Take the max number of
+    // triples that can be found in order to become consistent.
+    counts = counts.reduce((acc, curr) => {
+      const alreadySeen = acc.find((e) => e.subject === curr.subject);
+      if (alreadySeen) {
+        alreadySeen.count = Math.max(alreadySeen.count, curr.count);
+      } else {
+        acc.push(curr);
+      }
+      return acc;
+    }, []);
+    allSubjectsAndGraphs.forEach((e) => {
+      e.count = counts.find((f) => f.subject === e. subject)?.count;
     });
+
+    // List of subjects and the graph they are in
+    const subjectsAndGraphs = await getGraphsAndCountForSubjects(relatedSubjects);
+
+    // Find subjects that no longer have a correct destinator by calculating a difference
+    const removeSubjectsPerGraph = [];
+    for (const currSub of subjectsAndGraphs) {
+      const found = allSubjectsAndGraphs.find((e) =>
+        e.subject === currSub.subject &&
+        e.graph === currSub.graph);
+      if (!found)
+        removeSubjectsPerGraph.push(currSub);
+    }
+
+    for (const { subject, graph } of removeSubjectsPerGraph) {
+      await removeSubjectFromGraph(subject, graph);
+    }
+
+    // Difference between the two lists, only ones remaining are the missing or incorrect ones
+    const missingSubjectsPerGraph = [];
+    for (const allSub of allSubjectsAndGraphs) {
+      const found = subjectsAndGraphs.find((e) => 
+        e.subject === allSub.subject &&
+        e.graph === allSub.graph);
+      if (found) {
+        if (found.count > allSub.count) {
+          allSub.toRemoveFirst = true;
+          missingSubjectsPerGraph.push(allSub);
+        } else if (found.count < allSub.count) {
+          missingSubjectsPerGraph.push(allSub);
+          // No else. If counts are equal, nothing needs to be done.
+        }
+      } else {
+        missingSubjectsPerGraph.push(allSub);
+      }
+    }
+
+    for (const { subject, graph, toRemoveFirst } of missingSubjectsPerGraph)
+      await copySubjectDataToGraph(subject, graph, toRemoveFirst);
   }
 }

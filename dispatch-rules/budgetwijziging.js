@@ -129,11 +129,6 @@ rule = {
           BIND(${sparqlEscapeUri(sender)} as ?sender)
           {
             ${toezichthoudendeQuerySnippet()}
-            FILTER NOT EXISTS {
-              ?cb org:hasSubOrganization ?sender;
-                besluit:classificatie <http://data.vlaanderen.be/id/concept/BestuurseenheidClassificatieCode/f9cac08a-13c1-49da-9bcb-f650b0604054>;
-                regorg:orgStatus <http://lblod.data.gift/concepts/63cc561de9188d64ba5840a42ae8f0d6>.
-            }
           } UNION {
             VALUES ?bestuurseenheid {
               <http://data.lblod.info/id/bestuurseenheden/141d9d6b-54af-4d17-b313-8d1c30bc3f5b>
@@ -142,12 +137,6 @@ rule = {
 
             ?bestuurseenheid skos:prefLabel ?label;
               mu:uuid ?uuid.
-
-            FILTER NOT EXISTS {
-              ?cb org:hasSubOrganization ?sender;
-                besluit:classificatie <http://data.vlaanderen.be/id/concept/BestuurseenheidClassificatieCode/f9cac08a-13c1-49da-9bcb-f650b0604054>;
-                regorg:orgStatus <http://lblod.data.gift/concepts/63cc561de9188d64ba5840a42ae8f0d6>.
-            }
           }
         }
     `;
