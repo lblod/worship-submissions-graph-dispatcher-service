@@ -27,7 +27,7 @@ export const toezichtAndFinancierendBetrokkenheid = () => `
             <http://lblod.data.gift/concepts/ac400cc9f135ac7873fb3e551ec738c1>
           }
           ?betrokkenBestuur
-            <http://www.w3.org/ns/org#organization> ?sender ;
+            <http://www.w3.org/ns/org#organization> ?aboutEenheid ;
             <http://data.lblod.info/vocabularies/erediensten/typebetrokkenheid> ?typeLocaleBetrokkenheid .
           ?bestuurseenheid
             <http://data.lblod.info/vocabularies/erediensten/betrokkenBestuur> ?betrokkenBestuur ;
