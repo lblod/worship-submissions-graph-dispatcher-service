@@ -1,6 +1,6 @@
 {
   "name": "worship-submissions-graph-dispatcher-service",
-  "version": "0.16.3",
+  "version": "0.16.4",
   "description": "Microservice moves meb:Submissions to correct org graph.",
   "repository": {
     "type": "git",
