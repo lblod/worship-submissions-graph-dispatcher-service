@@ -1,8 +1,9 @@
 import { sparqlEscapeUri } from "mu";
+import { toezichtAndFinancierendBetrokkenheid } from "./query-snippets";
 
 const rules = [];
 
-/* Excel: Rules number: 92, 93, 94, 95, 96, 97, 98, 99
+/* Excel: Rules number: 92, 93, 94, 95, 96, 97, 98, 99, 171, 172
  * Testing:
  *--------------------------
  * -SENDER-: <http://data.lblod.info/id/bestuurseenheden/14278813524c762255aeba149e7d7134ddecfbb43e7d56910731bd4e13e34f39> Prov. limburg
@@ -81,6 +82,8 @@ let rule = {
             mu:uuid ?uuid ;
             skos:prefLabel ?label;
             a <http://data.lblod.info/vocabularies/erediensten/RepresentatiefOrgaan>.
+       } UNION {
+          ${toezichtAndFinancierendBetrokkenheid()}
        }
       }
     `;
