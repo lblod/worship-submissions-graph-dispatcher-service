@@ -1,5 +1,6 @@
 import { sparqlEscapeUri } from "mu";
 import { allTypeLocaleBetrokkenheid, repOrgQuerySnippet } from './query-snippets';
+import { ORG_GRAPH_SUFFIX } from '../config';
 
 const rules = [];
 
@@ -14,6 +15,7 @@ const rules = [];
  * EB: <http://data.lblod.info/id/besturenVanDeEredienst/6375F8724B5FEAF28DEDE821> Attaqwa
 **/
 let rule = {
+  abbSubgroupDestination: [ "LoketLB-databankEredienstenGebruiker", "LoketLB-databankEredienstenGebruiker-LF"],
   documentType: 'https://data.vlaanderen.be/id/concept/BesluitDocumentType/a970c99d-c06c-4942-9815-153bf3e87df2', // Afschrift erkenningszoekende besturen
   matchSentByEenheidClass: (eenheidClass) =>
     eenheidClass ==

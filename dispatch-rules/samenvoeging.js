@@ -1,4 +1,5 @@
 import { sparqlEscapeUri } from "mu";
+import { ORG_GRAPH_SUFFIX } from '../config';
 
 const rules = [];
 /* Excel: Rules number: 141
@@ -9,6 +10,7 @@ const rules = [];
  * PG: <http://data.lblod.info/id/bestuurseenheden/141d9d6b-54af-4d17-b313-8d1c30bc3f5b> ABB
 **/
 let rule = {
+  abbSubgroupDestination: [ "LoketLB-databankEredienstenGebruiker", "LoketLB-databankEredienstenGebruiker-LF"],
   documentType: 'https://data.vlaanderen.be/id/concept/BesluitDocumentType/14793940-5b9c-4172-b108-c73665ad9d6a', // Samenvoeging
   matchSentByEenheidClass: eenheidClass =>
     eenheidClass == 'http://data.vlaanderen.be/id/concept/BestuurseenheidClassificatieCode/36372fad-0358-499c-a4e3-f412d2eae213', // RO

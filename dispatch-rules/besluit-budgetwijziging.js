@@ -1,5 +1,6 @@
 import { sparqlEscapeUri } from "mu";
 import { toezichtAndFinancierendBetrokkenheid } from "./query-snippets";
+import { ORG_GRAPH_SUFFIX } from '../config';
 
 const rules = [];
 
@@ -22,6 +23,7 @@ const rules = [];
  * EB: <http://data.lblod.info/id/besturenVanDeEredienst/ece3ff12e1fdba111ce2bf3d5edf7c0e> Kerkfabriek St.-Apollonia van Roosdaal (Pamel)
 **/
 let rule = {
+  abbSubgroupDestination: [ "LoketLB-databankEredienstenGebruiker", "LoketLB-databankEredienstenGebruiker-LF"],
   documentType: 'https://data.vlaanderen.be/id/concept/BesluitType/df261490-cc74-4f80-b783-41c35e720b46', // Besluit budgetwijziging
   matchSentByEenheidClass: eenheidClass => {
     return [

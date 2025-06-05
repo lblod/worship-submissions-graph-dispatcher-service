@@ -1,4 +1,5 @@
 import { sparqlEscapeUri } from "mu";
+import { ORG_GRAPH_SUFFIX } from '../config';
 
 const rules = [];
 
@@ -21,6 +22,7 @@ const rules = [];
  * EB: <http://data.lblod.info/id/besturenVanDeEredienst/ece3ff12e1fdba111ce2bf3d5edf7c0e> Kerkfabriek St.-Apollonia van Roosdaal (Pamel)
 **/
 let rule = {
+  abbSubgroupDestination: [ "LoketLB-databankEredienstenGebruiker", "LoketLB-databankEredienstenGebruiker-LF"],
   documentType: 'https://data.vlaanderen.be/id/concept/BesluitType/b25faa84-3ab5-47ae-98c0-1b389c77b827', // schorsingsbesluit
   matchSentByEenheidClass: eenheidClass => {
     return [
