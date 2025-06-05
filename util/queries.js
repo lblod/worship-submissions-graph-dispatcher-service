@@ -2,7 +2,7 @@ import {  sparqlEscapeUri, sparqlEscapeString, sparqlEscapeDateTime, sparqlEscap
 import { querySudo as query, updateSudo as update } from "@lblod/mu-auth-sudo";
 import exportConfig from "../export-config";
 import { parseResult } from './utils';
-import { ORG_GRAPH_BASE, ORG_GRAPH_SUFFIX, DISPATCH_SOURCE_GRAPH, DISPATCH_FILES_GRAPH } from '../config';
+import { ORG_GRAPH_BASE, ORG_GRAPH_SUFFIX, ABB_UUID, DISPATCH_SOURCE_GRAPH, DISPATCH_FILES_GRAPH } from '../config';
 
 const CREATOR = 'http://lblod.data.gift/services/worship-submissions-graph-dispatcher-service';
 
@@ -81,9 +81,38 @@ export async function getSubmissionInfo(submission) {
   };
 }
 
-export async function getDestinators(submissionInfo, rule) {
+export async function calculateDestinatorGraphs(submissionInfo, rule) {
+
   const result = await query(rule.destinationInfoQuery(submissionInfo.creator, submissionInfo.submission));
-  return parseResult(result);
+  const destinationData = parseResult(result);
+
+  const destinationGraphs = [];
+  for(const destination of destinationData) {
+    if(destination.uuid == ABB_UUID) {
+
+      if(!destination.abbSubgroupDestination) {
+        console.warn(
+          `!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+            Detected ${submissionInfo.submission} should go to ABB.
+            However, no subgroups for ABB were specified in the rules.
+            This means we will only dispatch to the default ABB group: ${ORG_GRAPH_SUFFIX}.
+           !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+          `
+        );
+        // Note: to dispatch to default ABB is (currently) ok in this case. See DL-6512.
+        destinationGraphs.push(ORG_GRAPH_BASE + '/' + destination.uuid + '/' + ORG_GRAPH_SUFFIX);
+      }
+      else {
+        for(const ABBSubgroupSuffix of destination.abbSubgroupDestination) {
+          destinationGraphs.push(ORG_GRAPH_BASE + '/' + destination.uuid + '/' + ABBSubgroupSuffix);
+        }
+      }
+    }
+    else {
+      destinationGraphs.push(ORG_GRAPH_BASE + '/' + destination.uuid + '/' + ORG_GRAPH_SUFFIX);
+    }
+  }
+  return destinationGraphs;
 }
 
 export async function getGraphsAndCountForSubjects(subjects, graphs) {
