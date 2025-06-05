@@ -1,5 +1,6 @@
 import { sparqlEscapeUri } from "mu";
 import { toezichthoudendeQuerySnippet } from './query-snippets';
+import { ORG_GRAPH_SUFFIX } from '../config';
 
 const rules = [];
 
@@ -66,6 +67,7 @@ rules.push(rule);
 * GO: <http://data.lblod.info/id/bestuurseenheden/2ad0d123f4a81787572342c394a1917b81752f42d802d1e013941f56b53bdd2a> Gemeente Haacht
 **/
 rule = {
+  abbSubgroupDestination: [ ORG_GRAPH_SUFFIX, `${ORG_GRAPH_SUFFIX}-LF`],
   documentType: 'https://data.vlaanderen.be/id/concept/BesluitType/f56c645d-b8e1-4066-813d-e213f5bc529f', // Meerjarenplan(wijziging)
   matchSentByEenheidClass: eenheidClass => eenheidClass == 'http://data.vlaanderen.be/id/concept/BestuurseenheidClassificatieCode/66ec74fd-8cfc-4e16-99c6-350b35012e86', //EB zonder CB
   destinationInfoQuery: ( sender ) => {
@@ -127,6 +129,7 @@ rules.push(rule);
 * RO: <http://data.lblod.info/id/representatieveOrganen/c98e270d84a8455b2f4bf16b915aeff2> Bisdom Hasselt
 */
 rule = {
+  abbSubgroupDestination: [ ORG_GRAPH_SUFFIX, `${ORG_GRAPH_SUFFIX}-LF`],
   documentType: 'https://data.vlaanderen.be/id/concept/BesluitDocumentType/2c9ada23-1229-4c7e-a53e-acddc9014e4e', // Meerjarenplan(wijziging) - CB namens EB's
   matchSentByEenheidClass: eenheidClass => eenheidClass == 'http://data.vlaanderen.be/id/concept/BestuurseenheidClassificatieCode/f9cac08a-13c1-49da-9bcb-f650b0604054', // Centraal bestuur van de eredienst
   destinationInfoQuery: ( sender ) => {

@@ -26,18 +26,8 @@ import meldingInterneBeslissingTotSamenvoeging from './melding-interne-beslissin
 /*
  * This file exports a list of rule objects, which helps deduce who the targets are for a
  * a specific submission.
- * It tries to translate this file: https://docs.google.com/spreadsheets/d/1NnZHqaFnNToE-aZMiyDI1QIPhHP5EG8i39KGFhTazlg/edit?usp=sharing
- * Rule object has the following shape:
- *  {
- *    documentType: 'http://uri/of/type/doc',
- *    matchSentByEenheidClass: eenheidClass => { returns true if bestuurseenheidClassificatieCode matches }
- *    destinationInfoQuery: ( sender, submission = null ) => {
- *      returns string of query to execute to find matching eenheiden where to dispatch to
- *    }
- *  }
- *
- * The property of documentType and matchSentByEenheidClass are used to pre-filter the rules. This to avoid extra load on the database.
- * Only destinationInfoQuery will return the correct query to match the bestuurseenheden where the submission should go to.
+ * Check the README.md#Anatomy of a dispatch-rule.
+ * Please, if things change in the format of the rules, please update the doc there.
  */
 
 const rules = [

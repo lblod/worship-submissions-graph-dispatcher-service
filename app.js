@@ -8,7 +8,7 @@ import {
   getTypesForSubject,
   getSubmissionForSubject,
   getSubmissionInfo,
-  getDestinators,
+  calculateDestinatorGraphs,
   removeSubjectFromGraph,
   copySubjectDataToGraph,
   getRelatedSubjectsForSubmission,
@@ -21,8 +21,6 @@ import { DISPATCH_SOURCE_GRAPH,
          DISPATCH_FILES_GRAPH,
          ENABLE_HEALING,
          HEALING_CRON,
-         ORG_GRAPH_BASE,
-         ORG_GRAPH_SUFFIX,
          NUMBER_OF_HEALING_QUEUES
        } from './config';
 
@@ -240,7 +238,7 @@ async function dispatch(submission) {
 
     let destinators = [];
     for (const rule of applicableRules) {
-      const currDestinators = await getDestinators(submissionInfo, rule);
+      const currDestinators = await calculateDestinatorGraphs(submissionInfo, rule);
       destinators = destinators.concat(currDestinators);
     }
 
@@ -259,10 +257,10 @@ async function dispatch(submission) {
 
     // Scalar product of related subjects and graphs they should be in
     const allSubjectsAndGraphs = relatedSubjects.reduce((acc, curr) => {
-      destinators.forEach((d) => {
+      destinators.forEach((destinatorGraph) => {
         acc.push({
           subject: curr,
-          graph: ORG_GRAPH_BASE + '/' + d.uuid + '/' + ORG_GRAPH_SUFFIX
+          graph: destinatorGraph
         });
       });
       return acc;

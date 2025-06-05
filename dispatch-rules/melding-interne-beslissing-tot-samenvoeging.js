@@ -1,4 +1,5 @@
 import { sparqlEscapeUri } from "mu";
+import { ORG_GRAPH_SUFFIX } from '../config';
 
 const rules = [];
 /* Excel: Rules number: TODO: update excel?
