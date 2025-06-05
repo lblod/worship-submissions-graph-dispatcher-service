@@ -90,7 +90,7 @@ export async function calculateDestinatorGraphs(submissionInfo, rule) {
   for(const destination of destinationData) {
     if(destination.uuid == ABB_UUID) {
 
-      if(!destination.abbSubgroupDestination) {
+      if(!rule.abbSubgroupDestination) {
         console.warn(
           `!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
             Detected ${submissionInfo.submission} should go to ABB.
@@ -103,7 +103,7 @@ export async function calculateDestinatorGraphs(submissionInfo, rule) {
         destinationGraphs.push(ORG_GRAPH_BASE + '/' + destination.uuid + '/' + ORG_GRAPH_SUFFIX);
       }
       else {
-        for(const ABBSubgroupSuffix of destination.abbSubgroupDestination) {
+        for(const ABBSubgroupSuffix of rule.abbSubgroupDestination) {
           destinationGraphs.push(ORG_GRAPH_BASE + '/' + destination.uuid + '/' + ABBSubgroupSuffix);
         }
       }
