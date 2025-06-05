@@ -24,7 +24,7 @@ const rules = [];
  * RO: <http://data.lblod.info/id/representatieveOrganen/0ebb44c2ef14d86978ea85e74d128ad1> Oecumenisch Patriarchaat van Konstantinopel
 **/
 let rule = {
-  abbSubgroupDestination: [ "LoketLB-databankEredienstenGebruiker", "LoketLB-databankEredienstenGebruiker-LF"],
+  abbSubgroupDestination: [ ORG_GRAPH_SUFFIX, `${ORG_GRAPH_SUFFIX}-LF`],
   documentType: 'https://data.vlaanderen.be/id/concept/BesluitDocumentType/8e791b27-7600-4577-b24e-c7c29e0eb773', // Notulen EB
   matchSentByEenheidClass: eenheidClass => {
     return [

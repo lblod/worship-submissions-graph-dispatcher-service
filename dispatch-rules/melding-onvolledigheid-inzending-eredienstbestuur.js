@@ -33,7 +33,7 @@ const rules = [];
  * PG: <http://data.lblod.info/id/bestuurseenheden/141d9d6b-54af-4d17-b313-8d1c30bc3f5b> ABB
  **/
 let rule = {
-  abbSubgroupDestination: [ "LoketLB-databankEredienstenGebruiker", "LoketLB-databankEredienstenGebruiker-LF"],
+  abbSubgroupDestination: [ ORG_GRAPH_SUFFIX, `${ORG_GRAPH_SUFFIX}-LF`],
   documentType:
     "https://data.vlaanderen.be/id/concept/BesluitDocumentType/863caf68-97c9-4ee0-adb5-620577ea8146", // Melding onvolledigheid inzending eredienstbestuur
     matchSentByEenheidClass: eenheidClass => {

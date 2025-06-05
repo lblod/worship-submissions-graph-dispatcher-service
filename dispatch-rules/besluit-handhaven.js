@@ -21,7 +21,7 @@ const rules = [];
  * CB: <http://data.lblod.info/id/centraleBesturenVanDeEredienst/2b149a43d431b110132e2ab3b90a246e> CKB Aalst
 **/
 let rule = {
-  abbSubgroupDestination: [ "LoketLB-databankEredienstenGebruiker", "LoketLB-databankEredienstenGebruiker-LF"],
+  abbSubgroupDestination: [ ORG_GRAPH_SUFFIX, `${ORG_GRAPH_SUFFIX}-LF`],
   documentType: 'https://data.vlaanderen.be/id/concept/BesluitType/41a09f6c-7964-4777-8375-437ef61ed946',
   matchSentByEenheidClass: eenheidClass => {
     return [

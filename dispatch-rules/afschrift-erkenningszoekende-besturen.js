@@ -15,7 +15,7 @@ const rules = [];
  * EB: <http://data.lblod.info/id/besturenVanDeEredienst/6375F8724B5FEAF28DEDE821> Attaqwa
 **/
 let rule = {
-  abbSubgroupDestination: [ "LoketLB-databankEredienstenGebruiker", "LoketLB-databankEredienstenGebruiker-LF"],
+  abbSubgroupDestination: [ ORG_GRAPH_SUFFIX, `${ORG_GRAPH_SUFFIX}-LF`],
   documentType: 'https://data.vlaanderen.be/id/concept/BesluitDocumentType/a970c99d-c06c-4942-9815-153bf3e87df2', // Afschrift erkenningszoekende besturen
   matchSentByEenheidClass: (eenheidClass) =>
     eenheidClass ==

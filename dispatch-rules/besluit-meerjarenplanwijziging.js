@@ -23,7 +23,7 @@ const rules = [];
  * EB: <http://data.lblod.info/id/besturenVanDeEredienst/ece3ff12e1fdba111ce2bf3d5edf7c0e> Kerkfabriek St.-Apollonia van Roosdaal (Pamel)
 **/
 let rule = {
-  abbSubgroupDestination: [ "LoketLB-databankEredienstenGebruiker", "LoketLB-databankEredienstenGebruiker-LF"],
+  abbSubgroupDestination: [ ORG_GRAPH_SUFFIX, `${ORG_GRAPH_SUFFIX}-LF`],
   documentType: 'https://data.vlaanderen.be/id/concept/BesluitType/3fcf7dba-2e5b-4955-a489-6dd8285c013b', // Besluit meerjarenplanwijziging
   matchSentByEenheidClass: eenheidClass => {
     return [
