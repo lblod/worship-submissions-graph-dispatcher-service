@@ -1,4 +1,6 @@
 import { sparqlEscapeUri } from "mu";
+import { ORG_GRAPH_SUFFIX } from '../config';
+
 const rules = [];
 
 /* Excel: Rules number: 77
@@ -8,6 +10,7 @@ const rules = [];
 * PG: <http://data.lblod.info/id/bestuurseenheden/141d9d6b-54af-4d17-b313-8d1c30bc3f5b> ABB
 **/
 let rule = {
+  abbSubgroupDestination: [ ORG_GRAPH_SUFFIX, `${ORG_GRAPH_SUFFIX}-LF`],
   documentType: 'https://data.vlaanderen.be/id/concept/BesluitType/54b61cbd-349f-41c4-9c8a-7e8e67d08347', // Eindrekening (ER)
   matchSentByEenheidClass: eenheidClass => eenheidClass == 'http://data.vlaanderen.be/id/concept/BestuurseenheidClassificatieCode/66ec74fd-8cfc-4e16-99c6-350b35012e86', // EB
   destinationInfoQuery: ( sender ) => {
