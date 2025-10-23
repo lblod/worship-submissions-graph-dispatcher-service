@@ -223,7 +223,7 @@ async function processSubject(subject) {
 async function dispatch(submission) {
   const submissionInfo = await getSubmissionInfo(submission);
 
-  if(submissionInfo) {
+  if (submissionInfo) {
     const applicableRules = dispatchRules.filter(r => {
       const isOneSubmissionTypeIncluded = submissionInfo.submissionTypes.includes(r.documentType);
       let isOneCreatorTypeIncluded = false;

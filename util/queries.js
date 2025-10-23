@@ -71,14 +71,17 @@ export async function getSubmissionInfo(submission) {
 
   const parsedResult = parseResult(await query(queryStr));
 
-  // We can receive a submission with multiple decision types and creator types that all need to be evaluated
-  return {
-    submission: parsedResult[0].submission,
-    creator: parsedResult[0].creator,
-    creatorUuid: parsedResult[0].creatorUuid,
-    submissionTypes: parsedResult.map(res => res.submissionType),
-    creatorTypes: parsedResult.map(res => res.creatorType)
-  };
+  if (parsedResult.length) {
+    // We can receive a submission with multiple decision types and creator types that all need to be evaluated
+    return {
+      submission: parsedResult[0].submission,
+      creator: parsedResult[0].creator,
+      creatorUuid: parsedResult[0].creatorUuid,
+      submissionTypes: parsedResult.map(res => res.submissionType),
+      creatorTypes: parsedResult.map(res => res.creatorType)
+    };
+  }
+  return null;
 }
 
 export async function calculateDestinatorGraphs(submissionInfo, rule) {
