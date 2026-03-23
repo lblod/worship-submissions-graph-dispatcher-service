@@ -23,4 +23,4 @@ export const CHILD_SUBMISSION_WHITELIST_MAPPING = {
   "https://data.vlaanderen.be/id/concept/BesluitDocumentType/2c9ada23-1229-4c7e-a53e-acddc9014e4e":
     // Meerjarenplan(aanpassing)
     "https://data.vlaanderen.be/id/concept/BesluitType/f56c645d-b8e1-4066-813d-e213f5bc529f",
-}
+};
