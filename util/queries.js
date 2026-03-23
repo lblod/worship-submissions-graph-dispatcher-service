@@ -3,6 +3,7 @@ import { querySudo as query, updateSudo as update } from "@lblod/mu-auth-sudo";
 import exportConfig from "../export-config";
 import { parseResult } from './utils';
 import { ORG_GRAPH_BASE, ORG_GRAPH_SUFFIX, ABB_UUID, DISPATCH_SOURCE_GRAPH, DISPATCH_FILES_GRAPH } from '../config';
+import { CHILD_SUBMISSION_WHITELIST_MAPPING } from "../constants";
 
 const CREATOR = 'http://lblod.data.gift/services/worship-submissions-graph-dispatcher-service';
 
@@ -247,4 +248,31 @@ export async function getSubmissions( { inGraph, sentDateSince } = {}) {
   }
   const result = await query(queryStr);
   return parseResult(result).map(s => s.submission);
+}
+
+export async function retrieveChildSubmissions(submission, submissionType){
+  const childSubmissionType = CHILD_SUBMISSION_WHITELIST_MAPPING[submissionType];
+  if(!childSubmissionType){
+    return [];
+  }
+  const queryStr = /* sparql*/`
+    PREFIX meb: <http://rdf.myexperiment.org/ontologies/base/>
+    PREFIX prov: <http://www.w3.org/ns/prov#>
+    PREFIX dcterms: <http://purl.org/dc/terms/>
+
+    SELECT DISTINCT ?childSubmission WHERE {
+      ${sparqlEscapeUri(submission)}
+        a meb:Submission;
+        prov:generated ?formData.
+      
+      ?formData dcterms:relation ?childDecision.
+      ?childSubmission 
+        a meb:Submission;
+        dcterms:subject ?childDecision;
+        prov:generated ?childFormData.
+      ?childFormData <http://mu.semte.ch/vocabularies/ext/decisionType> ${sparqlEscapeUri(childSubmissionType)}.
+    }
+  `;
+  const result = await query(queryStr);
+  return parseResult(result).map(s => s.childSubmission);
 }

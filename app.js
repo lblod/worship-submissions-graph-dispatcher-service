@@ -14,15 +14,16 @@ import {
   getRelatedSubjectsForSubmission,
   getSubmissions,
   getGraphsAndCountForSubjects,
+  retrieveChildSubmissions,
 } from "./util/queries";
 import dispatchRules from "./dispatch-rules/entrypoint";
 import exportConfig from "./export-config";
 import { DISPATCH_SOURCE_GRAPH,
-         DISPATCH_FILES_GRAPH,
-         ENABLE_HEALING,
-         HEALING_CRON,
-         NUMBER_OF_HEALING_QUEUES
-       } from './config';
+  DISPATCH_FILES_GRAPH,
+  ENABLE_HEALING,
+  HEALING_CRON,
+  NUMBER_OF_HEALING_QUEUES
+} from './config';
 
 const normalQueue = new ProcessingQueue('normal-operation-queue');
 
@@ -235,25 +236,32 @@ async function dispatch(submission) {
 
       return isOneSubmissionTypeIncluded && isOneCreatorTypeIncluded;
     });
-
+    const submissions = [submissionInfo.submission];
     let destinators = [];
     for (const rule of applicableRules) {
       const currDestinators = await calculateDestinatorGraphs(submissionInfo, rule);
       destinators = destinators.concat(currDestinators);
+      if (rule.includeChildSubmissions) {
+        const currChildSubmissions = await retrieveChildSubmissions(submissionInfo.submission, rule.documentType);
+        submissions.push(...currChildSubmissions);
+      }
     }
 
-    let relatedSubjects = [ submissionInfo.submission ];
+    let relatedSubjects = [...submissions];
 
     for (const config of exportConfig) {
-      const subjects = await getRelatedSubjectsForSubmission(
-        submissionInfo.submission,
-        config.type,
-        config.pathToSubmission
-      );
+      for (const submission of submissions) {
+        const subjects = await getRelatedSubjectsForSubmission(
+          submission,
+          config.type,
+          config.pathToSubmission
+        );
 
-      relatedSubjects = [ ...relatedSubjects, ...subjects ];
+        relatedSubjects = [...relatedSubjects, ...subjects];
+      }
+
     }
-    relatedSubjects = [ ...(new Set(relatedSubjects)) ];
+    relatedSubjects = [...(new Set(relatedSubjects))];
 
     // Scalar product of related subjects and graphs they should be in
     const allSubjectsAndGraphs = relatedSubjects.reduce((acc, curr) => {
@@ -306,7 +314,7 @@ async function dispatch(submission) {
     // Difference between the two lists, only ones remaining are the missing or incorrect ones
     const missingSubjectsPerGraph = [];
     for (const allSub of allSubjectsAndGraphs) {
-      const found = subjectsAndGraphs.find((e) => 
+      const found = subjectsAndGraphs.find((e) =>
         e.subject === allSub.subject &&
         e.graph === allSub.graph);
       if (found) {
