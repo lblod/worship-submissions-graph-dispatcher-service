@@ -25,6 +25,7 @@ import {
   HEALING_CRON,
   NUMBER_OF_HEALING_QUEUES,
 } from "./config";
+import { addMany } from "./util/set";
 
 const normalQueue = new ProcessingQueue("normal-operation-queue");
 
@@ -238,94 +239,105 @@ async function processSubject(subject) {
 
 async function dispatch(submission) {
   const submissionInfo = await getSubmissionInfo(submission);
+  if (!submissionInfo) {
+    return;
+  }
 
-  if (submissionInfo) {
-    const applicableRules = dispatchRules.filter((r) => {
-      const isOneSubmissionTypeIncluded =
-        submissionInfo.submissionTypes.includes(r.documentType);
-      let isOneCreatorTypeIncluded = false;
-      for (const creatorType of submissionInfo.creatorTypes) {
-        if (r.matchSentByEenheidClass(creatorType)) {
-          isOneCreatorTypeIncluded = true;
-        }
+  const applicableRules = dispatchRules.filter((r) => {
+    const isOneSubmissionTypeIncluded = submissionInfo.submissionTypes.includes(
+      r.documentType,
+    );
+    let isOneCreatorTypeIncluded = false;
+    for (const creatorType of submissionInfo.creatorTypes) {
+      if (r.matchSentByEenheidClass(creatorType)) {
+        isOneCreatorTypeIncluded = true;
       }
+    }
 
-      return isOneSubmissionTypeIncluded && isOneCreatorTypeIncluded;
-    });
-    const submissions = [submissionInfo.submission];
-    let destinators = [];
-    for (const rule of applicableRules) {
-      const currDestinators = await calculateDestinatorGraphs(
-        submissionInfo,
-        rule,
+    return isOneSubmissionTypeIncluded && isOneCreatorTypeIncluded;
+  });
+  if (!applicableRules.length) {
+    return;
+  }
+  const childDispatchPromises = [];
+  const allTargetGraphs = new Set();
+  for (const rule of applicableRules) {
+    const ruleDestinators = await calculateDestinatorGraphs(
+      submissionInfo,
+      rule,
+    );
+    addMany(allTargetGraphs, ...ruleDestinators);
+    if (rule.includeChildSubmissions) {
+      const childSubmissions = await retrieveChildSubmissions(
+        submissionInfo.submission,
+        rule.documentType,
       );
-      destinators = destinators.concat(currDestinators);
-      if (rule.includeChildSubmissions) {
-        const currChildSubmissions = await retrieveChildSubmissions(
-          submissionInfo.submission,
-          rule.documentType,
+      for (const childSubmission of childSubmissions) {
+        childDispatchPromises.push(
+          dispatchSubmissionToGraphs(childSubmission, ruleDestinators, {
+            // We do not want to remove the childSubmission from other graphs!
+            removeExtraneous: false,
+          }),
         );
-        submissions.push(...currChildSubmissions);
       }
     }
+  }
+  await dispatchSubmissionToGraphs(
+    submissionInfo.submission,
+    [...allTargetGraphs],
+    { removeExtraneous: true },
+  );
+  for (const childDispatchPromise of childDispatchPromises) {
+    await childDispatchPromise;
+  }
+}
 
-    let relatedSubjects = [...submissions];
-
-    for (const config of exportConfig) {
-      for (const submission of submissions) {
-        const subjects = await getRelatedSubjectsForSubmission(
-          submission,
-          config.type,
-          config.pathToSubmission,
-        );
-
-        relatedSubjects = [...relatedSubjects, ...subjects];
-      }
+async function dispatchSubmissionToGraphs(
+  submission,
+  targetGraphs,
+  { removeExtraneous = true },
+) {
+  const relatedSubjects = await getAllRelatedSubjects(submission);
+  const subjectsToDispatch = [submission, ...relatedSubjects];
+  const subjectsAndTargetGraphsCartProduct = [];
+  for (const subject of subjectsToDispatch) {
+    for (const graph of targetGraphs) {
+      subjectsAndTargetGraphsCartProduct.push({ subject, graph });
     }
-    relatedSubjects = [...new Set(relatedSubjects)];
+  }
 
-    // Scalar product of related subjects and graphs they should be in
-    const allSubjectsAndGraphs = relatedSubjects.reduce((acc, curr) => {
-      destinators.forEach((destinatorGraph) => {
-        acc.push({
-          subject: curr,
-          graph: destinatorGraph,
-        });
-      });
-      return acc;
-    }, []);
+  // Count number of triples per subject
+  let counts = await getGraphsAndCountForSubjects(subjectsToDispatch, [
+    DISPATCH_SOURCE_GRAPH,
+    DISPATCH_FILES_GRAPH,
+  ]);
+  // Deduplicate the counts
+  // In certain scenario's, the physical file triples are not completely
+  // dispatched correctly between the temp/for-dispatch and the
+  // temp/original-physical-files-data graphs. Take the max number of
+  // triples that can be found in order to become consistent.
+  counts = counts.reduce((acc, curr) => {
+    const alreadySeen = acc.find((e) => e.subject === curr.subject);
+    if (alreadySeen) {
+      alreadySeen.count = Math.max(alreadySeen.count, curr.count);
+    } else {
+      acc.push(curr);
+    }
+    return acc;
+  }, []);
+  subjectsAndTargetGraphsCartProduct.forEach((e) => {
+    e.count = counts.find((f) => f.subject === e.subject)?.count ?? 0;
+  });
 
-    // Count number of triples per subject
-    let counts = await getGraphsAndCountForSubjects(relatedSubjects, [
-      DISPATCH_SOURCE_GRAPH,
-      DISPATCH_FILES_GRAPH,
-    ]);
-    // Deduplicate the counts
-    // In certain scenario's, the physical file triples are not completely
-    // dispatched correctly between the temp/for-dispatch and the
-    // temp/original-physical-files-data graphs. Take the max number of
-    // triples that can be found in order to become consistent.
-    counts = counts.reduce((acc, curr) => {
-      const alreadySeen = acc.find((e) => e.subject === curr.subject);
-      if (alreadySeen) {
-        alreadySeen.count = Math.max(alreadySeen.count, curr.count);
-      } else {
-        acc.push(curr);
-      }
-      return acc;
-    }, []);
-    allSubjectsAndGraphs.forEach((e) => {
-      e.count = counts.find((f) => f.subject === e.subject)?.count;
-    });
+  // List of subjects and the graph they are in
+  const subjectsAndGraphs =
+    await getGraphsAndCountForSubjects(subjectsToDispatch);
 
-    // List of subjects and the graph they are in
-    const subjectsAndGraphs =
-      await getGraphsAndCountForSubjects(relatedSubjects);
-
+  if (removeExtraneous) {
     // Find subjects that no longer have a correct destinator by calculating a difference
     const removeSubjectsPerGraph = [];
     for (const currSub of subjectsAndGraphs) {
-      const found = allSubjectsAndGraphs.find(
+      const found = subjectsAndTargetGraphsCartProduct.find(
         (e) => e.subject === currSub.subject && e.graph === currSub.graph,
       );
       if (!found) removeSubjectsPerGraph.push(currSub);
@@ -334,27 +346,39 @@ async function dispatch(submission) {
     for (const { subject, graph } of removeSubjectsPerGraph) {
       await removeSubjectFromGraph(subject, graph);
     }
-
-    // Difference between the two lists, only ones remaining are the missing or incorrect ones
-    const missingSubjectsPerGraph = [];
-    for (const allSub of allSubjectsAndGraphs) {
-      const found = subjectsAndGraphs.find(
-        (e) => e.subject === allSub.subject && e.graph === allSub.graph,
-      );
-      if (found) {
-        if (found.count > allSub.count) {
-          allSub.toRemoveFirst = true;
-          missingSubjectsPerGraph.push(allSub);
-        } else if (found.count < allSub.count) {
-          missingSubjectsPerGraph.push(allSub);
-          // No else. If counts are equal, nothing needs to be done.
-        }
-      } else {
-        missingSubjectsPerGraph.push(allSub);
-      }
-    }
-
-    for (const { subject, graph, toRemoveFirst } of missingSubjectsPerGraph)
-      await copySubjectDataToGraph(subject, graph, toRemoveFirst);
   }
+
+  // Difference between the two lists, only ones remaining are the missing or incorrect ones
+  const missingSubjectsPerGraph = [];
+  for (const allSub of subjectsAndTargetGraphsCartProduct) {
+    const found = subjectsAndGraphs.find(
+      (e) => e.subject === allSub.subject && e.graph === allSub.graph,
+    );
+    if (found) {
+      if (found.count > allSub.count) {
+        allSub.toRemoveFirst = true;
+        missingSubjectsPerGraph.push(allSub);
+      } else if (found.count < allSub.count) {
+        missingSubjectsPerGraph.push(allSub);
+        // No else. If counts are equal, nothing needs to be done.
+      }
+    } else {
+      missingSubjectsPerGraph.push(allSub);
+    }
+  }
+  for (const { subject, graph, toRemoveFirst } of missingSubjectsPerGraph)
+    await copySubjectDataToGraph(subject, graph, toRemoveFirst);
+}
+
+async function getAllRelatedSubjects(submission) {
+  const relatedSubjects = new Set();
+  for (const config of exportConfig) {
+    const subjects = await getRelatedSubjectsForSubmission(
+      submission,
+      config.type,
+      config.pathToSubmission,
+    );
+    addMany(relatedSubjects, ...subjects);
+  }
+  return [...relatedSubjects];
 }
