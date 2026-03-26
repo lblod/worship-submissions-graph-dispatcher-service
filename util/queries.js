@@ -4,8 +4,9 @@ import {
   sparqlEscapeDateTime,
   sparqlEscapeDate,
   uuid,
+  query,
+  update,
 } from "mu";
-import { querySudo as query, updateSudo as update } from "@lblod/mu-auth-sudo";
 import exportConfig from "../export-config";
 import { parseResult } from "./utils";
 import {
@@ -31,7 +32,7 @@ export async function getRelatedSubjectsForSubmission(
       ${pathToSubmission}
     }`;
 
-  const result = await query(queryStr);
+  const result = await query(queryStr, { sudo: true });
   return result.results.bindings.map((r) => r.subject.value);
 }
 
@@ -49,7 +50,7 @@ export async function getTypesForSubject(subject) {
      }
   `;
 
-  return (await query(queryStr)).results.bindings.map((r) => r.type.value);
+  return (await query(queryStr, { sudo: true })).results.bindings.map((r) => r.type.value);
 }
 
 export async function getSubmissionForSubject(subject, type) {
@@ -65,7 +66,7 @@ export async function getSubmissionForSubject(subject, type) {
       }
     `;
 
-    const bindings = (await query(queryStr)).results.bindings;
+    const bindings = (await query(queryStr, { sudo: true })).results.bindings;
     if (bindings.length) {
       return bindings[0].submission.value;
     }
@@ -89,7 +90,7 @@ export async function getSubmissionInfo(submission) {
     }
   `;
 
-  const parsedResult = parseResult(await query(queryStr));
+  const parsedResult = parseResult(await query(queryStr, { sudo: true }));
 
   if (parsedResult.length) {
     // We can receive a submission with multiple decision types and creator types that all need to be evaluated
@@ -110,6 +111,7 @@ export async function calculateDestinatorGraphs(submissionInfo, rule) {
       submissionInfo.creator,
       submissionInfo.submission,
     ),
+    { sudo: true }
   );
   const destinationData = parseResult(result);
 
@@ -168,7 +170,7 @@ export async function getGraphsAndCountForSubjects(subjects, graphs) {
     }
     GROUP BY ?graph ?subject
   `;
-  return parseResult(await query(q));
+  return parseResult(await query(q, { sudo: true }));
 }
 
 export async function removeSubjectFromGraph(subject, graph) {
@@ -185,7 +187,7 @@ export async function removeSubjectFromGraph(subject, graph) {
       }
     }
   `;
-  await update(removeQueryStr);
+  await update(removeQueryStr, { sudo: true });
 }
 
 export async function copySubjectDataToGraph(
@@ -226,7 +228,7 @@ export async function copySubjectDataToGraph(
         }
      }
   `;
-  await update(queryStr);
+  await update(queryStr, { sudo: true });
 }
 
 export async function sendErrorAlert({ message, detail, reference }) {
@@ -251,7 +253,7 @@ export async function sendErrorAlert({ message, detail, reference }) {
       }
   `;
   try {
-    await update(q);
+    await update(q, { sudo: true });
   } catch (e) {
     console.error(
       `[WARN] Something went wrong while trying to store an error.\nMessage: ${e}\nQuery: ${q}`,
@@ -285,7 +287,7 @@ export async function getSubmissions({ inGraph, sentDateSince } = {}) {
       }
   `;
   }
-  const result = await query(queryStr);
+  const result = await query(queryStr, { sudo: true });
   return parseResult(result).map((s) => s.submission);
 }
 
@@ -313,6 +315,6 @@ export async function retrieveChildSubmissions(submission, submissionType) {
       ?childFormData <http://mu.semte.ch/vocabularies/ext/decisionType> ${sparqlEscapeUri(childSubmissionType)}.
     }
   `;
-  const result = await query(queryStr);
+  const result = await query(queryStr, { sudo: true });
   return parseResult(result).map((s) => s.childSubmission);
 }

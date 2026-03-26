@@ -14,6 +14,8 @@ Add the following snippet to your `docker-compose.yml`:
 ```yml
 worship-submissions-graph-dispatcher:
   image: lblod/worship-submissions-graph-dispatcher-service
+  environment:
+    ALLOW_MU_AUTH_SUDO: true
 ```
 
 Configure the delta-notification service to send notifications on the `/delta` endpoint by adding the following rules in `./delta/rules.js`:
