@@ -1,5 +1,5 @@
 import { sparqlEscapeUri } from "mu";
-import { toezichthoudendeQuerySnippet } from "./query-snippets";
+import { toezichthoudendeAccessingChildSubmissionQuerySnippet, toezichthoudendeQuerySnippet } from "./query-snippets";
 import { ORG_GRAPH_SUFFIX } from '../config';
 
 const rules = [];
@@ -9,12 +9,13 @@ const rules = [];
 *--------------------------
 * -SENDER-: <http://data.lblod.info/id/besturenVanDeEredienst/d52de436e194111289248db2d06e99ac> Kerkfabriek O.-L.-Vrouw van Deinze
 * CB: <http://data.lblod.info/id/centraleBesturenVanDeEredienst/7f5475cfb202d12f54779f046441c9e1> CKB Deinze
+* GEMEENTE: <http://data.lblod.info/id/bestuurseenheden/d93451bf-e89a-4528-80f3-f0a1c19361a8> Gemeente Deinze (only receives submission, when CKB has made a parent submission)
 **/
 let rule = {
   documentType: 'https://data.vlaanderen.be/id/concept/BesluitType/d463b6d1-c207-4c1a-8c08-f2c7dd1fa53b', // Budget(wijziging) - Indiening bij Centraal bestuur of Representatief orgaan - EB met CB 
   matchSentByEenheidClass: eenheidClass => eenheidClass == 'http://data.vlaanderen.be/id/concept/BestuurseenheidClassificatieCode/66ec74fd-8cfc-4e16-99c6-350b35012e86', //EB met CB (Active)
-  destinationInfoQuery: ( sender ) => {
-    return `
+  destinationInfoQuery: ( sender, submission ) => {
+    return /* sparql */`
         PREFIX mu: <http://mu.semte.ch/vocabularies/core/>
         PREFIX org: <http://www.w3.org/ns/org#>
         PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
@@ -48,6 +49,8 @@ let rule = {
                 regorg:orgStatus <http://lblod.data.gift/concepts/63cc561de9188d64ba5840a42ae8f0d6> ;
                 besluit:classificatie <http://data.vlaanderen.be/id/concept/BestuurseenheidClassificatieCode/f9cac08a-13c1-49da-9bcb-f650b0604054> .
             }
+          } UNION {
+            ${toezichthoudendeAccessingChildSubmissionQuerySnippet(sender, submission)} 
           }
         }
     `;
@@ -158,7 +161,7 @@ rule = {
   abbSubgroupDestination: [ ORG_GRAPH_SUFFIX, `${ORG_GRAPH_SUFFIX}-LF`],
   documentType: 'https://data.vlaanderen.be/id/concept/BesluitDocumentType/ce569d3d-25ff-4ce9-a194-e77113597e29', // Budgetten(wijzigingen) - Indiening bij toezichthoudende gemeente of provincie - CB namens EB's
   matchSentByEenheidClass: eenheidClass => eenheidClass == 'http://data.vlaanderen.be/id/concept/BestuurseenheidClassificatieCode/f9cac08a-13c1-49da-9bcb-f650b0604054', // Centraal bestuur van de eredienst
-  includeChildSubmissions: true,
+  dispatchChildSubmissions: true,
   destinationInfoQuery: ( sender ) => {
     return `
       PREFIX mu: <http://mu.semte.ch/vocabularies/core/>
@@ -194,7 +197,6 @@ rule = {
   abbSubgroupDestination: [ ORG_GRAPH_SUFFIX, `${ORG_GRAPH_SUFFIX}-LF`],
   documentType: 'https://data.vlaanderen.be/id/concept/BesluitDocumentType/18833df2-8c9e-4edd-87fd-b5c252337349', // Budgetten(wijzigingen) - betreffende besturen van de eredienst - Indiening bij Representatief orgaan - CB namens EB's
   matchSentByEenheidClass: eenheidClass => eenheidClass == 'http://data.vlaanderen.be/id/concept/BestuurseenheidClassificatieCode/f9cac08a-13c1-49da-9bcb-f650b0604054', // Centraal bestuur van de eredienst
-  includeChildSubmissions: true,
   destinationInfoQuery: ( sender ) => {
     return `
       PREFIX mu: <http://mu.semte.ch/vocabularies/core/>

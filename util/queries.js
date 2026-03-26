@@ -16,7 +16,6 @@ import {
   DISPATCH_SOURCE_GRAPH,
   DISPATCH_FILES_GRAPH,
 } from "../config";
-import { CHILD_SUBMISSION_WHITELIST_MAPPING } from "../constants";
 
 const CREATOR =
   "http://lblod.data.gift/services/worship-submissions-graph-dispatcher-service";
@@ -291,12 +290,7 @@ export async function getSubmissions({ inGraph, sentDateSince } = {}) {
   return parseResult(result).map((s) => s.submission);
 }
 
-export async function retrieveChildSubmissions(submission, submissionType) {
-  const childSubmissionType =
-    CHILD_SUBMISSION_WHITELIST_MAPPING[submissionType];
-  if (!childSubmissionType) {
-    return [];
-  }
+export async function retrieveChildSubmissions(submission) {
   const queryStr = /* sparql*/ `
     PREFIX meb: <http://rdf.myexperiment.org/ontologies/base/>
     PREFIX prov: <http://www.w3.org/ns/prov#>
@@ -310,9 +304,7 @@ export async function retrieveChildSubmissions(submission, submissionType) {
       ?formData dcterms:relation ?childDecision.
       ?childSubmission 
         a meb:Submission;
-        dcterms:subject ?childDecision;
-        prov:generated ?childFormData.
-      ?childFormData <http://mu.semte.ch/vocabularies/ext/decisionType> ${sparqlEscapeUri(childSubmissionType)}.
+        dcterms:subject ?childDecision.
     }
   `;
   const result = await query(queryStr, { sudo: true });

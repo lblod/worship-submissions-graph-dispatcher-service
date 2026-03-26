@@ -259,7 +259,7 @@ async function dispatch(submission) {
   if (!applicableRules.length) {
     return;
   }
-  const childDispatchPromises = [];
+  let dispatchChildSubmissions = false;
   const allTargetGraphs = new Set();
   for (const rule of applicableRules) {
     const ruleDestinators = await calculateDestinatorGraphs(
@@ -267,36 +267,24 @@ async function dispatch(submission) {
       rule,
     );
     addMany(allTargetGraphs, ...ruleDestinators);
-    if (rule.includeChildSubmissions) {
-      const childSubmissions = await retrieveChildSubmissions(
-        submissionInfo.submission,
-        rule.documentType,
-      );
-      for (const childSubmission of childSubmissions) {
-        childDispatchPromises.push(
-          dispatchSubmissionToGraphs(childSubmission, ruleDestinators, {
-            // We do not want to remove the childSubmission from other graphs!
-            removeExtraneous: false,
-          }),
-        );
-      }
+    if (rule.dispatchChildSubmissions) {
+      dispatchChildSubmissions = true;
     }
   }
-  await dispatchSubmissionToGraphs(
-    submissionInfo.submission,
-    [...allTargetGraphs],
-    { removeExtraneous: true },
-  );
-  for (const childDispatchPromise of childDispatchPromises) {
-    await childDispatchPromise;
+  await dispatchSubmissionToGraphs(submissionInfo.submission, [
+    ...allTargetGraphs,
+  ]);
+  if (dispatchChildSubmissions) {
+    const childSubmissions = await retrieveChildSubmissions(
+      submissionInfo.submission,
+    );
+    for (const childSubmission of childSubmissions) {
+      await dispatch(childSubmission);
+    }
   }
 }
 
-async function dispatchSubmissionToGraphs(
-  submission,
-  targetGraphs,
-  { removeExtraneous = true },
-) {
+async function dispatchSubmissionToGraphs(submission, targetGraphs) {
   const relatedSubjects = await getAllRelatedSubjects(submission);
   const subjectsToDispatch = [submission, ...relatedSubjects];
   const subjectsAndTargetGraphsCartProduct = [];
@@ -333,19 +321,17 @@ async function dispatchSubmissionToGraphs(
   const subjectsAndGraphs =
     await getGraphsAndCountForSubjects(subjectsToDispatch);
 
-  if (removeExtraneous) {
-    // Find subjects that no longer have a correct destinator by calculating a difference
-    const removeSubjectsPerGraph = [];
-    for (const currSub of subjectsAndGraphs) {
-      const found = subjectsAndTargetGraphsCartProduct.find(
-        (e) => e.subject === currSub.subject && e.graph === currSub.graph,
-      );
-      if (!found) removeSubjectsPerGraph.push(currSub);
-    }
+  // Find subjects that no longer have a correct destinator by calculating a difference
+  const removeSubjectsPerGraph = [];
+  for (const currSub of subjectsAndGraphs) {
+    const found = subjectsAndTargetGraphsCartProduct.find(
+      (e) => e.subject === currSub.subject && e.graph === currSub.graph,
+    );
+    if (!found) removeSubjectsPerGraph.push(currSub);
+  }
 
-    for (const { subject, graph } of removeSubjectsPerGraph) {
-      await removeSubjectFromGraph(subject, graph);
-    }
+  for (const { subject, graph } of removeSubjectsPerGraph) {
+    await removeSubjectFromGraph(subject, graph);
   }
 
   // Difference between the two lists, only ones remaining are the missing or incorrect ones
