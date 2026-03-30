@@ -237,7 +237,11 @@ async function processSubject(subject) {
   }
 }
 
-async function dispatch(submission) {
+async function dispatch(submission, visitedSubmissions = new Set()) {
+  if(visitedSubmissions.has(submission)){
+    return;
+  }
+  visitedSubmissions.add(submission);
   const submissionInfo = await getSubmissionInfo(submission);
   if (!submissionInfo) {
     return;
@@ -279,7 +283,7 @@ async function dispatch(submission) {
       submissionInfo.submission,
     );
     for (const childSubmission of childSubmissions) {
-      await dispatch(childSubmission);
+      await dispatch(childSubmission, visitedSubmissions);
     }
   }
 }
