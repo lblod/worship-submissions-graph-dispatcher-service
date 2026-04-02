@@ -289,3 +289,24 @@ export async function getSubmissions({ inGraph, sentDateSince } = {}) {
   const result = await query(queryStr, { sudo: true });
   return parseResult(result).map((s) => s.submission);
 }
+
+export async function retrieveChildSubmissions(submission) {
+  const queryStr = /* sparql*/ `
+    PREFIX meb: <http://rdf.myexperiment.org/ontologies/base/>
+    PREFIX prov: <http://www.w3.org/ns/prov#>
+    PREFIX dcterms: <http://purl.org/dc/terms/>
+
+    SELECT DISTINCT ?childSubmission WHERE {
+      ${sparqlEscapeUri(submission)}
+        a meb:Submission;
+        prov:generated ?formData.
+      
+      ?formData dcterms:relation ?childDecision.
+      ?childSubmission 
+        a meb:Submission;
+        dcterms:subject ?childDecision.
+    }
+  `;
+  const result = await query(queryStr, { sudo: true });
+  return parseResult(result).map((s) => s.childSubmission);
+}
