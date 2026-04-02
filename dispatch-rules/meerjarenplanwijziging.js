@@ -1,5 +1,5 @@
 import { sparqlEscapeUri } from "mu";
-import { toezichthoudendeQuerySnippet } from './query-snippets';
+import { toezichthoudendeAccessingChildSubmissionQuerySnippet, toezichthoudendeQuerySnippet } from './query-snippets';
 import { ORG_GRAPH_SUFFIX } from '../config';
 
 const rules = [];
@@ -9,12 +9,13 @@ const rules = [];
 *--------------------------
 * -SENDER-: <http://data.lblod.info/id/besturenVanDeEredienst/d52de436e194111289248db2d06e99ac> Kerkfabriek O.-L.-Vrouw van Deinze
 * CB: <http://data.lblod.info/id/centraleBesturenVanDeEredienst/7f5475cfb202d12f54779f046441c9e1> CKB Deinze
+* GEMEENTE: <http://data.lblod.info/id/bestuurseenheden/d93451bf-e89a-4528-80f3-f0a1c19361a8> Gemeente Deinze (only receives submission, when CKB has made a parent submission)
 **/
 let rule = {
   documentType: 'https://data.vlaanderen.be/id/concept/BesluitType/f56c645d-b8e1-4066-813d-e213f5bc529f', // Meerjarenplan(wijziging)
   matchSentByEenheidClass: eenheidClass =>
     eenheidClass == 'http://data.vlaanderen.be/id/concept/BestuurseenheidClassificatieCode/66ec74fd-8cfc-4e16-99c6-350b35012e86', //EB met CB (Active)
-  destinationInfoQuery: ( sender ) => {
+  destinationInfoQuery: ( sender, submission ) => {
     return `
         PREFIX mu: <http://mu.semte.ch/vocabularies/core/>
         PREFIX org: <http://www.w3.org/ns/org#>
@@ -51,6 +52,8 @@ let rule = {
                   <http://data.vlaanderen.be/id/concept/BestuurseenheidClassificatieCode/f9cac08a-13c1-49da-9bcb-f650b0604054> ;
                   regorg:orgStatus <http://lblod.data.gift/concepts/63cc561de9188d64ba5840a42ae8f0d6> .
             }
+          } UNION {
+            ${toezichthoudendeAccessingChildSubmissionQuerySnippet(sender, submission)} 
           }
         }
     `;
@@ -132,6 +135,7 @@ rule = {
   abbSubgroupDestination: [ ORG_GRAPH_SUFFIX, `${ORG_GRAPH_SUFFIX}-LF`],
   documentType: 'https://data.vlaanderen.be/id/concept/BesluitDocumentType/2c9ada23-1229-4c7e-a53e-acddc9014e4e', // Meerjarenplan(wijziging) - CB namens EB's
   matchSentByEenheidClass: eenheidClass => eenheidClass == 'http://data.vlaanderen.be/id/concept/BestuurseenheidClassificatieCode/f9cac08a-13c1-49da-9bcb-f650b0604054', // Centraal bestuur van de eredienst
+  dispatchChildSubmissions: true,
   destinationInfoQuery: ( sender ) => {
     return `
       PREFIX mu: <http://mu.semte.ch/vocabularies/core/>

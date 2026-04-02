@@ -1,5 +1,5 @@
 import { sparqlEscapeUri } from "mu";
-import { toezichthoudendeQuerySnippet } from './query-snippets';
+import { toezichthoudendeAccessingChildSubmissionQuerySnippet, toezichthoudendeQuerySnippet } from './query-snippets';
 import { ORG_GRAPH_SUFFIX } from '../config';
 
 const rules = [];
@@ -9,16 +9,18 @@ const rules = [];
 *--------------------------
 * SENDER: <http://data.lblod.info/id/besturenVanDeEredienst/d52de436e194111289248db2d06e99ac> Kerkfabriek O.-L.-Vrouw van Deinze
 * CB: <http://data.lblod.info/id/centraleBesturenVanDeEredienst/7f5475cfb202d12f54779f046441c9e1> CKB Deinze
+* GEMEENTE: <http://data.lblod.info/id/bestuurseenheden/d93451bf-e89a-4528-80f3-f0a1c19361a8> Gemeente Deinze (only receives submission, when CKB has made a parent submission)
 **/
 let rule = {
   documentType: 'https://data.vlaanderen.be/id/concept/BesluitType/e44c535d-4339-4d15-bdbf-d4be6046de2c', //Jaarrekening (JR) - EB met CB (Active)
   matchSentByEenheidClass: eenheidClass => eenheidClass == 'http://data.vlaanderen.be/id/concept/BestuurseenheidClassificatieCode/66ec74fd-8cfc-4e16-99c6-350b35012e86', //EB
-  destinationInfoQuery: ( sender ) => {
-    return `
+  destinationInfoQuery: ( sender, submission ) => {
+    return /* sparql */`
       PREFIX mu: <http://mu.semte.ch/vocabularies/core/>
       PREFIX org: <http://www.w3.org/ns/org#>
       PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
       PREFIX regorg: <http://www.w3.org/ns/regorg#>
+      PREFIX pav: <http://purl.org/pav/>
 
       SELECT DISTINCT ?bestuurseenheid ?uuid ?label WHERE {
         BIND(${sparqlEscapeUri(sender)} as ?sender)
@@ -39,6 +41,8 @@ let rule = {
             <http://data.vlaanderen.be/ns/besluit#classificatie>
               <http://data.vlaanderen.be/id/concept/BestuurseenheidClassificatieCode/f9cac08a-13c1-49da-9bcb-f650b0604054>;
             regorg:orgStatus <http://lblod.data.gift/concepts/63cc561de9188d64ba5840a42ae8f0d6>.
+        } UNION {
+          ${toezichthoudendeAccessingChildSubmissionQuerySnippet(sender, submission)}
         }
       }
     `;
@@ -120,6 +124,7 @@ rule = {
   abbSubgroupDestination: [ ORG_GRAPH_SUFFIX, `${ORG_GRAPH_SUFFIX}-LF`],
   documentType: 'https://data.vlaanderen.be/id/concept/BesluitDocumentType/672bf096-dccd-40af-ab60-bd7de15cc461', // Jaarrekening (JR + Toelagenoverzicht)
   matchSentByEenheidClass: eenheidClass => eenheidClass == 'http://data.vlaanderen.be/id/concept/BestuurseenheidClassificatieCode/f9cac08a-13c1-49da-9bcb-f650b0604054', // CB
+  dispatchChildSubmissions: true,
   destinationInfoQuery: ( sender ) => {
     return `
       PREFIX mu: <http://mu.semte.ch/vocabularies/core/>
