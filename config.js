@@ -11,6 +11,7 @@ export const DISPATCH_FILES_GRAPH =
   "http://mu.semte.ch/graphs/temp/original-physical-files-data";
 export const HEALING_CRON = process.env.HEALING_CRON || "00 07 * * 06"; //Weekly on saturday
 export const ENABLE_HEALING = process.env.ENABLE_HEALING == "true";
+export const MINI_HEALING_CRON = process.env.MINI_HEALING_CRON || "0 2 * * *"; //Daily at 2 AM
 export const NUMBER_OF_HEALING_QUEUES =
   parseInt(process.env.NUMBER_OF_HEALING_QUEUES) || 1;
 export const ABB_UUID =

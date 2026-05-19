@@ -7,6 +7,7 @@ By correct: we mean as defined by business rules. See code for exact implementat
   1. on incoming delta, if a `meb:Submission` can be deduced, it will fetch it and dispatch to the correct org graph.
   2. Periodic healing, if enabled, will remove all submissions from their current target graph, and re-dispatch them again.
     - This tackles the case of changes in relations between bestuurseenheden, which affects which organisation a submission should belong to.
+    - A daily mini-healing will also be enabled to have the same healing effect but for submissions created in the last 24 hours.
 
 ## Installation
 Add the following snippet to your `docker-compose.yml`:
@@ -47,6 +48,7 @@ ORG_GRAPH_BASE : The base uri of the org graph; defaults to 'http://mu.semte.ch/
 ORG_GRAPH_SUFFIX : The postfix of the org-graph  defaults to 'ABB_databankErediensten_LB_CompEnts_gebruiker';
 DISPATCH_SOURCE_GRAPH : The source graph of the submissions defaults to 'http://mu.semte.ch/graphs/temp/for-dispatch';
 HEALING_CRON : cron pattern for healing defaults to '00 07 * * 06'; //Weekly on saturday
+MINI_HEALING_CRON : cron pattern for healing defaults to '0 2 * * *'; //Daily at 2 AM
 ENABLE_HEALING : enables healing, defaults to false
 NUMBER_OF_HEALING_QUEUES: the number of healing queues availible, for parallel processing purposes. Defaults to '1'
 ABB_UUID: the UUID of ABB, defaults to "141d9d6b-54af-4d17-b313-8d1c30bc3f5b"
