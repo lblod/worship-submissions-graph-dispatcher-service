@@ -23,6 +23,7 @@ import {
   DISPATCH_FILES_GRAPH,
   ENABLE_HEALING,
   HEALING_CRON,
+  MINI_HEALING_CRON,
   NUMBER_OF_HEALING_QUEUES,
 } from "./config";
 import { addMany } from "./util/set";
@@ -56,6 +57,33 @@ if (ENABLE_HEALING) {
     },
     null,
     true,
+  );
+
+  console.log(`MINI_HEALING_CRON is set to ${MINI_HEALING_CRON}`);
+  new CronJob(
+      MINI_HEALING_CRON,
+      async function () {
+        const now = new Date();
+        console.info(`Mini healing sync triggered by cron job at ${now.toISOString()}`);
+
+        const yesterday = new Date(now);
+        yesterday.setDate(yesterday.getDate() - 1);
+        const sentDateSince = yesterday.toISOString().split("T")[0];
+
+        console.info(`Mini healing will process submissions from ${sentDateSince} onwards`);
+
+        const submissions = await getSubmissions({ sentDateSince });
+        console.info(`Found ${submissions.length} submissions to heal from the last 24 hours`);
+
+        for (const submission of submissions) {
+          distributeAndSchedule(
+              healingQueuePool,
+              async () => await processSubject(submission),
+          );
+        }
+      },
+      null,
+      true,
   );
 }
 
