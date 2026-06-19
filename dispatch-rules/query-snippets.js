@@ -61,33 +61,47 @@ export const repOrgQuerySnippet = () => `
 `;
 
 export const toezichthoudendeAccessingChildSubmissionQuerySnippet = (sender, submission) => /* sparql */`
-  ?ckb 
-    <http://www.w3.org/ns/org#hasSubOrganization> ${sparqlEscapeUri(sender)};
-    <http://data.vlaanderen.be/ns/besluit#classificatie> <http://data.vlaanderen.be/id/concept/BestuurseenheidClassificatieCode/f9cac08a-13c1-49da-9bcb-f650b0604054>;
-    <http://www.w3.org/ns/regorg#orgStatus> <http://lblod.data.gift/concepts/63cc561de9188d64ba5840a42ae8f0d6>.
-    
-  ?betrokkenBestuur 
-    <http://www.w3.org/ns/org#organization> ?ckb;
-    <http://data.lblod.info/vocabularies/erediensten/typebetrokkenheid> <http://lblod.data.gift/concepts/ac400cc9f135ac7873fb3e551ec738c1>;
-    a <http://data.lblod.info/vocabularies/erediensten/BetrokkenLokaleBesturen>.
+  {
+    ?ckb 
+      <http://www.w3.org/ns/org#hasSubOrganization> ${sparqlEscapeUri(sender)};
+      <http://data.vlaanderen.be/ns/besluit#classificatie> <http://data.vlaanderen.be/id/concept/BestuurseenheidClassificatieCode/f9cac08a-13c1-49da-9bcb-f650b0604054>;
+      <http://www.w3.org/ns/regorg#orgStatus> <http://lblod.data.gift/concepts/63cc561de9188d64ba5840a42ae8f0d6>.
+      
+    ?betrokkenBestuur 
+      <http://www.w3.org/ns/org#organization> ?ckb;
+      <http://data.lblod.info/vocabularies/erediensten/typebetrokkenheid> <http://lblod.data.gift/concepts/ac400cc9f135ac7873fb3e551ec738c1>;
+      a <http://data.lblod.info/vocabularies/erediensten/BetrokkenLokaleBesturen>.
 
-  VALUES ?classificatie {
-    <http://data.vlaanderen.be/id/concept/BestuurseenheidClassificatieCode/5ab0e9b8a3b2ca7c5e000000>
-    <http://data.vlaanderen.be/id/concept/BestuurseenheidClassificatieCode/5ab0e9b8a3b2ca7c5e000001>
+      VALUES ?classificatie {
+        <http://data.vlaanderen.be/id/concept/BestuurseenheidClassificatieCode/5ab0e9b8a3b2ca7c5e000000>
+        <http://data.vlaanderen.be/id/concept/BestuurseenheidClassificatieCode/5ab0e9b8a3b2ca7c5e000001>
+      }
+      ?bestuurseenheid 
+        <http://data.lblod.info/vocabularies/erediensten/betrokkenBestuur> ?betrokkenBestuur;
+        <http://data.vlaanderen.be/ns/besluit#classificatie> ?classificatie;
+        <http://mu.semte.ch/vocabularies/core/uuid> ?uuid;
+        <http://www.w3.org/2004/02/skos/core#prefLabel> ?label.
+
+      ?parentSubmission
+        a <http://rdf.myexperiment.org/ontologies/base/Submission>;
+        <http://purl.org/pav/createdBy> ?ckb;
+        <http://www.w3.org/ns/prov#generated> ?parentSubmissionFormData.
+        
+      ?parentSubmissionFormData <http://purl.org/dc/terms/relation> ?decision.
+      ${sparqlEscapeUri(submission)}
+        a <http://rdf.myexperiment.org/ontologies/base/Submission>;
+        <http://purl.org/dc/terms/subject> ?decision.
   }
-  ?bestuurseenheid 
-    <http://data.lblod.info/vocabularies/erediensten/betrokkenBestuur> ?betrokkenBestuur;
-    <http://data.vlaanderen.be/ns/besluit#classificatie> ?classificatie;
-    <http://mu.semte.ch/vocabularies/core/uuid> ?uuid;
-    <http://www.w3.org/2004/02/skos/core#prefLabel> ?label.
+  UNION
+  {
+    ?bestuurseenheid 
+      <http://data.vlaanderen.be/ns/besluit#classificatie> <http://data.vlaanderen.be/id/concept/BestuurseenheidClassificatieCode/52cc9d8d-1c9a-4d92-9936-da9d4a622ec4>;
+      <http://mu.semte.ch/vocabularies/core/uuid> ?uuid;
+      <http://www.w3.org/2004/02/skos/core#prefLabel> ?label.
     
-  ?parentSubmission
-    a <http://rdf.myexperiment.org/ontologies/base/Submission>;
-    <http://purl.org/pav/createdBy> ?ckb;
-    <http://www.w3.org/ns/prov#generated> ?parentSubmissionFormData.
-    
-  ?parentSubmissionFormData <http://purl.org/dc/terms/relation> ?decision.
-  ${sparqlEscapeUri(submission)}
-    a <http://rdf.myexperiment.org/ontologies/base/Submission>;
-    <http://purl.org/dc/terms/subject> ?decision.
+    BIND(
+      <http://data.lblod.info/id/bestuurseenheden/141d9d6b-54af-4d17-b313-8d1c30bc3f5b>
+      AS ?bestuurseenheid
+    )
+  }
 `;
