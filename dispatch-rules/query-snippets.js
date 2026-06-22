@@ -94,14 +94,14 @@ export const toezichthoudendeAccessingChildSubmissionQuerySnippet = (sender, sub
   }
   UNION
   {
-    ?bestuurseenheid 
-      <http://data.vlaanderen.be/ns/besluit#classificatie> <http://data.vlaanderen.be/id/concept/BestuurseenheidClassificatieCode/52cc9d8d-1c9a-4d92-9936-da9d4a622ec4>;
-      <http://mu.semte.ch/vocabularies/core/uuid> ?uuid;
-      <http://www.w3.org/2004/02/skos/core#prefLabel> ?label.
-    
     BIND(
       <http://data.lblod.info/id/bestuurseenheden/141d9d6b-54af-4d17-b313-8d1c30bc3f5b>
       AS ?bestuurseenheid
     )
+      
+    ?bestuurseenheid 
+      <http://data.vlaanderen.be/ns/besluit#classificatie> <http://data.vlaanderen.be/id/concept/BestuurseenheidClassificatieCode/52cc9d8d-1c9a-4d92-9936-da9d4a622ec4>;
+      <http://mu.semte.ch/vocabularies/core/uuid> ?uuid;
+      <http://www.w3.org/2004/02/skos/core#prefLabel> ?label.
   }
 `;
