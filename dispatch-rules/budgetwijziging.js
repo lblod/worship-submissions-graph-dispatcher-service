@@ -12,6 +12,7 @@ const rules = [];
 * GEMEENTE: <http://data.lblod.info/id/bestuurseenheden/d93451bf-e89a-4528-80f3-f0a1c19361a8> Gemeente Deinze (only receives submission, when CKB has made a parent submission)
 **/
 let rule = {
+  abbSubgroupDestination: [ ORG_GRAPH_SUFFIX, `${ORG_GRAPH_SUFFIX}-LF`],
   documentType: 'https://data.vlaanderen.be/id/concept/BesluitType/d463b6d1-c207-4c1a-8c08-f2c7dd1fa53b', // Budget(wijziging) - Indiening bij Centraal bestuur of Representatief orgaan - EB met CB 
   matchSentByEenheidClass: eenheidClass => eenheidClass == 'http://data.vlaanderen.be/id/concept/BestuurseenheidClassificatieCode/66ec74fd-8cfc-4e16-99c6-350b35012e86', //EB met CB (Active)
   destinationInfoQuery: ( sender, submission ) => {
