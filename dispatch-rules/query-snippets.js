@@ -1,4 +1,5 @@
 import { sparqlEscapeUri } from "mu";
+import { DISPATCH_SOURCE_GRAPH } from "../config";
 
 export const allTypeLocaleBetrokkenheid = () => `
           VALUES ?classificatie {
@@ -82,15 +83,20 @@ export const toezichthoudendeAccessingChildSubmissionQuerySnippet = (sender, sub
         <http://mu.semte.ch/vocabularies/core/uuid> ?uuid;
         <http://www.w3.org/2004/02/skos/core#prefLabel> ?label.
 
-      ?parentSubmission
-        a <http://rdf.myexperiment.org/ontologies/base/Submission>;
-        <http://purl.org/pav/createdBy> ?ckb;
-        <http://www.w3.org/ns/prov#generated> ?parentSubmissionFormData.
-        
+      GRAPH ${sparqlEscapeUri(DISPATCH_SOURCE_GRAPH)} {
+        ?parentSubmission
+          a <http://rdf.myexperiment.org/ontologies/base/Submission>;
+          <http://purl.org/pav/createdBy> ?ckb;
+          <http://www.w3.org/ns/prov#generated> ?parentSubmissionFormData.
+      }
+
       ?parentSubmissionFormData <http://purl.org/dc/terms/relation> ?decision.
-      ${sparqlEscapeUri(submission)}
-        a <http://rdf.myexperiment.org/ontologies/base/Submission>;
-        <http://purl.org/dc/terms/subject> ?decision.
+
+      GRAPH ${sparqlEscapeUri(DISPATCH_SOURCE_GRAPH)} {
+        ${sparqlEscapeUri(submission)}
+          a <http://rdf.myexperiment.org/ontologies/base/Submission>;
+          <http://purl.org/dc/terms/subject> ?decision.
+      }
   }
   UNION
   {
