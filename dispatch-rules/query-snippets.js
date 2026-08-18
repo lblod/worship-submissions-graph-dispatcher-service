@@ -88,11 +88,8 @@ export const toezichthoudendeAccessingChildSubmissionQuerySnippet = (sender, sub
           a <http://rdf.myexperiment.org/ontologies/base/Submission>;
           <http://purl.org/pav/createdBy> ?ckb;
           <http://www.w3.org/ns/prov#generated> ?parentSubmissionFormData.
-      }
+        ?parentSubmissionFormData <http://purl.org/dc/terms/relation> ?decision.
 
-      ?parentSubmissionFormData <http://purl.org/dc/terms/relation> ?decision.
-
-      GRAPH ${sparqlEscapeUri(DISPATCH_SOURCE_GRAPH)} {
         ${sparqlEscapeUri(submission)}
           a <http://rdf.myexperiment.org/ontologies/base/Submission>;
           <http://purl.org/dc/terms/subject> ?decision.
