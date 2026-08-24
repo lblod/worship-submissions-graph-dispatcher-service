@@ -75,16 +75,20 @@ export async function getSubmissionForSubject(subject, type) {
 export async function getSubmissionInfo(submission) {
   const queryStr = `
     SELECT DISTINCT ?submissionType ?submission ?creator ?creatorUuid ?creatorType WHERE {
-      BIND(${sparqlEscapeUri(submission)} as ?submission)
-      ?submission a <http://rdf.myexperiment.org/ontologies/base/Submission>;
-        <http://www.w3.org/ns/prov#generated> ?formData;
-        <http://purl.org/pav/createdBy> ?creator.
+      GRAPH ${sparqlEscapeUri(DISPATCH_SOURCE_GRAPH)} {
+        BIND(${sparqlEscapeUri(submission)} as ?submission)
+        ?submission a <http://rdf.myexperiment.org/ontologies/base/Submission>;
+          <http://www.w3.org/ns/prov#generated> ?formData;
+          <http://purl.org/pav/createdBy> ?creator.
 
-      ?creator <http://data.vlaanderen.be/ns/besluit#classificatie> ?creatorType;
-        <http://mu.semte.ch/vocabularies/core/uuid> ?creatorUuid.
+        ?formData a <http://lblod.data.gift/vocabularies/automatische-melding/FormData>;
+              <http://mu.semte.ch/vocabularies/ext/decisionType> ?submissionType.
+      }
 
-      ?formData a <http://lblod.data.gift/vocabularies/automatische-melding/FormData>;
-            <http://mu.semte.ch/vocabularies/ext/decisionType> ?submissionType.
+      GRAPH <http://mu.semte.ch/graphs/public> {
+        ?creator <http://data.vlaanderen.be/ns/besluit#classificatie> ?creatorType;
+          <http://mu.semte.ch/vocabularies/core/uuid> ?creatorUuid.
+      }
     }
   `;
 

@@ -1,5 +1,5 @@
 import { sparqlEscapeUri } from "mu";
-import { ORG_GRAPH_SUFFIX } from '../config';
+import { ORG_GRAPH_SUFFIX, DISPATCH_SOURCE_GRAPH } from '../config';
 
 const rules = [];
 
@@ -36,18 +36,24 @@ let rule = {
             <http://data.lblod.info/id/bestuurseenheden/141d9d6b-54af-4d17-b313-8d1c30bc3f5b>
             ${sparqlEscapeUri(sender)}
           }
-          ?bestuurseenheid mu:uuid ?uuid;
-            skos:prefLabel ?label.
+          GRAPH <http://mu.semte.ch/graphs/public> {
+            ?bestuurseenheid mu:uuid ?uuid;
+              skos:prefLabel ?label.
+          }
         }
         UNION {
-          ?submission a meb:Submission;
-            prov:generated ?formData.
+          GRAPH ${sparqlEscapeUri(DISPATCH_SOURCE_GRAPH)} {
+            ?submission a meb:Submission;
+              prov:generated ?formData.
 
-          ?formData a <http://lblod.data.gift/vocabularies/automatische-melding/FormData>;
-            eli:is_about ?bestuurseenheid.
+            ?formData a <http://lblod.data.gift/vocabularies/automatische-melding/FormData>;
+              eli:is_about ?bestuurseenheid.
+          }
 
-          ?bestuurseenheid mu:uuid ?uuid;
-            skos:prefLabel ?label.
+          GRAPH <http://mu.semte.ch/graphs/public> {
+            ?bestuurseenheid mu:uuid ?uuid;
+              skos:prefLabel ?label.
+          }
         }
       }
     `;
