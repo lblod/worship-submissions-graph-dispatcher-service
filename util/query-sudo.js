@@ -7,11 +7,6 @@ import {
   SUDO_QUERY_RETRY_TIMEOUT_INCREMENT_FACTOR as RETRY_TIMEOUT_INCREMENT_FACTOR,
 } from "../config";
 
-// Retry behaviour modeled on https://github.com/lblod/mu-auth-sudo/blob/v0.6.2/src/auth-sudo.js,
-// but built on top of this app's existing "mu" SPARQL client instead of pulling in
-// @lblod/mu-auth-sudo as a dependency (that package requires Node >=22 as of 1.x, and its
-// 0.6.x line has an undeclared express-http-context peer dependency).
-
 async function executeWithRetry(executor, queryString, attempt = 0) {
   try {
     return await executor(queryString, { sudo: true });
