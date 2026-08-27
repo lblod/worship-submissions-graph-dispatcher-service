@@ -1,5 +1,5 @@
 import { sparqlEscapeUri } from "mu";
-import { ORG_GRAPH_SUFFIX } from '../config';
+import { ORG_GRAPH_SUFFIX, DISPATCH_SOURCE_GRAPH } from '../config';
 
 const rules = [];
 /* Excel: Rules number: 109, 110
@@ -23,45 +23,51 @@ let rule = {
         BIND(${sparqlEscapeUri(submission)} as ?submission)
        {
 
-         ?submission
-           <http://purl.org/pav/createdBy> ?sender;
-           <http://www.w3.org/ns/prov#generated> ?formData.
+         GRAPH ${sparqlEscapeUri(DISPATCH_SOURCE_GRAPH)} {
+           ?submission
+             <http://purl.org/pav/createdBy> ?sender;
+             <http://www.w3.org/ns/prov#generated> ?formData.
 
-         ?formData
-           <http://data.europa.eu/eli/ontology#is_about> ?aboutEenheid.
-
-         VALUES ?worshipType {
-           <http://data.lblod.info/vocabularies/erediensten/CentraalBestuurVanDeEredienst>
-           <http://data.lblod.info/vocabularies/erediensten/BestuurVanDeEredienst>
+           ?formData
+             <http://data.europa.eu/eli/ontology#is_about> ?aboutEenheid.
          }
 
-         VALUES ?worshipClassifications {
-           <http://data.vlaanderen.be/id/concept/BestuurseenheidClassificatieCode/66ec74fd-8cfc-4e16-99c6-350b35012e86>
-           <http://data.vlaanderen.be/id/concept/BestuurseenheidClassificatieCode/f9cac08a-13c1-49da-9bcb-f650b0604054>
+         GRAPH <http://mu.semte.ch/graphs/public> {
+           VALUES ?worshipType {
+             <http://data.lblod.info/vocabularies/erediensten/CentraalBestuurVanDeEredienst>
+             <http://data.lblod.info/vocabularies/erediensten/BestuurVanDeEredienst>
+           }
+
+           VALUES ?worshipClassifications {
+             <http://data.vlaanderen.be/id/concept/BestuurseenheidClassificatieCode/66ec74fd-8cfc-4e16-99c6-350b35012e86>
+             <http://data.vlaanderen.be/id/concept/BestuurseenheidClassificatieCode/f9cac08a-13c1-49da-9bcb-f650b0604054>
+           }
+
+           ?aboutEenheid a ?worshipType;
+             <http://data.vlaanderen.be/ns/besluit#classificatie> ?worshipClassifications.
+
+            VALUES ?classificatie {
+                <http://data.vlaanderen.be/id/concept/BestuurseenheidClassificatieCode/5ab0e9b8a3b2ca7c5e000000>
+                <http://data.vlaanderen.be/id/concept/BestuurseenheidClassificatieCode/5ab0e9b8a3b2ca7c5e000001>
+            }
+            ?betrokkenBestuur <http://www.w3.org/ns/org#organization> ?aboutEenheid;
+              <http://data.lblod.info/vocabularies/erediensten/typebetrokkenheid> <http://lblod.data.gift/concepts/ac400cc9f135ac7873fb3e551ec738c1>;
+              a <http://data.lblod.info/vocabularies/erediensten/BetrokkenLokaleBesturen>.
+
+            ?bestuurseenheid <http://data.lblod.info/vocabularies/erediensten/betrokkenBestuur> ?betrokkenBestuur;
+              <http://data.vlaanderen.be/ns/besluit#classificatie> ?classificatie;
+              mu:uuid ?uuid;
+              <http://www.w3.org/2004/02/skos/core#prefLabel> ?label.
          }
-
-         ?aboutEenheid a ?worshipType;
-           <http://data.vlaanderen.be/ns/besluit#classificatie> ?worshipClassifications.
-
-          VALUES ?classificatie {
-              <http://data.vlaanderen.be/id/concept/BestuurseenheidClassificatieCode/5ab0e9b8a3b2ca7c5e000000>
-              <http://data.vlaanderen.be/id/concept/BestuurseenheidClassificatieCode/5ab0e9b8a3b2ca7c5e000001>
-          }
-          ?betrokkenBestuur <http://www.w3.org/ns/org#organization> ?aboutEenheid;
-            <http://data.lblod.info/vocabularies/erediensten/typebetrokkenheid> <http://lblod.data.gift/concepts/ac400cc9f135ac7873fb3e551ec738c1>;
-            a <http://data.lblod.info/vocabularies/erediensten/BetrokkenLokaleBesturen>.
-
-          ?bestuurseenheid <http://data.lblod.info/vocabularies/erediensten/betrokkenBestuur> ?betrokkenBestuur;
-            <http://data.vlaanderen.be/ns/besluit#classificatie> ?classificatie;
-            mu:uuid ?uuid;
-            <http://www.w3.org/2004/02/skos/core#prefLabel> ?label.
 
        } UNION {
          VALUES ?bestuurseenheid {
            ${sparqlEscapeUri(sender)}
          }
-         ?bestuurseenheid mu:uuid ?uuid;
-           skos:prefLabel ?label.
+         GRAPH <http://mu.semte.ch/graphs/public> {
+           ?bestuurseenheid mu:uuid ?uuid;
+             skos:prefLabel ?label.
+         }
        }
       }
     `;

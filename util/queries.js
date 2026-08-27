@@ -4,9 +4,8 @@ import {
   sparqlEscapeDateTime,
   sparqlEscapeDate,
   uuid,
-  query,
-  update,
 } from "mu";
+import { querySudo as query, updateSudo as update } from "./query-sudo.js";
 import exportConfig from "../export-config";
 import { parseResult } from "./utils";
 import {
@@ -31,7 +30,7 @@ export async function getRelatedSubjectsForSubmission(
       ${pathToSubmission}
     }`;
 
-  const result = await query(queryStr, { sudo: true });
+  const result = await query(queryStr);
   return result.results.bindings.map((r) => r.subject.value);
 }
 
@@ -49,7 +48,7 @@ export async function getTypesForSubject(subject) {
      }
   `;
 
-  return (await query(queryStr, { sudo: true })).results.bindings.map((r) => r.type.value);
+  return (await query(queryStr)).results.bindings.map((r) => r.type.value);
 }
 
 export async function getSubmissionForSubject(subject, type) {
@@ -65,7 +64,7 @@ export async function getSubmissionForSubject(subject, type) {
       }
     `;
 
-    const bindings = (await query(queryStr, { sudo: true })).results.bindings;
+    const bindings = (await query(queryStr)).results.bindings;
     if (bindings.length) {
       return bindings[0].submission.value;
     }
@@ -76,20 +75,24 @@ export async function getSubmissionForSubject(subject, type) {
 export async function getSubmissionInfo(submission) {
   const queryStr = `
     SELECT DISTINCT ?submissionType ?submission ?creator ?creatorUuid ?creatorType WHERE {
-      BIND(${sparqlEscapeUri(submission)} as ?submission)
-      ?submission a <http://rdf.myexperiment.org/ontologies/base/Submission>;
-        <http://www.w3.org/ns/prov#generated> ?formData;
-        <http://purl.org/pav/createdBy> ?creator.
+      GRAPH ${sparqlEscapeUri(DISPATCH_SOURCE_GRAPH)} {
+        BIND(${sparqlEscapeUri(submission)} as ?submission)
+        ?submission a <http://rdf.myexperiment.org/ontologies/base/Submission>;
+          <http://www.w3.org/ns/prov#generated> ?formData;
+          <http://purl.org/pav/createdBy> ?creator.
 
-      ?creator <http://data.vlaanderen.be/ns/besluit#classificatie> ?creatorType;
-        <http://mu.semte.ch/vocabularies/core/uuid> ?creatorUuid.
+        ?formData a <http://lblod.data.gift/vocabularies/automatische-melding/FormData>;
+              <http://mu.semte.ch/vocabularies/ext/decisionType> ?submissionType.
+      }
 
-      ?formData a <http://lblod.data.gift/vocabularies/automatische-melding/FormData>;
-            <http://mu.semte.ch/vocabularies/ext/decisionType> ?submissionType.
+      GRAPH <http://mu.semte.ch/graphs/public> {
+        ?creator <http://data.vlaanderen.be/ns/besluit#classificatie> ?creatorType;
+          <http://mu.semte.ch/vocabularies/core/uuid> ?creatorUuid.
+      }
     }
   `;
 
-  const parsedResult = parseResult(await query(queryStr, { sudo: true }));
+  const parsedResult = parseResult(await query(queryStr));
 
   if (parsedResult.length) {
     // We can receive a submission with multiple decision types and creator types that all need to be evaluated
@@ -110,7 +113,6 @@ export async function calculateDestinatorGraphs(submissionInfo, rule) {
       submissionInfo.creator,
       submissionInfo.submission,
     ),
-    { sudo: true }
   );
   const destinationData = parseResult(result);
 
@@ -169,7 +171,7 @@ export async function getGraphsAndCountForSubjects(subjects, graphs) {
     }
     GROUP BY ?graph ?subject
   `;
-  return parseResult(await query(q, { sudo: true }));
+  return parseResult(await query(q));
 }
 
 export async function removeSubjectFromGraph(subject, graph) {
@@ -186,7 +188,7 @@ export async function removeSubjectFromGraph(subject, graph) {
       }
     }
   `;
-  await update(removeQueryStr, { sudo: true });
+  await update(removeQueryStr);
 }
 
 export async function copySubjectDataToGraph(
@@ -227,7 +229,7 @@ export async function copySubjectDataToGraph(
         }
      }
   `;
-  await update(queryStr, { sudo: true });
+  await update(queryStr);
 }
 
 export async function sendErrorAlert({ message, detail, reference }) {
@@ -252,7 +254,7 @@ export async function sendErrorAlert({ message, detail, reference }) {
       }
   `;
   try {
-    await update(q, { sudo: true });
+    await update(q);
   } catch (e) {
     console.error(
       `[WARN] Something went wrong while trying to store an error.\nMessage: ${e}\nQuery: ${q}`,
@@ -286,7 +288,7 @@ export async function getSubmissions({ inGraph, sentDateSince } = {}) {
       }
   `;
   }
-  const result = await query(queryStr, { sudo: true });
+  const result = await query(queryStr);
   return parseResult(result).map((s) => s.submission);
 }
 
@@ -307,6 +309,6 @@ export async function retrieveChildSubmissions(submission) {
         dcterms:subject ?childDecision.
     }
   `;
-  const result = await query(queryStr, { sudo: true });
+  const result = await query(queryStr);
   return parseResult(result).map((s) => s.childSubmission);
 }

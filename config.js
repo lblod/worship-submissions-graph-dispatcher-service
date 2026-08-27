@@ -1,3 +1,5 @@
+import env from "env-var";
+
 export const ORG_GRAPH_BASE =
   process.env.ORG_GRAPH_BASE || "http://mu.semte.ch/graphs/organizations";
 export const ORG_GRAPH_SUFFIX =
@@ -16,3 +18,20 @@ export const NUMBER_OF_HEALING_QUEUES =
   parseInt(process.env.NUMBER_OF_HEALING_QUEUES) || 1;
 export const ABB_UUID =
   process.env.ABB_UUID || "141d9d6b-54af-4d17-b313-8d1c30bc3f5b";
+export const SUDO_QUERY_RETRY = env.get("SUDO_QUERY_RETRY").default("false").asBool();
+export const SUDO_QUERY_RETRY_MAX_ATTEMPTS = env
+  .get("SUDO_QUERY_RETRY_MAX_ATTEMPTS")
+  .default("5")
+  .asInt();
+export const SUDO_QUERY_RETRY_FOR_HTTP_STATUS_CODES = env
+  .get("SUDO_QUERY_RETRY_FOR_HTTP_STATUS_CODES")
+  .default("")
+  .asArray();
+export const SUDO_QUERY_RETRY_FOR_CONNECTION_ERRORS = env
+  .get("SUDO_QUERY_RETRY_FOR_CONNECTION_ERRORS")
+  .default("ECONNRESET,ETIMEDOUT,EAI_AGAIN")
+  .asArray();
+export const SUDO_QUERY_RETRY_TIMEOUT_INCREMENT_FACTOR = env
+  .get("SUDO_QUERY_RETRY_TIMEOUT_INCREMENT_FACTOR")
+  .default("0.3")
+  .asFloat();

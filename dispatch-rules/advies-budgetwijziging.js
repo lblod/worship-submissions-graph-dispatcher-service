@@ -1,5 +1,5 @@
 import { sparqlEscapeUri } from "mu";
-import { ORG_GRAPH_SUFFIX } from '../config';
+import { ORG_GRAPH_SUFFIX, DISPATCH_SOURCE_GRAPH } from '../config';
 
 const rules = [];
 /* Excel: Rules number: 86, 87
@@ -36,34 +36,38 @@ let rule = {
         BIND(${sparqlEscapeUri(sender)} as ?sender)
         BIND(${sparqlEscapeUri(submission)} as ?submission)
 
-        ?submission
-          pav:createdBy ?sender;
-          prov:generated ?formData.
+        GRAPH ${sparqlEscapeUri(DISPATCH_SOURCE_GRAPH)} {
+          ?submission
+            pav:createdBy ?sender;
+            prov:generated ?formData.
 
-        ?formData
-          eli:is_about ?aboutEenheid.      
-
-        OPTIONAL {
-          ?centraalBestuurVanDeEredienst org:hasSubOrganization ?aboutEenheid.
+          ?formData
+            eli:is_about ?aboutEenheid.
         }
 
-        ?aboutEenheid a ere:BestuurVanDeEredienst;
-          besluit:classificatie <http://data.vlaanderen.be/id/concept/BestuurseenheidClassificatieCode/66ec74fd-8cfc-4e16-99c6-350b35012e86>.
-
-        BIND (IF(BOUND(?centraalBestuurVanDeEredienst), ?centraalBestuurVanDeEredienst, ?aboutEenheid) AS ?receiver)
-        {
-          ?receiver
-            mu:uuid ?uuid ;
-            skos:prefLabel ?label .
-          BIND (?receiver AS ?bestuurseenheid)
-        } UNION {
-          VALUES ?bestuurseenheid {
-            <http://data.lblod.info/id/bestuurseenheden/141d9d6b-54af-4d17-b313-8d1c30bc3f5b>
-            ${sparqlEscapeUri(sender)}
+        GRAPH <http://mu.semte.ch/graphs/public> {
+          OPTIONAL {
+            ?centraalBestuurVanDeEredienst org:hasSubOrganization ?aboutEenheid.
           }
-          ?bestuurseenheid
-            mu:uuid ?uuid ;
-            skos:prefLabel ?label .
+
+          ?aboutEenheid a ere:BestuurVanDeEredienst;
+            besluit:classificatie <http://data.vlaanderen.be/id/concept/BestuurseenheidClassificatieCode/66ec74fd-8cfc-4e16-99c6-350b35012e86>.
+
+          BIND (IF(BOUND(?centraalBestuurVanDeEredienst), ?centraalBestuurVanDeEredienst, ?aboutEenheid) AS ?receiver)
+          {
+            ?receiver
+              mu:uuid ?uuid ;
+              skos:prefLabel ?label .
+            BIND (?receiver AS ?bestuurseenheid)
+          } UNION {
+            VALUES ?bestuurseenheid {
+              <http://data.lblod.info/id/bestuurseenheden/141d9d6b-54af-4d17-b313-8d1c30bc3f5b>
+              ${sparqlEscapeUri(sender)}
+            }
+            ?bestuurseenheid
+              mu:uuid ?uuid ;
+              skos:prefLabel ?label .
+          }
         }
       }
     `;
