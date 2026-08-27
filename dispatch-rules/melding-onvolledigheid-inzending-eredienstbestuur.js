@@ -1,5 +1,5 @@
 import { sparqlEscapeUri } from "mu";
-import { ORG_GRAPH_SUFFIX } from '../config';
+import { ORG_GRAPH_SUFFIX, DISPATCH_SOURCE_GRAPH } from '../config';
 
 const rules = [];
 
@@ -53,37 +53,41 @@ let rule = {
             BIND(${sparqlEscapeUri(sender)} as ?sender)
             BIND(${sparqlEscapeUri(submission)} as ?submission)
 
-            ?submission
-              <http://purl.org/pav/createdBy> ?sender;
-              <http://www.w3.org/ns/prov#generated> ?formData.
+            GRAPH ${sparqlEscapeUri(DISPATCH_SOURCE_GRAPH)} {
+              ?submission
+                <http://purl.org/pav/createdBy> ?sender;
+                <http://www.w3.org/ns/prov#generated> ?formData.
 
-            ?formData
-              <http://data.europa.eu/eli/ontology#is_about> ?aboutEenheid.
-
-            VALUES ?worshipType {
-              <http://data.lblod.info/vocabularies/erediensten/CentraalBestuurVanDeEredienst>
-              <http://data.lblod.info/vocabularies/erediensten/BestuurVanDeEredienst>
+              ?formData
+                <http://data.europa.eu/eli/ontology#is_about> ?aboutEenheid.
             }
 
-            VALUES ?worshipClassifications {
-              <http://data.vlaanderen.be/id/concept/BestuurseenheidClassificatieCode/66ec74fd-8cfc-4e16-99c6-350b35012e86>
-              <http://data.vlaanderen.be/id/concept/BestuurseenheidClassificatieCode/f9cac08a-13c1-49da-9bcb-f650b0604054>
-            }
-
-            ?aboutEenheid a ?worshipType;
-              <http://data.vlaanderen.be/ns/besluit#classificatie> ?worshipClassifications.
-
-            {
-              ?aboutEenheid mu:uuid ?uuid;
-                skos:prefLabel ?label.
-              BIND(?aboutEenheid as ?bestuurseenheid)
-            } UNION {
-              VALUES ?bestuurseenheid {
-                <http://data.lblod.info/id/bestuurseenheden/141d9d6b-54af-4d17-b313-8d1c30bc3f5b>
-                ${sparqlEscapeUri(sender)}
+            GRAPH <http://mu.semte.ch/graphs/public> {
+              VALUES ?worshipType {
+                <http://data.lblod.info/vocabularies/erediensten/CentraalBestuurVanDeEredienst>
+                <http://data.lblod.info/vocabularies/erediensten/BestuurVanDeEredienst>
               }
-              ?bestuurseenheid mu:uuid ?uuid;
+
+              VALUES ?worshipClassifications {
+                <http://data.vlaanderen.be/id/concept/BestuurseenheidClassificatieCode/66ec74fd-8cfc-4e16-99c6-350b35012e86>
+                <http://data.vlaanderen.be/id/concept/BestuurseenheidClassificatieCode/f9cac08a-13c1-49da-9bcb-f650b0604054>
+              }
+
+              ?aboutEenheid a ?worshipType;
+                <http://data.vlaanderen.be/ns/besluit#classificatie> ?worshipClassifications.
+
+              {
+                ?aboutEenheid mu:uuid ?uuid;
                   skos:prefLabel ?label.
+                BIND(?aboutEenheid as ?bestuurseenheid)
+              } UNION {
+                VALUES ?bestuurseenheid {
+                  <http://data.lblod.info/id/bestuurseenheden/141d9d6b-54af-4d17-b313-8d1c30bc3f5b>
+                  ${sparqlEscapeUri(sender)}
+                }
+                ?bestuurseenheid mu:uuid ?uuid;
+                    skos:prefLabel ?label.
+              }
             }
           }
     `;
