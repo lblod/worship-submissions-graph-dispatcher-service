@@ -11,6 +11,8 @@ export const DISPATCH_SOURCE_GRAPH =
 export const DISPATCH_FILES_GRAPH =
   process.env.DISPATCH_FILES_GRAPH ||
   "http://mu.semte.ch/graphs/temp/original-physical-files-data";
+export const DISPATCH_EXCLUDED_GRAPHS_REGEX =
+  process.env.DISPATCH_EXCLUDED_GRAPHS_REGEX || "";
 export const HEALING_CRON = process.env.HEALING_CRON || "00 07 * * 06"; //Weekly on saturday
 export const ENABLE_HEALING = process.env.ENABLE_HEALING == "true";
 export const MINI_HEALING_CRON = process.env.MINI_HEALING_CRON || "0 2 * * *"; //Daily at 2 AM

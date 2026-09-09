@@ -47,6 +47,8 @@ export default [
 ORG_GRAPH_BASE : The base uri of the org graph; defaults to 'http://mu.semte.ch/graphs/organizations';
 ORG_GRAPH_SUFFIX : The postfix of the org-graph  defaults to 'ABB_databankErediensten_LB_CompEnts_gebruiker';
 DISPATCH_SOURCE_GRAPH : The source graph of the submissions defaults to 'http://mu.semte.ch/graphs/temp/for-dispatch';
+DISPATCH_EXCLUDED_GRAPHS_REGEX : A JavaScript regular expression. Graphs matching it are ignored on dispatch: nothing is removed from them and nothing is copied into them. Unanchored partial match; use '^' and '$' to anchor. Defaults to '' (disabled).
+  e.g. DISPATCH_EXCLUDED_GRAPHS_REGEX='^http://mu\.semte\.ch/graphs/organizations/.*/LoketLB-toezichtGebruiker$' ignores the LoketLB-toezichtGebruiker source graph of every organisation (the pattern needed for the meldingsplichtige-api bundle).
 HEALING_CRON : cron pattern for healing defaults to '00 07 * * 06'; //Weekly on saturday
 MINI_HEALING_CRON : cron pattern for healing defaults to '0 2 * * *'; //Daily at 2 AM
 ENABLE_HEALING : enables healing, defaults to false
