@@ -1,3 +1,6 @@
+import { sparqlEscapeUri } from "mu";
+import { DISPATCH_SOURCE_GRAPH } from "./config";
+
 /*
  * This file is used as helper for fetching related subjects to a meb:Submission.
  * It provides some path template queries as a shorthand to fetch the related subject.
@@ -7,71 +10,93 @@
 export default [
   {
     type: `http://mu.semte.ch/vocabularies/ext/SubmissionDocument`,
-    pathToSubmission: `?submission <http://purl.org/dc/terms/subject> ?subject;
-                        a <http://rdf.myexperiment.org/ontologies/base/Submission>.`,
+    pathToSubmission: `GRAPH ${sparqlEscapeUri(DISPATCH_SOURCE_GRAPH)} {
+      ?submission <http://purl.org/dc/terms/subject> ?subject;
+                        a <http://rdf.myexperiment.org/ontologies/base/Submission>.
+    }`,
   },
   {
     type: `http://lblod.data.gift/vocabularies/besluit/TaxRate`,
-    pathToSubmission: `?submission <http://www.w3.org/ns/prov#generated> ?formData;
+    pathToSubmission: `GRAPH ${sparqlEscapeUri(DISPATCH_SOURCE_GRAPH)} {
+      ?submission <http://www.w3.org/ns/prov#generated> ?formData;
                          a <http://rdf.myexperiment.org/ontologies/base/Submission>.
-                       ?formData <http://lblod.data.gift/vocabularies/besluit/taxRate> ?subject.`,
+                       ?formData <http://lblod.data.gift/vocabularies/besluit/taxRate> ?subject.
+    }`,
   },
   {
     type: `http://mu.semte.ch/vocabularies/ext/AuthenticityType`,
-    pathToSubmission: `?submission <http://www.w3.org/ns/prov#generated> ?formData;
+    pathToSubmission: `GRAPH ${sparqlEscapeUri(DISPATCH_SOURCE_GRAPH)} {
+      ?submission <http://www.w3.org/ns/prov#generated> ?formData;
                          a <http://rdf.myexperiment.org/ontologies/base/Submission>.
-                       ?formData <http://lblod.data.gift/vocabularies/besluit/authenticityType> ?subject.`,
+                       ?formData <http://lblod.data.gift/vocabularies/besluit/authenticityType> ?subject.
+    }`,
   },
   {
     type: `http://mu.semte.ch/vocabularies/ext/TaxType`,
-    pathToSubmission: `?submission <http://www.w3.org/ns/prov#generated> ?formData;
+    pathToSubmission: `GRAPH ${sparqlEscapeUri(DISPATCH_SOURCE_GRAPH)} {
+      ?submission <http://www.w3.org/ns/prov#generated> ?formData;
                          a <http://rdf.myexperiment.org/ontologies/base/Submission>.
-                       ?formData <http://mu.semte.ch/vocabularies/ext/taxType> ?subject.`,
+                       ?formData <http://mu.semte.ch/vocabularies/ext/taxType> ?subject.
+    }`,
   },
   {
     type: `http://mu.semte.ch/vocabularies/ext/ChartOfAccount`,
-    pathToSubmission: `?submission <http://www.w3.org/ns/prov#generated> ?formData;
+    pathToSubmission: `GRAPH ${sparqlEscapeUri(DISPATCH_SOURCE_GRAPH)} {
+      ?submission <http://www.w3.org/ns/prov#generated> ?formData;
                         a <http://rdf.myexperiment.org/ontologies/base/Submission>.
-                       ?formData <http://lblod.data.gift/vocabularies/besluit/chartOfAccount> ?subject.`,
+                       ?formData <http://lblod.data.gift/vocabularies/besluit/chartOfAccount> ?subject.
+    }`,
   },
   {
     type: `http://lblod.data.gift/vocabularies/automatische-melding/FormData`,
-    pathToSubmission: `?submission <http://www.w3.org/ns/prov#generated> ?subject;
-                       a <http://rdf.myexperiment.org/ontologies/base/Submission>.`,
+    pathToSubmission: `GRAPH ${sparqlEscapeUri(DISPATCH_SOURCE_GRAPH)} {
+      ?submission <http://www.w3.org/ns/prov#generated> ?subject;
+                       a <http://rdf.myexperiment.org/ontologies/base/Submission>.
+    }`,
   },
   {
     type: `http://www.semanticdesktop.org/ontologies/2007/03/22/nfo#FileDataObject`,
-    pathToSubmission: `?submission <http://www.semanticdesktop.org/ontologies/2007/01/19/nie#hasPart> ?subject.
-                       ?submission a <http://rdf.myexperiment.org/ontologies/base/Submission>.`,
+    pathToSubmission: `GRAPH ${sparqlEscapeUri(DISPATCH_SOURCE_GRAPH)} {
+      ?submission <http://www.semanticdesktop.org/ontologies/2007/01/19/nie#hasPart> ?subject.
+                       ?submission a <http://rdf.myexperiment.org/ontologies/base/Submission>.
+    }`,
   },
   {
     type: `http://www.semanticdesktop.org/ontologies/2007/03/22/nfo#FileDataObject`,
-    pathToSubmission: `?subject <http://www.semanticdesktop.org/ontologies/2007/01/19/nie#dataSource> ?remoteFile.
+    pathToSubmission: `GRAPH ${sparqlEscapeUri(DISPATCH_SOURCE_GRAPH)} {
+      ?subject <http://www.semanticdesktop.org/ontologies/2007/01/19/nie#dataSource> ?remoteFile.
                        ?submission <http://www.semanticdesktop.org/ontologies/2007/01/19/nie#hasPart> ?remoteFile.
-                       ?submission a <http://rdf.myexperiment.org/ontologies/base/Submission>.`,
+                       ?submission a <http://rdf.myexperiment.org/ontologies/base/Submission>.
+    }`,
   },
   {
     type: `http://www.semanticdesktop.org/ontologies/2007/03/22/nfo#FileDataObject`,
-    pathToSubmission: `?subject <http://www.semanticdesktop.org/ontologies/2007/01/19/nie#dataSource>
+    pathToSubmission: `GRAPH ${sparqlEscapeUri(DISPATCH_SOURCE_GRAPH)} {
+      ?subject <http://www.semanticdesktop.org/ontologies/2007/01/19/nie#dataSource>
                                 / <http://www.semanticdesktop.org/ontologies/2007/01/19/nie#dataSource> ?remoteFile.
                        ?submission <http://www.semanticdesktop.org/ontologies/2007/01/19/nie#hasPart> ?remoteFile.
-                       ?submission a <http://rdf.myexperiment.org/ontologies/base/Submission>.`,
+                       ?submission a <http://rdf.myexperiment.org/ontologies/base/Submission>.
+    }`,
   },
   {
     type: `http://www.semanticdesktop.org/ontologies/2007/03/22/nfo#FileDataObject`,
-    pathToSubmission: `?subject <http://purl.org/dc/terms/type> <http://data.lblod.gift/concepts/meta-file-type>.
+    pathToSubmission: `GRAPH ${sparqlEscapeUri(DISPATCH_SOURCE_GRAPH)} {
+      ?subject <http://purl.org/dc/terms/type> <http://data.lblod.gift/concepts/meta-file-type>.
                        ?s <http://purl.org/dc/terms/source> ?subject.
                        ?s a <http://mu.semte.ch/vocabularies/ext/SubmissionDocument>.
                        ?submission <http://purl.org/dc/terms/subject> ?s.
-                       ?submission a <http://rdf.myexperiment.org/ontologies/base/Submission>.`,
+                       ?submission a <http://rdf.myexperiment.org/ontologies/base/Submission>.
+    }`,
   },
   {
     type: `http://www.semanticdesktop.org/ontologies/2007/03/22/nfo#FileDataObject`,
-    pathToSubmission: `?subject <http://purl.org/dc/terms/type> <http://data.lblod.gift/concepts/form-data-file-type>.
+    pathToSubmission: `GRAPH ${sparqlEscapeUri(DISPATCH_SOURCE_GRAPH)} {
+      ?subject <http://purl.org/dc/terms/type> <http://data.lblod.gift/concepts/form-data-file-type>.
                        ?s <http://purl.org/dc/terms/source> ?subject.
                        ?s a <http://mu.semte.ch/vocabularies/ext/SubmissionDocument>.
                        ?submission <http://purl.org/dc/terms/subject> ?s.
-                       ?submission a <http://rdf.myexperiment.org/ontologies/base/Submission>.`,
+                       ?submission a <http://rdf.myexperiment.org/ontologies/base/Submission>.
+    }`,
   },
   {
     type: `http://www.semanticdesktop.org/ontologies/2007/03/22/nfo#FileDataObject`,
@@ -81,36 +106,48 @@ export default [
   },
   {
     type: `http://www.semanticdesktop.org/ontologies/2007/03/22/nfo#FileDataObject`,
-    pathToSubmission: `?formData <http://purl.org/dc/terms/hasPart> ?subject.
-                       ?submission <http://www.w3.org/ns/prov#generated> ?formData.`,
+    pathToSubmission: `GRAPH ${sparqlEscapeUri(DISPATCH_SOURCE_GRAPH)} {
+      ?formData <http://purl.org/dc/terms/hasPart> ?subject.
+                       ?submission <http://www.w3.org/ns/prov#generated> ?formData.
+    }`,
   },
   {
     type: `http://www.semanticdesktop.org/ontologies/2007/03/22/nfo#FileDataObject`,
-    pathToSubmission: `?subject <http://www.semanticdesktop.org/ontologies/2007/01/19/nie#dataSource> ?virtualFile .
+    pathToSubmission: `GRAPH ${sparqlEscapeUri(DISPATCH_SOURCE_GRAPH)} {
+      ?subject <http://www.semanticdesktop.org/ontologies/2007/01/19/nie#dataSource> ?virtualFile .
                        ?formData <http://purl.org/dc/terms/hasPart> ?virtualFile.
-                       ?submission <http://www.w3.org/ns/prov#generated> ?formData.`,
+                       ?submission <http://www.w3.org/ns/prov#generated> ?formData.
+    }`,
   },
   {
     type: `http://www.semanticdesktop.org/ontologies/2007/03/22/nfo#RemoteDataObject`,
-    pathToSubmission: `?formData <http://purl.org/dc/terms/hasPart> ?subject.
-                       ?submission <http://www.w3.org/ns/prov#generated> ?formData.`,
+    pathToSubmission: `GRAPH ${sparqlEscapeUri(DISPATCH_SOURCE_GRAPH)} {
+      ?formData <http://purl.org/dc/terms/hasPart> ?subject.
+                       ?submission <http://www.w3.org/ns/prov#generated> ?formData.
+    }`,
   },
   {
     type: `http://www.semanticdesktop.org/ontologies/2007/03/22/nfo#LocalFileDataObject`,
-    pathToSubmission: `?subject <http://www.semanticdesktop.org/ontologies/2007/01/19/nie#dataSource> ?vfile.
+    pathToSubmission: `GRAPH ${sparqlEscapeUri(DISPATCH_SOURCE_GRAPH)} {
+      ?subject <http://www.semanticdesktop.org/ontologies/2007/01/19/nie#dataSource> ?vfile.
                        ?formData <http://purl.org/dc/terms/hasPart> ?vfile.
-                       ?submission <http://www.w3.org/ns/prov#generated> ?formData.`,
+                       ?submission <http://www.w3.org/ns/prov#generated> ?formData.
+    }`,
   },
   {
     type: `http://rdf.myexperiment.org/ontologies/base/Submission`,
-    pathToSubmission: `?submission a <http://rdf.myexperiment.org/ontologies/base/Submission> .
-                       FILTER(?submission = ?subject)`,
+    pathToSubmission: `GRAPH ${sparqlEscapeUri(DISPATCH_SOURCE_GRAPH)} {
+      ?submission a <http://rdf.myexperiment.org/ontologies/base/Submission> .
+                       BIND(?submission as ?subject)
+    }`,
   },
   {
     type: `http://data.vlaanderen.be/ns/besluit#Artikel`,
-    pathToSubmission: `?subject a <http://data.vlaanderen.be/ns/besluit#Artikel>.
+    pathToSubmission: `GRAPH ${sparqlEscapeUri(DISPATCH_SOURCE_GRAPH)} {
+      ?subject a <http://data.vlaanderen.be/ns/besluit#Artikel>.
                       ?submissionDocument <http://data.europa.eu/eli/ontology#has_part> ?subject.
                       ?submission a <http://rdf.myexperiment.org/ontologies/base/Submission>;
-                         <http://purl.org/dc/terms/subject> ?submissionDocument.`,
+                         <http://purl.org/dc/terms/subject> ?submissionDocument.
+    }`,
   },
 ];
