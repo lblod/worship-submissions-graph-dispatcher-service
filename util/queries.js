@@ -8,6 +8,7 @@ import {
 import { querySudo as query, updateSudo as update } from "./query-sudo.js";
 import exportConfig from "../export-config";
 import { parseResult } from "./utils";
+import { TARGET_GRAPHS_PATTERN } from "../target-graphs.js";
 import {
   ORG_GRAPH_BASE,
   ORG_GRAPH_SUFFIX,
@@ -154,7 +155,7 @@ export async function getGraphsAndCountForSubjects(subjects, graphs) {
     : "";
   const graphFilter = graphs?.length
     ? ""
-    : `FILTER (REGEX(STR(?graph), "${ORG_GRAPH_BASE}"))`;
+    : `FILTER (REGEX(STR(?graph), ${sparqlEscapeString(TARGET_GRAPHS_PATTERN)}))`;
   const q = `
     SELECT DISTINCT
         ?graph
