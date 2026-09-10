@@ -21,25 +21,12 @@ import exportConfig from "./export-config";
 import {
   DISPATCH_SOURCE_GRAPH,
   DISPATCH_FILES_GRAPH,
-  DISPATCH_EXCLUDED_GRAPHS_REGEX,
   ENABLE_HEALING,
   HEALING_CRON,
   MINI_HEALING_CRON,
   NUMBER_OF_HEALING_QUEUES,
 } from "./config";
 import { addMany } from "./util/set";
-
-let excludedGraphRegex = null;
-if (DISPATCH_EXCLUDED_GRAPHS_REGEX) {
-  try {
-    excludedGraphRegex = new RegExp(DISPATCH_EXCLUDED_GRAPHS_REGEX);
-  } catch (e) {
-    throw new Error(
-      `Invalid DISPATCH_EXCLUDED_GRAPHS_REGEX "${DISPATCH_EXCLUDED_GRAPHS_REGEX}": ${e}`,
-    );
-  }
-}
-const isExcludedGraph = (graph) => !!excludedGraphRegex?.test(graph);
 
 const normalQueue = new ProcessingQueue("normal-operation-queue");
 
@@ -330,7 +317,6 @@ async function dispatch(submission, visitedSubmissions = new Set()) {
 }
 
 async function dispatchSubmissionToGraphs(submission, targetGraphs) {
-  targetGraphs = targetGraphs.filter((graph) => !isExcludedGraph(graph));
   const relatedSubjects = await getAllRelatedSubjects(submission);
   const subjectsToDispatch = [submission, ...relatedSubjects];
   const subjectsAndTargetGraphsCartProduct = [];
@@ -364,9 +350,8 @@ async function dispatchSubmissionToGraphs(submission, targetGraphs) {
   });
 
   // List of subjects and the graph they are in
-  const subjectsAndGraphs = (
-    await getGraphsAndCountForSubjects(subjectsToDispatch)
-  ).filter((e) => !isExcludedGraph(e.graph));
+  const subjectsAndGraphs =
+    await getGraphsAndCountForSubjects(subjectsToDispatch);
 
   // Find subjects that no longer have a correct destinator by calculating a difference
   const removeSubjectsPerGraph = [];
