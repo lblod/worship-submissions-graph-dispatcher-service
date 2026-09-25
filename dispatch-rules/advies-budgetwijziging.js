@@ -52,18 +52,24 @@ let rule = {
 
           ?aboutEenheid a ere:BestuurVanDeEredienst;
             besluit:classificatie <http://data.vlaanderen.be/id/concept/BestuurseenheidClassificatieCode/66ec74fd-8cfc-4e16-99c6-350b35012e86>.
+        }
 
-          BIND (IF(BOUND(?centraalBestuurVanDeEredienst), ?centraalBestuurVanDeEredienst, ?aboutEenheid) AS ?receiver)
-          {
+        BIND (COALESCE(?centraalBestuurVanDeEredienst, ?aboutEenheid) AS ?receiver)
+        {
+          GRAPH <http://mu.semte.ch/graphs/public> {
             ?receiver
               mu:uuid ?uuid ;
               skos:prefLabel ?label .
-            BIND (?receiver AS ?bestuurseenheid)
-          } UNION {
-            VALUES ?bestuurseenheid {
-              <http://data.lblod.info/id/bestuurseenheden/141d9d6b-54af-4d17-b313-8d1c30bc3f5b>
-              ${sparqlEscapeUri(sender)}
-            }
+          }
+          BIND (?receiver AS ?bestuurseenheid)
+        } 
+        UNION 
+        {
+          VALUES ?bestuurseenheid {
+            <http://data.lblod.info/id/bestuurseenheden/141d9d6b-54af-4d17-b313-8d1c30bc3f5b>
+            <http://data.lblod.info/id/representatieveOrganen/6f79a1b89678b85009484da7c4a104bc>
+          }
+          GRAPH <http://mu.semte.ch/graphs/public> {
             ?bestuurseenheid
               mu:uuid ?uuid ;
               skos:prefLabel ?label .
