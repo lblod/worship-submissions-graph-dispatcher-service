@@ -67,7 +67,7 @@ let rule = {
         {
           VALUES ?bestuurseenheid {
             <http://data.lblod.info/id/bestuurseenheden/141d9d6b-54af-4d17-b313-8d1c30bc3f5b>
-            <http://data.lblod.info/id/representatieveOrganen/6f79a1b89678b85009484da7c4a104bc>
+            ${sparqlEscapeUri(sender)}
           }
           GRAPH <http://mu.semte.ch/graphs/public> {
             ?bestuurseenheid
